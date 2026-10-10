@@ -1,0 +1,15 @@
+// use prisma-8
+
+model Client {
+  id          Int      @id @default(autoincrement())
+  clientCode  String   @unique
+  name        String
+  email       String?
+  phone       String?
+  companyName String?
+  address     String?
+  notes       String?
+  isActive    Boolean  @default(true)
+  createdAt   TimestamptzString @default(now())
+  updatedAt   temporal.updatedAtString()
+}
