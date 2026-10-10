@@ -1,6 +1,6 @@
 
 'use client';
-
+import ClientSearch from '@/components/clients/client-search';
 import { useEffect, useState } from 'react';
 
 
@@ -105,6 +105,24 @@ export default function HomePage() {
           backend and database integration are ready.
         </p>
       </section>
+
+      <section className="mt-8" aria-labelledby="client-search-heading">
+  <div className="mb-4">
+    <h2
+      id="client-search-heading"
+      className="text-base font-semibold text-slate-900"
+    >
+      Find a client
+    </h2>
+    <p className="mt-1 text-sm text-slate-500">
+      Search registered client records.
+    </p>
+  </div>
+
+  <div className="max-w-xl">
+    <ClientSearch />
+  </div>
+</section>
     </div>
   );
 }
