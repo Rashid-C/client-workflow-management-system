@@ -1,8 +1,9 @@
 
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Version } from '@nestjs/common';
 
-@Controller('api/v1/health')
+@Controller('health')
 export class AppController {
+  @Version('1')
   @Get()
   checkHealth() {
     return {
