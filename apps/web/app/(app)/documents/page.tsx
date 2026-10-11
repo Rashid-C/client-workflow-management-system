@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState, useSyncExternalStore } from 'react';
 
 type DocumentStatus = 'Valid' | 'Expiring soon' | 'Expired';
 
@@ -77,7 +76,23 @@ const initialDocuments: ClientDocument[] = [
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-function getStatus(expiryDate: string, today: string): DocumentStatus {
+// The local date only exists in the browser. Reading it through
+// useSyncExternalStore renders null on the server and the real date on the
+// client, avoiding a hydration mismatch without setState in an effect.
+const subscribeToToday = () => () => {};
+
+function getLocalToday() {
+  const now = new Date();
+  return [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+function getStatus(expiryDate: string, today: string | null): DocumentStatus | null {
+  if (!today) return null;
+
   const expiry = Date.parse(`${expiryDate}T00:00:00Z`);
   const current = Date.parse(`${today}T00:00:00Z`);
   const daysRemaining = Math.round((expiry - current) / DAY_MS);
@@ -103,15 +118,7 @@ const statusStyles: Record<DocumentStatus, string> = {
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState(initialDocuments);
-  const [today, setToday] = useState('');
-
-useEffect(() => {
-  const now = new Date();
-  setToday(
-    `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-  );
-}, []);;
-
+  const today = useSyncExternalStore(subscribeToToday, getLocalToday, () => null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
@@ -397,12 +404,12 @@ useEffect(() => {
             <button
               type="button"
               onClick={() => {
-                setStatusFilter('Expired');
+                setStatusFilter(expiredCount > 0 ? 'Expired' : 'Expiring soon');
                 setTypeFilter('All');
               }}
               className="mt-3 text-sm font-semibold text-rose-700 hover:text-rose-900"
             >
-              View expired documents →
+              View {expiredCount > 0 ? 'expired' : 'expiring'} documents →
             </button>
           </section>
         )}
@@ -519,11 +526,7 @@ useEffect(() => {
                           {document.responsible}
                         </td>
                         <td className="px-5 py-4">
-                          <span
-                            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[getStatus(document.expiryDate, today)]}`}
-                          >
-                            {getStatus(document.expiryDate, today)}
-                          </span>
+                          <StatusBadge status={document.status} />
                         </td>
                       </tr>
                     ))}
@@ -533,8 +536,6 @@ useEffect(() => {
 
               <div className="divide-y divide-slate-200 md:hidden">
                 {filteredDocuments.map((document) => {
-                  const status = getStatus(document.expiryDate, today);
-
                   return (
                     <article key={document.id} className="space-y-3 p-4">
                       <div className="flex items-start justify-between gap-3">
@@ -546,11 +547,7 @@ useEffect(() => {
                             {document.documentName}
                           </p>
                         </div>
-                        <span
-                          className={`inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${statusStyles[status]}`}
-                        >
-                          {status}
-                        </span>
+                        <StatusBadge status={document.status} />
                       </div>
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
@@ -605,6 +602,18 @@ function Field({
       </span>
       {children}
     </label>
+  );
+}
+
+function StatusBadge({ status }: { status: DocumentStatus | null }) {
+  return (
+    <span
+      className={`inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ring-inset ${
+        status ? statusStyles[status] : 'bg-slate-50 text-slate-400 ring-slate-300/40'
+      }`}
+    >
+      {status ?? '—'}
+    </span>
   );
 }
 
