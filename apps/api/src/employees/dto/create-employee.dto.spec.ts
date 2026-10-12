@@ -9,6 +9,7 @@ const valid = {
   designation: 'Senior Auditor',
   roleIds: [3],
   joinedDate: '2026-10-12',
+  temporaryPassword: 'temporary-pass-123',
 };
 
 async function errorsFor(input: object) {
@@ -47,6 +48,15 @@ describe('CreateEmployeeDto', () => {
       errorsFor({ ...valid, status: 'Deleted' }),
     ).resolves.toContain('status');
   });
+
+  it.each(['short', 'x'.repeat(129)])(
+    'rejects a temporary password of length %#',
+    async (temporaryPassword) => {
+      await expect(
+        errorsFor({ ...valid, temporaryPassword }),
+      ).resolves.toContain('temporaryPassword');
+    },
+  );
 
   it('rejects an invalid email', async () => {
     await expect(

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { api } from "@/lib/api";
 
 type Client = {
   id: number;
@@ -16,7 +17,6 @@ type Client = {
   updatedAt: string;
 };
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ClientSearch() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -29,20 +29,9 @@ export default function ClientSearch() {
 
     async function loadClients() {
       try {
-        if (!API_URL) {
-          throw new Error("The client API URL is not configured.");
-        }
-
-        const response = await fetch(`${API_URL}/clients`, {
+        const data = await api<Client[]>("/clients", {
           signal: controller.signal,
-          cache: "no-store",
         });
-
-        if (!response.ok) {
-          throw new Error(`Unable to load clients (${response.status}).`);
-        }
-
-        const data: Client[] = await response.json();
         setClients(data);
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") return;
@@ -80,9 +69,6 @@ export default function ClientSearch() {
     return (
       <div role="alert" className="space-y-3 py-4">
         <p className="text-sm text-red-700">{error}</p>
-        <p className="text-sm text-slate-500">
-          Check that the API is running at {API_URL}.
-        </p>
       </div>
     );
   }

@@ -4,6 +4,7 @@ import {
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
+import type { AuthUser } from '../auth/session.js';
 import {
   EmployeesService,
   SUPER_ADMIN_INVARIANT_LOCK,
@@ -22,6 +23,17 @@ describe('EmployeesService', () => {
     release: ReturnType<typeof vi.fn>;
   };
 
+  const admin: AuthUser = {
+    sessionId: 1,
+    employeeId: 99,
+    employeeCode: 'ADMIN-001',
+    name: 'Admin',
+    email: 'admin@firm.ae',
+    isSuperAdmin: true,
+    mustChangePassword: false,
+    permissions: { 'employees.view': 'all', 'employees.deactivate': 'all' },
+  };
+
   const newEmployee: CreateEmployeeDto = {
     employeeCode: 'EMP-001',
     name: ' Aisha Rahman ',
@@ -29,6 +41,7 @@ describe('EmployeesService', () => {
     designation: 'Senior Auditor',
     roleIds: [2, 3],
     joinedDate: '2026-10-12',
+    temporaryPassword: 'temporary-pass-123',
   };
 
   const savedEmployee = {
@@ -67,25 +80,38 @@ describe('EmployeesService', () => {
   });
 
   describe('findAll', () => {
-    it('loads employees and their roles in a single query', async () => {
+    it('loads every employee and their roles in a single query', async () => {
       pool.query.mockResolvedValue({ rows: [savedEmployee] });
 
-      await expect(service.findAll()).resolves.toEqual([savedEmployee]);
+      await expect(service.findAll(admin)).resolves.toEqual([savedEmployee]);
 
       expect(pool.query).toHaveBeenCalledOnce();
-      const [sql] = pool.query.mock.calls[0];
+      const [sql, params] = pool.query.mock.calls[0];
       expect(sql).toContain('json_agg');
-      expect(sql).toContain('GROUP BY e."id"');
+      expect(sql).not.toContain('WHERE e."id"');
+      expect(params).toEqual([]);
+    });
+
+    it('limits "own" scope to the viewer themselves', async () => {
+      pool.query.mockResolvedValue({ rows: [] });
+      const staff = { ...admin, employeeId: 4, permissions: { 'employees.view': 'own' as const } };
+
+      await service.findAll(staff);
+
+      const [sql, params] = pool.query.mock.calls[0];
+      expect(sql).toContain('WHERE e."id" = $1');
+      expect(params).toEqual([4]);
     });
   });
 
   describe('create', () => {
-    it('inserts the employee and their roles, then commits', async () => {
+    it('inserts the employee, roles and a temporary credential, then commits', async () => {
       connection.query
         .mockResolvedValueOnce({}) // BEGIN
         .mockResolvedValueOnce({ rowCount: 2, rows: [{ id: 2 }, { id: 3 }] }) // roles exist
         .mockResolvedValueOnce({ rows: [{ id: 1 }] }) // INSERT Employee
         .mockResolvedValueOnce({}) // INSERT EmployeeRole
+        .mockResolvedValueOnce({}) // INSERT EmployeeCredential
         .mockResolvedValueOnce({ rows: [savedEmployee] }) // reload
         .mockResolvedValueOnce({}); // COMMIT
 
@@ -93,8 +119,7 @@ describe('EmployeesService', () => {
         savedEmployee,
       );
 
-      const [, insertParams] = connection.query.mock.calls[2];
-      expect(insertParams).toEqual([
+      expect(connection.query.mock.calls[2][1]).toEqual([
         'EMP-001',
         'Aisha Rahman',
         'aisha@firm.ae',
@@ -104,6 +129,13 @@ describe('EmployeesService', () => {
         '2026-10-12',
       ]);
       expect(connection.query.mock.calls[3][1]).toEqual([1, [2, 3]]);
+
+      const [credentialSql, credentialParams] = connection.query.mock.calls[4];
+      expect(credentialSql).toContain('"EmployeeCredential"');
+      expect(credentialParams[0]).toBe(1);
+      expect(credentialParams[1]).toMatch(/^\$argon2id\$/);
+      expect(credentialParams).not.toContain('temporary-pass-123');
+
       expect(sqlCalls().at(-1)).toBe('COMMIT');
       expect(connection.release).toHaveBeenCalledOnce();
     });
@@ -157,20 +189,23 @@ describe('EmployeesService', () => {
   });
 
   describe('updateStatus', () => {
-    it('takes the Super Admin lock and updates the status', async () => {
+    const target = (overrides = {}) => ({
+      rows: [{ id: 1, status: 'Active', isSuperAdmin: false, ...overrides }],
+    });
+
+    it('takes the Super Admin lock, deactivates and signs the person out', async () => {
       const updated = { ...savedEmployee, status: 'Inactive' };
       connection.query
         .mockResolvedValueOnce({}) // BEGIN
         .mockResolvedValueOnce({}) // advisory lock
-        .mockResolvedValueOnce({
-          rows: [{ id: 1, status: 'Active', isSuperAdmin: false }],
-        })
+        .mockResolvedValueOnce(target())
         .mockResolvedValueOnce({}) // UPDATE
+        .mockResolvedValueOnce({}) // DELETE sessions
         .mockResolvedValueOnce({ rows: [updated] }) // reload
         .mockResolvedValueOnce({}); // COMMIT
 
       await expect(
-        service.updateStatus('EMP-001', 'Inactive'),
+        service.updateStatus('EMP-001', 'Inactive', admin),
       ).resolves.toEqual(updated);
 
       expect(connection.query.mock.calls[1]).toEqual([
@@ -178,7 +213,23 @@ describe('EmployeesService', () => {
         [SUPER_ADMIN_INVARIANT_LOCK],
       ]);
       expect(connection.query.mock.calls[3][1]).toEqual(['Inactive', 1]);
+      expect(sqlCalls()[4]).toContain('DELETE FROM "Session"');
+      expect(connection.query.mock.calls[4][1]).toEqual([1]);
       expect(sqlCalls().at(-1)).toBe('COMMIT');
+    });
+
+    it('keeps sessions when reactivating', async () => {
+      connection.query
+        .mockResolvedValueOnce({}) // BEGIN
+        .mockResolvedValueOnce({}) // advisory lock
+        .mockResolvedValueOnce(target({ status: 'Inactive' }))
+        .mockResolvedValueOnce({}) // UPDATE
+        .mockResolvedValueOnce({ rows: [savedEmployee] }) // reload
+        .mockResolvedValueOnce({}); // COMMIT
+
+      await service.updateStatus('EMP-001', 'Active', admin);
+
+      expect(sqlCalls().some((sql) => sql.includes('DELETE'))).toBe(false);
     });
 
     it('returns 404 for an unknown employee', async () => {
@@ -189,25 +240,36 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({}); // ROLLBACK
 
       await expect(
-        service.updateStatus('EMP-999', 'Inactive'),
+        service.updateStatus('EMP-999', 'Inactive', admin),
       ).rejects.toBeInstanceOf(NotFoundException);
       expect(sqlCalls().at(-1)).toBe('ROLLBACK');
       expect(connection.release).toHaveBeenCalledOnce();
+    });
+
+    it('refuses to let someone deactivate themselves', async () => {
+      connection.query
+        .mockResolvedValueOnce({}) // BEGIN
+        .mockResolvedValueOnce({}) // advisory lock
+        .mockResolvedValueOnce(target({ id: admin.employeeId }))
+        .mockResolvedValueOnce({}); // ROLLBACK
+
+      await expect(
+        service.updateStatus('ADMIN-001', 'Inactive', admin),
+      ).rejects.toThrow('You cannot deactivate yourself');
+      expect(sqlCalls().at(-1)).toBe('ROLLBACK');
     });
 
     it('refuses to deactivate the last active Super Admin', async () => {
       connection.query
         .mockResolvedValueOnce({}) // BEGIN
         .mockResolvedValueOnce({}) // advisory lock
-        .mockResolvedValueOnce({
-          rows: [{ id: 1, status: 'Active', isSuperAdmin: true }],
-        })
+        .mockResolvedValueOnce(target({ isSuperAdmin: true }))
         .mockResolvedValueOnce({ rows: [{ count: '0' }] }) // no other admins
         .mockResolvedValueOnce({}); // ROLLBACK
 
       await expect(
-        service.updateStatus('EMP-001', 'Inactive'),
-      ).rejects.toBeInstanceOf(BadRequestException);
+        service.updateStatus('EMP-001', 'Inactive', admin),
+      ).rejects.toThrow('At least one active Super Admin must remain');
       expect(
         sqlCalls().some((sql) => sql.includes('UPDATE "Employee"')),
       ).toBe(false);
@@ -218,16 +280,15 @@ describe('EmployeesService', () => {
       connection.query
         .mockResolvedValueOnce({}) // BEGIN
         .mockResolvedValueOnce({}) // advisory lock
-        .mockResolvedValueOnce({
-          rows: [{ id: 1, status: 'Active', isSuperAdmin: true }],
-        })
+        .mockResolvedValueOnce(target({ isSuperAdmin: true }))
         .mockResolvedValueOnce({ rows: [{ count: '1' }] }) // one other admin
         .mockResolvedValueOnce({}) // UPDATE
+        .mockResolvedValueOnce({}) // DELETE sessions
         .mockResolvedValueOnce({ rows: [savedEmployee] }) // reload
         .mockResolvedValueOnce({}); // COMMIT
 
       await expect(
-        service.updateStatus('EMP-001', 'Inactive'),
+        service.updateStatus('EMP-001', 'Inactive', admin),
       ).resolves.toBeDefined();
       expect(sqlCalls().at(-1)).toBe('COMMIT');
     });

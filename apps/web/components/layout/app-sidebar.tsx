@@ -13,48 +13,59 @@ import {
   FileClock,
   FileText,
   LayoutDashboard,
+  LogOut,
   Menu,
   Settings,
   ShieldCheck,
   Users,
   X,
 } from 'lucide-react';
+import { useCurrentUser } from '@/components/auth/current-user';
 
-const navigation = [
+type NavItem = {
+  label: string;
+  href: string;
+  icon: typeof LayoutDashboard;
+  permission?: string;
+};
+
+// `permission` hides an item from people who could not use the page; the
+// API still enforces access on every request.
+const navigation: { label: string; items: NavItem[] }[] = [
   {
     label: 'WORKSPACE',
     items: [
       { label: 'Overview', href: '/', icon: LayoutDashboard },
       { label: 'My Work', href: '/my-work', icon: ClipboardList },
-      { label: 'Daily Updates', href: '/daily-updates', icon: CalendarDays },
+      { label: 'Daily Updates', href: '/daily-updates', icon: CalendarDays, permission: 'daily_updates.view' },
     ],
   },
   {
     label: 'CLIENTS',
     items: [
-      { label: 'Clients', href: '/clients', icon: BriefcaseBusiness },
-      { label: 'Documents & Expiry', href: '/documents', icon: FileClock },
+      { label: 'Clients', href: '/clients', icon: BriefcaseBusiness, permission: 'clients.view' },
+      { label: 'Documents & Expiry', href: '/documents', icon: FileClock, permission: 'documents.view' },
     ],
   },
   {
     label: 'OPERATIONS',
     items: [
-      { label: 'Tasks', href: '/tasks', icon: ClipboardList },
-      { label: 'Workflows', href: '/workflows', icon: Activity },
-      { label: 'Time Logs', href: '/time-logs', icon: FileText },
+      { label: 'Tasks', href: '/tasks', icon: ClipboardList, permission: 'tasks.view' },
+      { label: 'Workflows', href: '/workflows', icon: Activity, permission: 'workflows.view' },
+      { label: 'Time Logs', href: '/time-logs', icon: FileText, permission: 'time_logs.view' },
     ],
   },
   {
     label: 'BUSINESS DEVELOPMENT',
     items: [
-      { label: 'Leads & Follow-ups', href: '/leads', icon: CalendarDays },
+      { label: 'Leads & Follow-ups', href: '/leads', icon: CalendarDays, permission: 'leads.view' },
     ],
   },
   {
     label: 'MANAGEMENT',
     items: [
-      { label: 'Employees', href: '/employees', icon: Users },
-      { label: 'Roles & Permissions', href: '/roles', icon: ShieldCheck },
+      { label: 'Employees', href: '/employees', icon: Users, permission: 'employees.view' },
+      { label: 'Roles & Permissions', href: '/roles', icon: ShieldCheck, permission: 'roles.view' },
     ],
   },
 ];
@@ -69,7 +80,17 @@ export default function AppSidebar({
   onCollapsedChange,
 }: AppSidebarProps) {
   const pathname = usePathname();
+  const { user, can, signOut } = useCurrentUser();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
+
+  const visibleNavigation = navigation
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) => item.permission === undefined || can(item.permission),
+      ),
+    }))
+    .filter((group) => group.items.length > 0);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const collapsed = controlledCollapsed ?? internalCollapsed;
@@ -83,7 +104,7 @@ export default function AppSidebar({
   function renderNavigation(mobile = false) {
     return (
       <nav aria-label="Main navigation" className="space-y-6">
-        {navigation.map((group) => (
+        {visibleNavigation.map((group) => (
           <section key={group.label}>
             {!collapsed || mobile ? (
               <h2 className="mb-2 px-3 text-[10px] font-semibold tracking-[0.16em] text-slate-400">
@@ -155,7 +176,7 @@ export default function AppSidebar({
       <aside
         className={[
           'hidden min-h-screen shrink-0 flex-col border-r border-slate-200 bg-white transition-[width] duration-200 md:flex',
-          collapsed ? 'w-[76px]' : 'w-64',
+          collapsed ? 'w-19' : 'w-64',
         ].join(' ')}
       >
         <div
@@ -188,17 +209,39 @@ export default function AppSidebar({
         </div>
 
         <div className="border-t border-slate-100 p-3">
-          <Link
-            href="/settings"
-            title={collapsed ? 'Settings' : undefined}
+          {user && !collapsed && (
+            <div className="mb-2 px-3 py-1">
+              <p className="truncate text-sm font-medium text-slate-900">{user.name}</p>
+              <p className="truncate text-xs text-slate-500">{user.email}</p>
+            </div>
+          )}
+
+          {can('settings.manage') && (
+            <Link
+              href="/settings"
+              title={collapsed ? 'Settings' : undefined}
+              className={[
+                'flex min-h-10 items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100',
+                collapsed ? 'justify-center px-0' : '',
+              ].join(' ')}
+            >
+              <Settings size={18} strokeWidth={1.8} aria-hidden="true" />
+              {!collapsed && <span>Settings</span>}
+            </Link>
+          )}
+
+          <button
+            type="button"
+            onClick={() => void signOut()}
+            title={collapsed ? 'Sign out' : undefined}
             className={[
-              'flex min-h-10 items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100',
+              'flex min-h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100',
               collapsed ? 'justify-center px-0' : '',
             ].join(' ')}
           >
-            <Settings size={18} strokeWidth={1.8} aria-hidden="true" />
-            {!collapsed && <span>Settings</span>}
-          </Link>
+            <LogOut size={18} strokeWidth={1.8} aria-hidden="true" />
+            {!collapsed && <span>Sign out</span>}
+          </button>
 
           <button
             type="button"
@@ -247,14 +290,30 @@ export default function AppSidebar({
             </div>
 
             <div className="border-t border-slate-100 p-3">
-              <Link
-                href="/settings"
-                onClick={() => setMobileOpen(false)}
-                className="flex min-h-10 items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100"
+              {user && (
+                <div className="mb-2 px-3 py-1">
+                  <p className="truncate text-sm font-medium text-slate-900">{user.name}</p>
+                  <p className="truncate text-xs text-slate-500">{user.email}</p>
+                </div>
+              )}
+              {can('settings.manage') && (
+                <Link
+                  href="/settings"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex min-h-10 items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100"
+                >
+                  <Settings size={18} />
+                  Settings
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="flex min-h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100"
               >
-                <Settings size={18} />
-                Settings
-              </Link>
+                <LogOut size={18} />
+                Sign out
+              </button>
             </div>
           </aside>
         </div>

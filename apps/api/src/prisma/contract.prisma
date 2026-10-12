@@ -76,3 +76,34 @@ model EmployeeRole {
   @@unique([employeeId, roleId])
   @@index([roleId])
 }
+
+// Kept apart from Employee so no employee query can return a password hash.
+model EmployeeCredential {
+  id                 Int                        @id @default(autoincrement())
+  employeeId         Int                        @unique
+  employee           Employee                   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  // argon2id, encoded as $argon2id$v=19$m=...,t=...,p=...$salt$hash
+  passwordHash       String
+  // Set when an admin issues a temporary password.
+  mustChangePassword Boolean                    @default(true)
+  failedAttempts     Int                        @default(0)
+  lockedUntil        TimestamptzString?
+  passwordChangedAt  TimestamptzString          @default(now())
+  createdAt          TimestamptzString          @default(now())
+  updatedAt          temporal.updatedAtString()
+}
+
+model Session {
+  id         Int               @id @default(autoincrement())
+  // SHA-256 of the cookie token; the token itself is never stored.
+  tokenHash  String            @unique
+  employeeId Int
+  employee   Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  createdAt  TimestamptzString @default(now())
+  lastSeenAt TimestamptzString @default(now())
+  expiresAt  TimestamptzString
+  ipAddress  String?
+  userAgent  String?
+
+  @@index([employeeId])
+}

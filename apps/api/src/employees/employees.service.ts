@@ -6,6 +6,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { Pool, PoolClient } from 'pg';
+import { hashPassword } from '../auth/password.js';
+import type { AuthUser } from '../auth/session.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
 import type {
   CreateEmployeeDto,
@@ -56,15 +58,22 @@ const SELECT_EMPLOYEES = `
 export class EmployeesService {
   constructor(@Inject(POSTGRES_POOL) private readonly pool: Pool) {}
 
-  async findAll(): Promise<Employee[]> {
+  async findAll(viewer: AuthUser): Promise<Employee[]> {
+    // "own" scope: a person sees only their own record.
+    const ownOnly = viewer.permissions['employees.view'] === 'own';
     const result = await this.pool.query<Employee>(
-      `${SELECT_EMPLOYEES} GROUP BY e."id" ORDER BY e."id" ASC`,
+      `${SELECT_EMPLOYEES}
+       ${ownOnly ? 'WHERE e."id" = $1' : ''}
+       GROUP BY e."id" ORDER BY e."id" ASC`,
+      ownOnly ? [viewer.employeeId] : [],
     );
 
     return result.rows;
   }
 
   async create(data: CreateEmployeeDto): Promise<Employee> {
+    // Hash before opening the transaction; argon2 takes tens of milliseconds.
+    const passwordHash = await hashPassword(data.temporaryPassword);
     const connection = await this.pool.connect();
 
     try {
@@ -104,6 +113,13 @@ export class EmployeesService {
         [employeeId, data.roleIds],
       );
 
+      await connection.query(
+        `INSERT INTO "EmployeeCredential"
+          ("employeeId", "passwordHash", "mustChangePassword", "updatedAt")
+         VALUES ($1, $2, true, NOW())`,
+        [employeeId, passwordHash],
+      );
+
       const employee = await this.findById(connection, employeeId);
 
       await connection.query('COMMIT');
@@ -119,6 +135,7 @@ export class EmployeesService {
   async updateStatus(
     employeeCode: string,
     status: EmployeeStatus,
+    actor: AuthUser,
   ): Promise<Employee> {
     const connection = await this.pool.connect();
 
@@ -151,6 +168,10 @@ export class EmployeesService {
         throw new NotFoundException('Employee not found');
       }
 
+      if (current.id === actor.employeeId && status === 'Inactive') {
+        throw new BadRequestException('You cannot deactivate yourself');
+      }
+
       if (
         current.isSuperAdmin &&
         current.status === 'Active' &&
@@ -177,6 +198,14 @@ export class EmployeesService {
          WHERE "id" = $2`,
         [status, current.id],
       );
+
+      // A deactivated person is signed out everywhere, immediately.
+      if (status === 'Inactive') {
+        await connection.query(
+          `DELETE FROM "Session" WHERE "employeeId" = $1`,
+          [current.id],
+        );
+      }
 
       const employee = await this.findById(connection, current.id);
 

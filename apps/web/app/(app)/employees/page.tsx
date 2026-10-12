@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useCurrentUser } from "@/components/auth/current-user";
+import { api, ApiError } from "@/lib/api";
 
 type EmployeeStatus = "Active" | "Inactive";
 
@@ -40,10 +42,6 @@ type ApiEmployee = {
   updatedAt: string;
 };
 
-const API_BASE = "http://localhost:3001/api/v1";
-const API_URL = `${API_BASE}/employees`;
-const ROLES_URL = `${API_BASE}/roles`;
-
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
 
@@ -78,15 +76,8 @@ function todayInBrowserTimeZone() {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
-// Nest's ValidationPipe returns `message` as a list of field errors.
-async function readApiError(response: Response, fallback: string) {
-  const body = await response.json().catch(() => null);
-  const message = body?.message;
-  if (Array.isArray(message)) return message.join(" ");
-  return typeof message === "string" ? message : fallback;
-}
-
 export default function EmployeesPage() {
+  const { user, can } = useCurrentUser();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -107,6 +98,7 @@ export default function EmployeesPage() {
   const [roles, setRoles] = useState<ApiRole[]>([]);
   const [roleIds, setRoleIds] = useState<number[]>([]);
   const [joinedDate, setJoinedDate] = useState("");
+  const [temporaryPassword, setTemporaryPassword] = useState("");
   const [formError, setFormError] = useState("");
 
   // New employees start as Staff unless the admin picks otherwise.
@@ -119,22 +111,14 @@ export default function EmployeesPage() {
     setLoadError("");
 
     try {
-      const [employeesResponse, rolesResponse] = await Promise.all([
-        fetch(API_URL, { signal }),
-        fetch(ROLES_URL, { signal }),
+      const [data, roleData] = await Promise.all([
+        api<ApiEmployee[]>("/employees", { signal }),
+        // Without roles.view the role filter and form simply stay empty.
+        api<ApiRole[]>("/roles", { signal }).catch((error: unknown) => {
+          if (error instanceof ApiError && error.status === 403) return [];
+          throw error;
+        }),
       ]);
-
-      if (!employeesResponse.ok) {
-        throw new Error(
-          `Unable to load employees (${employeesResponse.status}).`,
-        );
-      }
-      if (!rolesResponse.ok) {
-        throw new Error(`Unable to load roles (${rolesResponse.status}).`);
-      }
-
-      const data: ApiEmployee[] = await employeesResponse.json();
-      const roleData: ApiRole[] = await rolesResponse.json();
 
       setEmployees(data.map(toEmployee));
       setRoles(roleData);
@@ -207,6 +191,7 @@ export default function EmployeesPage() {
     setDesignation("");
     setRoleIds(defaultRoleIds);
     setJoinedDate("");
+    setTemporaryPassword("");
     setFormError("");
   }
 
@@ -225,12 +210,14 @@ export default function EmployeesPage() {
       return;
     }
 
+    // Only EMP-### codes count; others (e.g. ADMIN-001) would give NaN.
     const nextNumber =
       Math.max(
         0,
-        ...employees.map((employee) =>
-          Number(employee.id.replace("EMP-", "")),
-        ),
+        ...employees.map((employee) => {
+          const match = /^EMP-(\d+)$/.exec(employee.id);
+          return match ? Number(match[1]) : 0;
+        }),
       ) + 1;
 
     const employeeCode = `EMP-${String(nextNumber).padStart(3, "0")}`;
@@ -240,12 +227,16 @@ export default function EmployeesPage() {
       return;
     }
 
+    if (temporaryPassword.length < 12) {
+      setFormError("The temporary password needs at least 12 characters.");
+      return;
+    }
+
     setSaving(true);
 
     try {
-      const response = await fetch(API_URL, {
+      const created = await api<ApiEmployee>("/employees", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           employeeCode,
           name: name.trim(),
@@ -255,19 +246,9 @@ export default function EmployeesPage() {
           roleIds,
           status: "Active",
           joinedDate: joinedDate || todayInBrowserTimeZone(),
+          temporaryPassword,
         }),
       });
-
-      if (!response.ok) {
-        throw new Error(
-          await readApiError(
-            response,
-            `Unable to create employee (${response.status}).`,
-          ),
-        );
-      }
-
-      const created: ApiEmployee = await response.json();
 
       setEmployees((current) => [toEmployee(created), ...current]);
       setShowForm(false);
@@ -308,25 +289,10 @@ export default function EmployeesPage() {
     setMessage("");
 
     try {
-      const response = await fetch(
-        `${API_URL}/${encodeURIComponent(employeeId)}/status`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: nextStatus }),
-        },
+      const updated = await api<ApiEmployee>(
+        `/employees/${encodeURIComponent(employeeId)}/status`,
+        { method: "PATCH", body: JSON.stringify({ status: nextStatus }) },
       );
-
-      if (!response.ok) {
-        throw new Error(
-          await readApiError(
-            response,
-            `Status update failed (${response.status}).`,
-          ),
-        );
-      }
-
-      const updated: ApiEmployee = await response.json();
 
       setEmployees((current) =>
         current.map((employee) =>
@@ -363,18 +329,20 @@ export default function EmployeesPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => {
-            setMessage("");
-            setRoleIds(defaultRoleIds);
-            setShowForm(true);
-          }}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
-        >
-          <span aria-hidden="true">+</span>
-          Add employee
-        </button>
+        {can("employees.create") && (
+          <button
+            type="button"
+            onClick={() => {
+              setMessage("");
+              setRoleIds(defaultRoleIds);
+              setShowForm(true);
+            }}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+          >
+            <span aria-hidden="true">+</span>
+            Add employee
+          </button>
+        )}
       </header>
 
       {message && (
@@ -739,7 +707,7 @@ export default function EmployeesPage() {
                     ))}
                   </div>
                   <p className="mt-1 text-xs text-slate-500">
-                    Sign-in and access checks are not active yet.
+                    Roles decide what this person can see and change.
                   </p>
                 </fieldset>
 
@@ -754,6 +722,29 @@ export default function EmployeesPage() {
                     onChange={(event) => setJoinedDate(event.target.value)}
                     className={inputClass}
                   />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label htmlFor="employee-temporary-password" className="text-sm font-medium">
+                    Temporary password *
+                  </label>
+                  <input
+                    id="employee-temporary-password"
+                    type="text"
+                    required
+                    minLength={12}
+                    maxLength={128}
+                    autoComplete="off"
+                    spellCheck={false}
+                    aria-describedby="employee-temporary-password-hint"
+                    value={temporaryPassword}
+                    onChange={(event) => setTemporaryPassword(event.target.value)}
+                    className={`${inputClass} font-mono`}
+                  />
+                  <p id="employee-temporary-password-hint" className="mt-1 text-xs text-slate-500">
+                    At least 12 characters. Give it to the employee in person;
+                    they must replace it when they first sign in.
+                  </p>
                 </div>
               </div>
 
@@ -848,20 +839,22 @@ export default function EmployeesPage() {
               >
                 Close
               </button>
-              <button
-                type="button"
-                onClick={() => void toggleStatus(selectedEmployee.id)}
-                className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium hover:bg-slate-100"
-              >
-                Mark {selectedEmployee.status === "Active" ? "inactive" : "active"}
-              </button>
+              {can("employees.deactivate") &&
+                selectedEmployee.id !== user?.employeeCode && (
+                  <button
+                    type="button"
+                    onClick={() => void toggleStatus(selectedEmployee.id)}
+                    className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium hover:bg-slate-100"
+                  >
+                    Mark {selectedEmployee.status === "Active" ? "inactive" : "active"}
+                  </button>
+                )}
             </div>
           </section>
         </div>
       )}
 
       <p className="text-xs text-slate-500">
-        Employee records and status updates are connected to your local API.
         Task counts are not connected yet.
       </p>
     </div>
