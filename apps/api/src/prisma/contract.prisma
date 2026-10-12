@@ -1,15 +1,28 @@
 // use prisma-8
-
 model Client {
-  id          Int      @id @default(autoincrement())
-  clientCode  String   @unique
+  id          Int                        @id @default(autoincrement())
+  clientCode  String                     @unique
   name        String
   email       String?
   phone       String?
   companyName String?
   address     String?
   notes       String?
-  isActive    Boolean  @default(true)
-  createdAt   TimestamptzString @default(now())
+  isActive    Boolean                    @default(true)
+  createdAt   TimestamptzString          @default(now())
   updatedAt   temporal.updatedAtString()
+}
+
+model Employee {
+  id           Int                        @id @default(autoincrement())
+  employeeCode String                     @unique
+  name         String
+  email        String                     @unique
+  phone        String?
+  designation  String
+  role         String                     @default("Staff")
+  status       String                     @default("Active")
+  joinedDate   String
+  createdAt    TimestamptzString          @default(now())
+  updatedAt    temporal.updatedAtString()
 }
