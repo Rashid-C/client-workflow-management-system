@@ -1,10 +1,18 @@
-
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 
-type EmployeeRole = "Super Admin" | "Manager" | "Staff";
 type EmployeeStatus = "Active" | "Inactive";
+
+type RoleSummary = {
+  id: number;
+  name: string;
+  isSystem: boolean;
+};
+
+type ApiRole = RoleSummary & {
+  description: string | null;
+};
 
 type Employee = {
   id: string;
@@ -12,7 +20,7 @@ type Employee = {
   email: string;
   phone: string;
   designation: string;
-  role: EmployeeRole;
+  roles: RoleSummary[];
   status: EmployeeStatus;
   joinedDate: string;
   assignedTasks: number;
@@ -25,23 +33,58 @@ type ApiEmployee = {
   email: string;
   phone: string | null;
   designation: string;
-  role: EmployeeRole;
+  roles: RoleSummary[];
   status: EmployeeStatus;
   joinedDate: string;
   createdAt: string;
   updatedAt: string;
 };
 
-const API_URL = "http://localhost:3001/api/v1/employees";
+const API_BASE = "http://localhost:3001/api/v1";
+const API_URL = `${API_BASE}/employees`;
+const ROLES_URL = `${API_BASE}/roles`;
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
 
-const roleStyles: Record<EmployeeRole, string> = {
-  "Super Admin": "border-purple-200 bg-purple-50 text-purple-700",
-  Manager: "border-blue-200 bg-blue-50 text-blue-700",
-  Staff: "border-gray-200 bg-gray-50 text-gray-700",
-};
+function roleStyle(role: RoleSummary) {
+  if (role.isSystem) return "border-purple-200 bg-purple-50 text-purple-700";
+  if (role.name === "Manager") return "border-blue-200 bg-blue-50 text-blue-700";
+  return "border-gray-200 bg-gray-50 text-gray-700";
+}
+
+const isSuperAdmin = (employee: Employee) =>
+  employee.roles.some((role) => role.isSystem);
+
+function toEmployee(item: ApiEmployee): Employee {
+  return {
+    id: item.employeeCode,
+    name: item.name,
+    email: item.email,
+    phone: item.phone ?? "",
+    designation: item.designation,
+    roles: item.roles,
+    status: item.status,
+    joinedDate: item.joinedDate,
+    assignedTasks: 0,
+  };
+}
+
+// YYYY-MM-DD for the user's local day. toISOString() would give the UTC day,
+// which is yesterday in Abu Dhabi between midnight and 4 a.m.
+function todayInBrowserTimeZone() {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+// Nest's ValidationPipe returns `message` as a list of field errors.
+async function readApiError(response: Response, fallback: string) {
+  const body = await response.json().catch(() => null);
+  const message = body?.message;
+  if (Array.isArray(message)) return message.join(" ");
+  return typeof message === "string" ? message : fallback;
+}
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -61,35 +104,40 @@ export default function EmployeesPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [designation, setDesignation] = useState("");
-  const [role, setRole] = useState<EmployeeRole>("Staff");
+  const [roles, setRoles] = useState<ApiRole[]>([]);
+  const [roleIds, setRoleIds] = useState<number[]>([]);
   const [joinedDate, setJoinedDate] = useState("");
   const [formError, setFormError] = useState("");
+
+  // New employees start as Staff unless the admin picks otherwise.
+  const defaultRoleIds = useMemo(
+    () => roles.filter((r) => r.name === "Staff").map((r) => r.id),
+    [roles],
+  );
 
   async function loadEmployees(signal?: AbortSignal) {
     setLoadError("");
 
     try {
-      const response = await fetch(API_URL, { signal });
+      const [employeesResponse, rolesResponse] = await Promise.all([
+        fetch(API_URL, { signal }),
+        fetch(ROLES_URL, { signal }),
+      ]);
 
-      if (!response.ok) {
-        throw new Error(`Unable to load employees (${response.status}).`);
+      if (!employeesResponse.ok) {
+        throw new Error(
+          `Unable to load employees (${employeesResponse.status}).`,
+        );
+      }
+      if (!rolesResponse.ok) {
+        throw new Error(`Unable to load roles (${rolesResponse.status}).`);
       }
 
-      const data: ApiEmployee[] = await response.json();
+      const data: ApiEmployee[] = await employeesResponse.json();
+      const roleData: ApiRole[] = await rolesResponse.json();
 
-      setEmployees(
-        data.map((item) => ({
-          id: item.employeeCode,
-          name: item.name,
-          email: item.email,
-          phone: item.phone ?? "",
-          designation: item.designation,
-          role: item.role,
-          status: item.status,
-          joinedDate: item.joinedDate,
-          assignedTasks: 0,
-        })),
-      );
+      setEmployees(data.map(toEmployee));
+      setRoles(roleData);
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") return;
 
@@ -122,8 +170,8 @@ export default function EmployeesPage() {
       total: employees.length,
       active: employees.filter((e) => e.status === "Active").length,
       inactive: employees.filter((e) => e.status === "Inactive").length,
-      managers: employees.filter(
-        (e) => e.role === "Manager" || e.role === "Super Admin",
+      managers: employees.filter((e) =>
+        e.roles.some((r) => r.isSystem || r.name === "Manager"),
       ).length,
     }),
     [employees],
@@ -142,7 +190,8 @@ export default function EmployeesPage() {
       ].some((value) => value.toLowerCase().includes(query));
 
       const matchesRole =
-        roleFilter === "All" || employee.role === roleFilter;
+        roleFilter === "All" ||
+        employee.roles.some((r) => String(r.id) === roleFilter);
 
       const matchesStatus =
         statusFilter === "All" || employee.status === statusFilter;
@@ -156,7 +205,7 @@ export default function EmployeesPage() {
     setEmail("");
     setPhone("");
     setDesignation("");
-    setRole("Staff");
+    setRoleIds(defaultRoleIds);
     setJoinedDate("");
     setFormError("");
   }
@@ -186,6 +235,11 @@ export default function EmployeesPage() {
 
     const employeeCode = `EMP-${String(nextNumber).padStart(3, "0")}`;
 
+    if (roleIds.length === 0) {
+      setFormError("Choose at least one role.");
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -198,36 +252,24 @@ export default function EmployeesPage() {
           email: email.trim(),
           phone: phone.trim() || undefined,
           designation: designation.trim(),
-          role,
+          roleIds,
           status: "Active",
-          joinedDate:
-            joinedDate || new Date().toISOString().slice(0, 10),
+          joinedDate: joinedDate || todayInBrowserTimeZone(),
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
         throw new Error(
-          errorData?.message ??
+          await readApiError(
+            response,
             `Unable to create employee (${response.status}).`,
+          ),
         );
       }
 
       const created: ApiEmployee = await response.json();
 
-      const newEmployee: Employee = {
-        id: created.employeeCode,
-        name: created.name,
-        email: created.email,
-        phone: created.phone ?? "",
-        designation: created.designation,
-        role: created.role,
-        status: created.status,
-        joinedDate: created.joinedDate,
-        assignedTasks: 0,
-      };
-
-      setEmployees((current) => [newEmployee, ...current]);
+      setEmployees((current) => [toEmployee(created), ...current]);
       setShowForm(false);
       resetForm();
       setMessage(`${created.name} was added successfully.`);
@@ -249,13 +291,13 @@ export default function EmployeesPage() {
     const nextStatus =
       target.status === "Active" ? "Inactive" : "Active";
 
+    // A courtesy check only; the API enforces this rule authoritatively.
     if (
-      target.role === "Super Admin" &&
+      isSuperAdmin(target) &&
       target.status === "Active" &&
       nextStatus === "Inactive" &&
       employees.filter(
-        (employee) =>
-          employee.role === "Super Admin" && employee.status === "Active",
+        (employee) => isSuperAdmin(employee) && employee.status === "Active",
       ).length <= 1
     ) {
       setMessage("At least one active Super Admin must remain.");
@@ -276,9 +318,11 @@ export default function EmployeesPage() {
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
         throw new Error(
-          errorData?.message ?? `Status update failed (${response.status}).`,
+          await readApiError(
+            response,
+            `Status update failed (${response.status}).`,
+          ),
         );
       }
 
@@ -286,9 +330,7 @@ export default function EmployeesPage() {
 
       setEmployees((current) =>
         current.map((employee) =>
-          employee.id === updated.employeeCode
-            ? { ...employee, status: updated.status }
-            : employee,
+          employee.id === updated.employeeCode ? toEmployee(updated) : employee,
         ),
       );
 
@@ -325,6 +367,7 @@ export default function EmployeesPage() {
           type="button"
           onClick={() => {
             setMessage("");
+            setRoleIds(defaultRoleIds);
             setShowForm(true);
           }}
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
@@ -404,9 +447,11 @@ export default function EmployeesPage() {
               className={inputClass}
             >
               <option value="All">All roles</option>
-              <option value="Super Admin">Super Admin</option>
-              <option value="Manager">Manager</option>
-              <option value="Staff">Staff</option>
+              {roles.map((r) => (
+                <option key={r.id} value={String(r.id)}>
+                  {r.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -482,11 +527,16 @@ export default function EmployeesPage() {
                       </td>
                       <td className="px-3 py-4">{employee.designation}</td>
                       <td className="px-3 py-4">
-                        <span
-                          className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${roleStyles[employee.role]}`}
-                        >
-                          {employee.role}
-                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {employee.roles.map((r) => (
+                            <span
+                              key={r.id}
+                              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${roleStyle(r)}`}
+                            >
+                              {r.name}
+                            </span>
+                          ))}
+                        </div>
                       </td>
                       <td className="px-3 py-4">{employee.assignedTasks}</td>
                       <td className="px-3 py-4">
@@ -531,11 +581,16 @@ export default function EmployeesPage() {
                         {employee.id}
                       </p>
                     </div>
-                    <span
-                      className={`shrink-0 rounded-full border px-2 py-1 text-xs font-medium ${roleStyles[employee.role]}`}
-                    >
-                      {employee.role}
-                    </span>
+                    <div className="flex shrink-0 flex-col items-end gap-1">
+                      {employee.roles.map((r) => (
+                        <span
+                          key={r.id}
+                          className={`rounded-full border px-2 py-1 text-xs font-medium ${roleStyle(r)}`}
+                        >
+                          {r.name}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div className="mt-4 flex items-center justify-between gap-3 text-sm">
                     <div>
@@ -652,27 +707,41 @@ export default function EmployeesPage() {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="employee-role" className="text-sm font-medium">
-                    System role *
-                  </label>
-                  <select
-                    id="employee-role"
-                    required
-                    value={role}
-                    onChange={(event) =>
-                      setRole(event.target.value as EmployeeRole)
-                    }
-                    className={inputClass}
-                  >
-                    <option value="Staff">Staff</option>
-                    <option value="Manager">Manager</option>
-                    <option value="Super Admin">Super Admin</option>
-                  </select>
+                <fieldset>
+                  <legend className="text-sm font-medium">Roles *</legend>
+                  <div className="mt-1.5 space-y-2 rounded-lg border border-slate-200 p-3">
+                    {roles.map((r) => (
+                      <label
+                        key={r.id}
+                        className="flex items-start gap-2 text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={roleIds.includes(r.id)}
+                          onChange={(event) =>
+                            setRoleIds((current) =>
+                              event.target.checked
+                                ? [...current, r.id]
+                                : current.filter((id) => id !== r.id),
+                            )
+                          }
+                          className="mt-0.5"
+                        />
+                        <span>
+                          <span className="font-medium">{r.name}</span>
+                          {r.description && (
+                            <span className="block text-xs text-slate-500">
+                              {r.description}
+                            </span>
+                          )}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                   <p className="mt-1 text-xs text-slate-500">
-                    Real access controls are not active yet.
+                    Sign-in and access checks are not active yet.
                   </p>
-                </div>
+                </fieldset>
 
                 <div>
                   <label htmlFor="employee-joined-date" className="text-sm font-medium">
@@ -753,7 +822,10 @@ export default function EmployeesPage() {
               {[
                 ["Email", selectedEmployee.email],
                 ["Phone", selectedEmployee.phone || "Not provided"],
-                ["Role", selectedEmployee.role],
+                [
+                  "Roles",
+                  selectedEmployee.roles.map((r) => r.name).join(", "),
+                ],
                 ["Status", selectedEmployee.status],
                 ["Joining date", selectedEmployee.joinedDate],
                 ["Assigned tasks", String(selectedEmployee.assignedTasks)],

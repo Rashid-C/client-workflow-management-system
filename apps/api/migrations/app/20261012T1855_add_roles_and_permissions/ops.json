@@ -1,0 +1,708 @@
+[
+  {
+    "id": "table.EmployeeRole",
+    "label": "Create table \"EmployeeRole\"",
+    "summary": "Creates table \"EmployeeRole\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "EmployeeRole"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"EmployeeRole\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmployeeRole\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"EmployeeRole\"",
+        "sql": "CREATE TABLE \"public\".\"EmployeeRole\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"employeeId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"roleId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"EmployeeRole\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmployeeRole\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.Role",
+    "label": "Create table \"Role\"",
+    "summary": "Creates table \"Role\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Role"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Role\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Role\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Role\"",
+        "sql": "CREATE TABLE \"public\".\"Role\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isSystem\" bool DEFAULT false NOT NULL,\n  \"name\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Role\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Role\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.RolePermission",
+    "label": "Create table \"RolePermission\"",
+    "summary": "Creates table \"RolePermission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "RolePermission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"RolePermission\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"RolePermission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"RolePermission\"",
+        "sql": "CREATE TABLE \"public\".\"RolePermission\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"permissionKey\" text NOT NULL,\n  \"roleId\" int4 NOT NULL,\n  \"scope\" text DEFAULT 'all' NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"RolePermission_scope_check_4253cd73\" CHECK (\"scope\" IN ('own', 'all'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"RolePermission\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"RolePermission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterType.Employee.joinedDate",
+    "label": "Alter type of \"Employee\".\"joinedDate\" to date",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "joinedDate",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"joinedDate\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "joinedDate"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "alter type of \"joinedDate\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ALTER COLUMN \"joinedDate\" TYPE date USING \"joinedDate\"::date"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"joinedDate\" has type \"date\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "joinedDate",
+          "date"
+        ]
+      }
+    ],
+    "meta": {
+      "warning": "TABLE_REWRITE"
+    }
+  },
+  {
+    "id": "checkConstraint.Employee.Employee_status_check_cf0b2206",
+    "label": "Add check constraint \"Employee_status_check_cf0b2206\" on \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Employee_status_check_cf0b2206",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Employee_status_check_cf0b2206\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_status_check_cf0b2206",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Employee_status_check_cf0b2206\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD CONSTRAINT \"Employee_status_check_cf0b2206\" CHECK (\"status\" IN ('Active', 'Inactive'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Employee_status_check_cf0b2206\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_status_check_cf0b2206",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.EmployeeRole.EmployeeRole_employeeId_roleId_key",
+    "label": "Add unique constraint on \"EmployeeRole\" (employeeId, roleId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "EmployeeRole_employeeId_roleId_key",
+        "table": "EmployeeRole"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"EmployeeRole_employeeId_roleId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeRole_employeeId_roleId_key",
+          "public",
+          "\"public\".\"EmployeeRole\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"EmployeeRole_employeeId_roleId_key\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeRole\" ADD CONSTRAINT \"EmployeeRole_employeeId_roleId_key\" UNIQUE (\"employeeId\", \"roleId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"EmployeeRole_employeeId_roleId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeRole_employeeId_roleId_key",
+          "public",
+          "\"public\".\"EmployeeRole\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.RolePermission.RolePermission_roleId_permissionKey_key",
+    "label": "Add unique constraint on \"RolePermission\" (roleId, permissionKey)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "RolePermission_roleId_permissionKey_key",
+        "table": "RolePermission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"RolePermission_roleId_permissionKey_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "RolePermission_roleId_permissionKey_key",
+          "public",
+          "\"public\".\"RolePermission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"RolePermission_roleId_permissionKey_key\"",
+        "sql": "ALTER TABLE \"public\".\"RolePermission\" ADD CONSTRAINT \"RolePermission_roleId_permissionKey_key\" UNIQUE (\"roleId\", \"permissionKey\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"RolePermission_roleId_permissionKey_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "RolePermission_roleId_permissionKey_key",
+          "public",
+          "\"public\".\"RolePermission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmployeeRole.EmployeeRole_employeeId_idx_087dd4a6",
+    "label": "Create index \"EmployeeRole_employeeId_idx_087dd4a6\" on \"EmployeeRole\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmployeeRole_employeeId_idx_087dd4a6",
+        "table": "EmployeeRole"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmployeeRole_employeeId_idx_087dd4a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmployeeRole_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmployeeRole_employeeId_idx_087dd4a6\"",
+        "sql": "CREATE INDEX \"EmployeeRole_employeeId_idx_087dd4a6\" ON \"public\".\"EmployeeRole\" (\"employeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmployeeRole_employeeId_idx_087dd4a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmployeeRole_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.EmployeeRole.EmployeeRole_roleId_idx_ffccc9a4",
+    "label": "Create index \"EmployeeRole_roleId_idx_ffccc9a4\" on \"EmployeeRole\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "EmployeeRole_roleId_idx_ffccc9a4",
+        "table": "EmployeeRole"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"EmployeeRole_roleId_idx_ffccc9a4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmployeeRole_roleId_idx_ffccc9a4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"EmployeeRole_roleId_idx_ffccc9a4\"",
+        "sql": "CREATE INDEX \"EmployeeRole_roleId_idx_ffccc9a4\" ON \"public\".\"EmployeeRole\" (\"roleId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"EmployeeRole_roleId_idx_ffccc9a4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"EmployeeRole_roleId_idx_ffccc9a4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Role.Role_name_lower_key_e40b0be1",
+    "label": "Create index \"Role_name_lower_key_e40b0be1\" on \"Role\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Role_name_lower_key_e40b0be1",
+        "table": "Role"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Role_name_lower_key_e40b0be1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Role_name_lower_key_e40b0be1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Role_name_lower_key_e40b0be1\"",
+        "sql": "CREATE UNIQUE INDEX \"Role_name_lower_key_e40b0be1\" ON \"public\".\"Role\" (lower(name))",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Role_name_lower_key_e40b0be1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Role_name_lower_key_e40b0be1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.RolePermission.RolePermission_roleId_idx_ffccc9a4",
+    "label": "Create index \"RolePermission_roleId_idx_ffccc9a4\" on \"RolePermission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "RolePermission_roleId_idx_ffccc9a4",
+        "table": "RolePermission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"RolePermission_roleId_idx_ffccc9a4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"RolePermission_roleId_idx_ffccc9a4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"RolePermission_roleId_idx_ffccc9a4\"",
+        "sql": "CREATE INDEX \"RolePermission_roleId_idx_ffccc9a4\" ON \"public\".\"RolePermission\" (\"roleId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"RolePermission_roleId_idx_ffccc9a4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"RolePermission_roleId_idx_ffccc9a4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.EmployeeRole.EmployeeRole_employeeId_fkey",
+    "label": "Add foreign key \"EmployeeRole_employeeId_fkey\" on \"EmployeeRole\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmployeeRole_employeeId_fkey",
+        "table": "EmployeeRole"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"EmployeeRole_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeRole_employeeId_fkey",
+          "public",
+          "\"public\".\"EmployeeRole\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"EmployeeRole_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeRole\"\nADD CONSTRAINT \"EmployeeRole_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"EmployeeRole_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeRole_employeeId_fkey",
+          "public",
+          "\"public\".\"EmployeeRole\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.EmployeeRole.EmployeeRole_roleId_fkey",
+    "label": "Add foreign key \"EmployeeRole_roleId_fkey\" on \"EmployeeRole\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "EmployeeRole_roleId_fkey",
+        "table": "EmployeeRole"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"EmployeeRole_roleId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeRole_roleId_fkey",
+          "public",
+          "\"public\".\"EmployeeRole\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"EmployeeRole_roleId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"EmployeeRole\"\nADD CONSTRAINT \"EmployeeRole_roleId_fkey\"\nFOREIGN KEY (\"roleId\")\nREFERENCES \"public\".\"Role\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"EmployeeRole_roleId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "EmployeeRole_roleId_fkey",
+          "public",
+          "\"public\".\"EmployeeRole\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.RolePermission.RolePermission_roleId_fkey",
+    "label": "Add foreign key \"RolePermission_roleId_fkey\" on \"RolePermission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "RolePermission_roleId_fkey",
+        "table": "RolePermission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"RolePermission_roleId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "RolePermission_roleId_fkey",
+          "public",
+          "\"public\".\"RolePermission\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"RolePermission_roleId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"RolePermission\"\nADD CONSTRAINT \"RolePermission_roleId_fkey\"\nFOREIGN KEY (\"roleId\")\nREFERENCES \"public\".\"Role\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"RolePermission_roleId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "RolePermission_roleId_fkey",
+          "public",
+          "\"public\".\"RolePermission\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data.Role.seed",
+    "label": "Seed default roles",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Role"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure no roles exist yet",
+        "sql": "SELECT NOT EXISTS (SELECT 1 FROM \"public\".\"Role\") AS \"result\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "insert Super Admin, Manager and Staff",
+        "sql": "INSERT INTO \"public\".\"Role\" (\"name\", \"description\", \"isSystem\", \"updatedAt\")\nVALUES\n  ('Super Admin', 'Full access to every feature and setting.', true, now()),\n  ('Manager', 'Manages clients, tasks, staff and assignments.', false, now()),\n  ('Staff', 'Works on the stages assigned to them.', false, now())"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify the three default roles exist",
+        "sql": "SELECT count(*) = 3 AS \"result\" FROM \"public\".\"Role\"\nWHERE \"name\" IN ('Super Admin', 'Manager', 'Staff')"
+      }
+    ]
+  },
+  {
+    "id": "data.RolePermission.seed",
+    "label": "Seed default role permissions",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "RolePermission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure no role permissions exist yet",
+        "sql": "SELECT NOT EXISTS (SELECT 1 FROM \"public\".\"RolePermission\") AS \"result\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "grant Manager and Staff their default permissions",
+        "sql": "INSERT INTO \"public\".\"RolePermission\" (\"roleId\", \"permissionKey\", \"scope\")\nSELECT r.\"id\", d.\"permissionKey\", d.\"scope\"\nFROM (VALUES \n  ('Manager', 'dashboard.view', 'all'),\n  ('Manager', 'reports.view', 'all'),\n  ('Manager', 'clients.view', 'all'),\n  ('Manager', 'clients.create', 'all'),\n  ('Manager', 'clients.edit', 'all'),\n  ('Manager', 'tasks.view', 'all'),\n  ('Manager', 'tasks.create', 'all'),\n  ('Manager', 'tasks.edit', 'all'),\n  ('Manager', 'tasks.assign', 'all'),\n  ('Manager', 'tasks.complete', 'all'),\n  ('Manager', 'tasks.reopen', 'all'),\n  ('Manager', 'employees.view', 'all'),\n  ('Manager', 'employees.create', 'all'),\n  ('Manager', 'employees.edit', 'all'),\n  ('Manager', 'workflows.view', 'all'),\n  ('Manager', 'workflows.manage', 'all'),\n  ('Manager', 'documents.view', 'all'),\n  ('Manager', 'documents.create', 'all'),\n  ('Manager', 'documents.edit', 'all'),\n  ('Manager', 'time_logs.view', 'all'),\n  ('Manager', 'time_logs.create', 'all'),\n  ('Manager', 'time_logs.edit', 'all'),\n  ('Manager', 'daily_updates.view', 'all'),\n  ('Manager', 'daily_updates.create', 'all'),\n  ('Manager', 'leads.view', 'all'),\n  ('Manager', 'leads.create', 'all'),\n  ('Manager', 'leads.edit', 'all'),\n  ('Manager', 'roles.view', 'all'),\n  ('Manager', 'history.view', 'all'),\n  ('Staff', 'dashboard.view', 'all'),\n  ('Staff', 'clients.view', 'own'),\n  ('Staff', 'tasks.view', 'own'),\n  ('Staff', 'tasks.assign', 'own'),\n  ('Staff', 'tasks.complete', 'own'),\n  ('Staff', 'workflows.view', 'all'),\n  ('Staff', 'documents.view', 'own'),\n  ('Staff', 'time_logs.view', 'own'),\n  ('Staff', 'time_logs.create', 'all'),\n  ('Staff', 'daily_updates.view', 'own'),\n  ('Staff', 'daily_updates.create', 'all'),\n  ('Staff', 'leads.view', 'own'),\n  ('Staff', 'leads.edit', 'own')\n) AS d(\"roleName\", \"permissionKey\", \"scope\")\nJOIN \"public\".\"Role\" r ON r.\"name\" = d.\"roleName\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify 42 default permissions were granted",
+        "sql": "SELECT count(*) = 42 AS \"result\" FROM \"public\".\"RolePermission\""
+      }
+    ]
+  },
+  {
+    "id": "data.EmployeeRole.backfill",
+    "label": "Copy each employee's role into EmployeeRole",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "EmployeeRole"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure every employee role names an existing role",
+        "sql": "SELECT NOT EXISTS (\n  SELECT 1 FROM \"public\".\"Employee\" e\n  WHERE NOT EXISTS (SELECT 1 FROM \"public\".\"Role\" r WHERE r.\"name\" = e.\"role\")\n) AS \"result\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "link each employee to the role named in Employee.role",
+        "sql": "INSERT INTO \"public\".\"EmployeeRole\" (\"employeeId\", \"roleId\")\nSELECT e.\"id\", r.\"id\"\nFROM \"public\".\"Employee\" e\nJOIN \"public\".\"Role\" r ON r.\"name\" = e.\"role\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify every employee now has a role",
+        "sql": "SELECT NOT EXISTS (\n  SELECT 1 FROM \"public\".\"Employee\" e\n  WHERE NOT EXISTS (SELECT 1 FROM \"public\".\"EmployeeRole\" er WHERE er.\"employeeId\" = e.\"id\")\n) AS \"result\""
+      }
+    ]
+  },
+  {
+    "id": "dropColumn.Employee.role",
+    "label": "Drop column \"role\" from \"Employee\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "role",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"role\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "role"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop column \"role\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" DROP COLUMN \"role\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"role\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "role"
+        ]
+      }
+    ]
+  }
+]

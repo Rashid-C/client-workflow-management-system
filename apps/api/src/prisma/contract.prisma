@@ -13,6 +13,12 @@ model Client {
   updatedAt   temporal.updatedAtString()
 }
 
+enum EmployeeStatus {
+  @@type("pg/text@1")
+  Active   = "Active"
+  Inactive = "Inactive"
+}
+
 model Employee {
   id           Int                        @id @default(autoincrement())
   employeeCode String                     @unique
@@ -20,9 +26,53 @@ model Employee {
   email        String                     @unique
   phone        String?
   designation  String
-  role         String                     @default("Staff")
-  status       String                     @default("Active")
-  joinedDate   String
+  status       EmployeeStatus             @default(Active)
+  joinedDate   DateString
   createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()
+}
+
+// Permissions themselves are a fixed catalogue in API code; the database
+// stores which role holds which permission key, and at what scope.
+enum PermissionScope {
+  @@type("pg/text@1")
+  Own = "own"
+  All = "all"
+}
+
+model Role {
+  id          Int                        @id @default(autoincrement())
+  name        String
+  description String?
+  // System roles (Super Admin) cannot be edited or deleted.
+  isSystem    Boolean                    @default(false)
+  createdAt   TimestamptzString          @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  // "Manager" and "manager" must not both exist.
+  @@index(expression: "lower(name)", unique: true, name: "Role_name_lower_key")
+}
+
+model RolePermission {
+  id            Int               @id @default(autoincrement())
+  roleId        Int
+  role          Role              @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionKey String
+  scope         PermissionScope   @default(All)
+  createdAt     TimestamptzString @default(now())
+
+  @@unique([roleId, permissionKey])
+}
+
+model EmployeeRole {
+  id         Int               @id @default(autoincrement())
+  employeeId Int
+  employee   Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  roleId     Int
+  // A role still held by someone cannot be deleted.
+  role       Role              @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  createdAt  TimestamptzString @default(now())
+
+  @@unique([employeeId, roleId])
+  @@index([roleId])
 }

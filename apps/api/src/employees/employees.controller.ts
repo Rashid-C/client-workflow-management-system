@@ -7,14 +7,11 @@ import {
   Post,
   Version,
 } from '@nestjs/common';
-import { IsIn } from 'class-validator';
 import { EmployeesService } from './employees.service.js';
-import { CreateEmployeeDto } from './dto/create-employee.dto.js';
-
-class UpdateEmployeeStatusDto {
-  @IsIn(['Active', 'Inactive'])
-  status!: 'Active' | 'Inactive';
-}
+import {
+  CreateEmployeeDto,
+  UpdateEmployeeStatusDto,
+} from './dto/create-employee.dto.js';
 
 @Controller('employees')
 export class EmployeesController {
