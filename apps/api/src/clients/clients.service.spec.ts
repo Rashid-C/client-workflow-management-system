@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientsService } from './clients.service.js';
-import { POSTGRES_POOL } from './postgres-pool.token.js';
+import { POSTGRES_POOL } from '../database/database.module.js';
 
 describe('ClientsService', () => {
   let service: ClientsService;

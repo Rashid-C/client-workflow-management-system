@@ -1,6 +1,6 @@
 import { Inject, Injectable, ConflictException } from '@nestjs/common';
 import type { Pool } from 'pg';
-import { POSTGRES_POOL } from './postgres-pool.token.js';
+import { POSTGRES_POOL } from '../database/database.module.js';
 
 export interface Client {
   id: number;
