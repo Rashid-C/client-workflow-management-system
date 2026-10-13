@@ -4,6 +4,7 @@ import {
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
+import { AuditService, type AuditContext } from '../audit/audit.service.js';
 import type { AuthUser } from '../auth/session.js';
 import {
   EmployeesService,
@@ -22,6 +23,7 @@ describe('EmployeesService', () => {
     query: ReturnType<typeof vi.fn>;
     release: ReturnType<typeof vi.fn>;
   };
+  let record: ReturnType<typeof vi.fn>;
 
   const admin: AuthUser = {
     sessionId: 1,
@@ -32,6 +34,11 @@ describe('EmployeesService', () => {
     isSuperAdmin: true,
     mustChangePassword: false,
     permissions: { 'employees.view': 'all', 'employees.deactivate': 'all' },
+  };
+
+  const context: AuditContext = {
+    actor: { employeeId: admin.employeeId, name: admin.name },
+    ipAddress: '10.0.0.5',
   };
 
   const newEmployee: CreateEmployeeDto = {
@@ -64,6 +71,7 @@ describe('EmployeesService', () => {
 
   beforeEach(async () => {
     connection = { query: vi.fn(), release: vi.fn() };
+    record = vi.fn().mockResolvedValue(undefined);
     pool = {
       query: vi.fn(),
       connect: vi.fn().mockResolvedValue(connection),
@@ -73,6 +81,7 @@ describe('EmployeesService', () => {
       providers: [
         EmployeesService,
         { provide: POSTGRES_POOL, useValue: pool },
+        { provide: AuditService, useValue: { record } },
       ],
     }).compile();
 
@@ -115,7 +124,7 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({ rows: [savedEmployee] }) // reload
         .mockResolvedValueOnce({}); // COMMIT
 
-      await expect(service.create(newEmployee)).resolves.toEqual(
+      await expect(service.create(newEmployee, context)).resolves.toEqual(
         savedEmployee,
       );
 
@@ -136,6 +145,17 @@ describe('EmployeesService', () => {
       expect(credentialParams[1]).toMatch(/^\$argon2id\$/);
       expect(credentialParams).not.toContain('temporary-pass-123');
 
+      const [db, auditContext, entry] = record.mock.calls[0];
+      expect(db).toBe(connection);
+      expect(auditContext).toBe(context);
+      expect(entry).toMatchObject({
+        action: 'employee.created',
+        entityType: 'Employee',
+        entityId: 1,
+      });
+      expect(entry.changes.roles).toEqual(['Manager', 'Staff']);
+      expect(JSON.stringify(entry)).not.toContain('temporary-pass-123');
+
       expect(sqlCalls().at(-1)).toBe('COMMIT');
       expect(connection.release).toHaveBeenCalledOnce();
     });
@@ -146,11 +166,12 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({ rowCount: 1, rows: [{ id: 2 }] }) // only one of two found
         .mockResolvedValueOnce({}); // ROLLBACK
 
-      await expect(service.create(newEmployee)).rejects.toBeInstanceOf(
+      await expect(service.create(newEmployee, context)).rejects.toBeInstanceOf(
         BadRequestException,
       );
 
       expect(sqlCalls().some((sql) => sql.includes('INSERT'))).toBe(false);
+      expect(record).not.toHaveBeenCalled();
       expect(sqlCalls().at(-1)).toBe('ROLLBACK');
       expect(connection.release).toHaveBeenCalledOnce();
     });
@@ -168,7 +189,7 @@ describe('EmployeesService', () => {
           .mockRejectedValueOnce({ code }) // INSERT Employee fails
           .mockResolvedValueOnce({}); // ROLLBACK
 
-        await expect(service.create(newEmployee)).rejects.toBeInstanceOf(
+        await expect(service.create(newEmployee, context)).rejects.toBeInstanceOf(
           expected,
         );
         expect(sqlCalls().at(-1)).toBe('ROLLBACK');
@@ -183,7 +204,7 @@ describe('EmployeesService', () => {
         .mockRejectedValueOnce(failure) // roles lookup fails
         .mockResolvedValueOnce({}); // ROLLBACK
 
-      await expect(service.create(newEmployee)).rejects.toBe(failure);
+      await expect(service.create(newEmployee, context)).rejects.toBe(failure);
       expect(connection.release).toHaveBeenCalledOnce();
     });
   });
@@ -205,7 +226,7 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({}); // COMMIT
 
       await expect(
-        service.updateStatus('EMP-001', 'Inactive', admin),
+        service.updateStatus('EMP-001', 'Inactive', context),
       ).resolves.toEqual(updated);
 
       expect(connection.query.mock.calls[1]).toEqual([
@@ -215,6 +236,10 @@ describe('EmployeesService', () => {
       expect(connection.query.mock.calls[3][1]).toEqual(['Inactive', 1]);
       expect(sqlCalls()[4]).toContain('DELETE FROM "Session"');
       expect(connection.query.mock.calls[4][1]).toEqual([1]);
+      expect(record.mock.calls[0][2]).toMatchObject({
+        action: 'employee.status_changed',
+        changes: { status: { from: 'Active', to: 'Inactive' } },
+      });
       expect(sqlCalls().at(-1)).toBe('COMMIT');
     });
 
@@ -227,9 +252,23 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({ rows: [savedEmployee] }) // reload
         .mockResolvedValueOnce({}); // COMMIT
 
-      await service.updateStatus('EMP-001', 'Active', admin);
+      await service.updateStatus('EMP-001', 'Active', context);
 
       expect(sqlCalls().some((sql) => sql.includes('DELETE'))).toBe(false);
+    });
+
+    it('changes and records nothing when the status is already set', async () => {
+      connection.query
+        .mockResolvedValueOnce({}) // BEGIN
+        .mockResolvedValueOnce({}) // advisory lock
+        .mockResolvedValueOnce(target({ status: 'Inactive' }))
+        .mockResolvedValueOnce({ rows: [savedEmployee] }) // reload
+        .mockResolvedValueOnce({}); // COMMIT
+
+      await service.updateStatus('EMP-001', 'Inactive', context);
+
+      expect(sqlCalls().some((sql) => sql.includes('UPDATE "Employee"'))).toBe(false);
+      expect(record).not.toHaveBeenCalled();
     });
 
     it('returns 404 for an unknown employee', async () => {
@@ -240,7 +279,7 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({}); // ROLLBACK
 
       await expect(
-        service.updateStatus('EMP-999', 'Inactive', admin),
+        service.updateStatus('EMP-999', 'Inactive', context),
       ).rejects.toBeInstanceOf(NotFoundException);
       expect(sqlCalls().at(-1)).toBe('ROLLBACK');
       expect(connection.release).toHaveBeenCalledOnce();
@@ -254,7 +293,7 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({}); // ROLLBACK
 
       await expect(
-        service.updateStatus('ADMIN-001', 'Inactive', admin),
+        service.updateStatus('ADMIN-001', 'Inactive', context),
       ).rejects.toThrow('You cannot deactivate yourself');
       expect(sqlCalls().at(-1)).toBe('ROLLBACK');
     });
@@ -268,7 +307,7 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({}); // ROLLBACK
 
       await expect(
-        service.updateStatus('EMP-001', 'Inactive', admin),
+        service.updateStatus('EMP-001', 'Inactive', context),
       ).rejects.toThrow('At least one active Super Admin must remain');
       expect(
         sqlCalls().some((sql) => sql.includes('UPDATE "Employee"')),
@@ -288,7 +327,7 @@ describe('EmployeesService', () => {
         .mockResolvedValueOnce({}); // COMMIT
 
       await expect(
-        service.updateStatus('EMP-001', 'Inactive', admin),
+        service.updateStatus('EMP-001', 'Inactive', context),
       ).resolves.toBeDefined();
       expect(sqlCalls().at(-1)).toBe('COMMIT');
     });

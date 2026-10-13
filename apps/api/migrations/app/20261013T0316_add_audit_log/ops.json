@@ -1,0 +1,278 @@
+[
+  {
+    "id": "table.AuditLog",
+    "label": "Create table \"AuditLog\"",
+    "summary": "Creates table \"AuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "AuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"AuditLog\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"AuditLog\"",
+        "sql": "CREATE TABLE \"public\".\"AuditLog\" (\n  \"action\" text NOT NULL,\n  \"actorEmployeeId\" int4,\n  \"actorName\" text,\n  \"changes\" jsonb,\n  \"entityId\" text NOT NULL,\n  \"entityType\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"ipAddress\" text,\n  \"occurredAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"reason\" text,\n  \"summary\" text NOT NULL,\n  \"userAgent\" text,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"AuditLog\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AuditLog.AuditLog_actorEmployeeId_id_idx_4bfd4920",
+    "label": "Create index \"AuditLog_actorEmployeeId_id_idx_4bfd4920\" on \"AuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AuditLog_actorEmployeeId_id_idx_4bfd4920",
+        "table": "AuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AuditLog_actorEmployeeId_id_idx_4bfd4920\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog_actorEmployeeId_id_idx_4bfd4920\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AuditLog_actorEmployeeId_id_idx_4bfd4920\"",
+        "sql": "CREATE INDEX \"AuditLog_actorEmployeeId_id_idx_4bfd4920\" ON \"public\".\"AuditLog\" (\"actorEmployeeId\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AuditLog_actorEmployeeId_id_idx_4bfd4920\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog_actorEmployeeId_id_idx_4bfd4920\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AuditLog.AuditLog_actorEmployeeId_idx_d564fedd",
+    "label": "Create index \"AuditLog_actorEmployeeId_idx_d564fedd\" on \"AuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AuditLog_actorEmployeeId_idx_d564fedd",
+        "table": "AuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AuditLog_actorEmployeeId_idx_d564fedd\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog_actorEmployeeId_idx_d564fedd\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AuditLog_actorEmployeeId_idx_d564fedd\"",
+        "sql": "CREATE INDEX \"AuditLog_actorEmployeeId_idx_d564fedd\" ON \"public\".\"AuditLog\" (\"actorEmployeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AuditLog_actorEmployeeId_idx_d564fedd\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog_actorEmployeeId_idx_d564fedd\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AuditLog.AuditLog_entityType_entityId_id_idx_2f03149c",
+    "label": "Create index \"AuditLog_entityType_entityId_id_idx_2f03149c\" on \"AuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AuditLog_entityType_entityId_id_idx_2f03149c",
+        "table": "AuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AuditLog_entityType_entityId_id_idx_2f03149c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog_entityType_entityId_id_idx_2f03149c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AuditLog_entityType_entityId_id_idx_2f03149c\"",
+        "sql": "CREATE INDEX \"AuditLog_entityType_entityId_id_idx_2f03149c\" ON \"public\".\"AuditLog\" (\"entityType\", \"entityId\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AuditLog_entityType_entityId_id_idx_2f03149c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog_entityType_entityId_id_idx_2f03149c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.AuditLog.AuditLog_occurredAt_idx_c6b89167",
+    "label": "Create index \"AuditLog_occurredAt_idx_c6b89167\" on \"AuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AuditLog_occurredAt_idx_c6b89167",
+        "table": "AuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AuditLog_occurredAt_idx_c6b89167\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog_occurredAt_idx_c6b89167\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AuditLog_occurredAt_idx_c6b89167\"",
+        "sql": "CREATE INDEX \"AuditLog_occurredAt_idx_c6b89167\" ON \"public\".\"AuditLog\" (\"occurredAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AuditLog_occurredAt_idx_c6b89167\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"AuditLog_occurredAt_idx_c6b89167\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.AuditLog.AuditLog_actorEmployeeId_fkey",
+    "label": "Add foreign key \"AuditLog_actorEmployeeId_fkey\" on \"AuditLog\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "AuditLog_actorEmployeeId_fkey",
+        "table": "AuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"AuditLog_actorEmployeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AuditLog_actorEmployeeId_fkey",
+          "public",
+          "\"public\".\"AuditLog\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"AuditLog_actorEmployeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"AuditLog\"\nADD CONSTRAINT \"AuditLog_actorEmployeeId_fkey\"\nFOREIGN KEY (\"actorEmployeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"AuditLog_actorEmployeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AuditLog_actorEmployeeId_fkey",
+          "public",
+          "\"public\".\"AuditLog\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "trigger.AuditLog.appendOnly",
+    "label": "Make \"AuditLog\" append-only",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "AuditLog"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure the append-only function does not exist yet",
+        "sql": "SELECT to_regprocedure('public.\"AuditLog_reject_change\"()') IS NULL AS \"result\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "create the function that rejects changes",
+        "sql": "CREATE FUNCTION \"public\".\"AuditLog_reject_change\"() RETURNS trigger\nLANGUAGE plpgsql AS $body$\nBEGIN\n  RAISE EXCEPTION 'AuditLog is append-only: % is not allowed', TG_OP\n    USING ERRCODE = 'insufficient_privilege';\nEND;\n$body$"
+      },
+      {
+        "description": "reject UPDATE and DELETE on every row",
+        "sql": "CREATE TRIGGER \"AuditLog_append_only\"\nBEFORE UPDATE OR DELETE ON \"public\".\"AuditLog\"\nFOR EACH ROW EXECUTE FUNCTION \"public\".\"AuditLog_reject_change\"()"
+      },
+      {
+        "description": "reject TRUNCATE of the whole table",
+        "sql": "CREATE TRIGGER \"AuditLog_no_truncate\"\nBEFORE TRUNCATE ON \"public\".\"AuditLog\"\nFOR EACH STATEMENT EXECUTE FUNCTION \"public\".\"AuditLog_reject_change\"()"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify both append-only triggers exist",
+        "sql": "SELECT count(*) = 2 AS \"result\" FROM pg_trigger\nWHERE tgrelid = '\"public\".\"AuditLog\"'::regclass\n  AND tgname IN ('AuditLog_append_only', 'AuditLog_no_truncate')"
+      }
+    ]
+  }
+]

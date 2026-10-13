@@ -4,11 +4,12 @@ import {
   Get,
   HttpCode,
   Post,
-  Req,
   Res,
   Version,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
+import { Audit } from '../audit/audit-context.decorator.js';
+import type { AuditContext } from '../audit/audit.service.js';
 import { AuthService } from './auth.service.js';
 import {
   AllowPendingPassword,
@@ -35,13 +36,13 @@ export class AuthController {
   @HttpCode(200)
   async login(
     @Body() data: LoginDto,
-    @Req() request: Request,
+    @Audit() audit: AuditContext,
     @Res({ passthrough: true }) response: Response,
   ) {
     const { token, expiresAt, user } = await this.authService.login(
       data.email,
       data.password,
-      { ipAddress: request.ip, userAgent: request.headers['user-agent'] },
+      audit,
     );
 
     response.cookie(SESSION_COOKIE, token, { ...cookieOptions, expires: expiresAt });
@@ -54,9 +55,10 @@ export class AuthController {
   @HttpCode(204)
   async logout(
     @CurrentUser() user: AuthUser,
+    @Audit() audit: AuditContext,
     @Res({ passthrough: true }) response: Response,
   ) {
-    await this.authService.logout(user.sessionId);
+    await this.authService.logout(user, audit);
     response.clearCookie(SESSION_COOKIE, cookieOptions);
   }
 
@@ -74,11 +76,13 @@ export class AuthController {
   async changePassword(
     @CurrentUser() user: AuthUser,
     @Body() data: ChangePasswordDto,
+    @Audit() audit: AuditContext,
   ) {
     await this.authService.changePassword(
       user,
       data.currentPassword,
       data.newPassword,
+      audit,
     );
   }
 }

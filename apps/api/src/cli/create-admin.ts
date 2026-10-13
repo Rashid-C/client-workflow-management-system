@@ -143,6 +143,17 @@ async function main() {
          VALUES ($1, $2, false, NOW())`,
         [employeeId, passwordHash],
       );
+      // Run on the server, so there is no signed-in actor to name.
+      await db.query(
+        `INSERT INTO "AuditLog"
+          ("actorName", "action", "entityType", "entityId", "summary", "changes")
+         VALUES ('Server setup (create-admin)', 'employee.created', 'Employee', $1, $2, $3)`,
+        [
+          String(employeeId),
+          `Created first Super Admin ${name} (${employeeCode})`,
+          JSON.stringify({ employeeCode, name, email, designation, roles: ['Super Admin'] }),
+        ],
+      );
       await db.query('COMMIT');
     } catch (error) {
       await db.query('ROLLBACK');

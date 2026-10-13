@@ -6,6 +6,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import type { Pool, PoolClient } from 'pg';
+import type { AuditContext } from '../audit/audit.service.js';
+import { AuditService } from '../audit/audit.service.js';
 import { hashPassword } from '../auth/password.js';
 import type { AuthUser } from '../auth/session.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
@@ -56,7 +58,10 @@ const SELECT_EMPLOYEES = `
 
 @Injectable()
 export class EmployeesService {
-  constructor(@Inject(POSTGRES_POOL) private readonly pool: Pool) {}
+  constructor(
+    @Inject(POSTGRES_POOL) private readonly pool: Pool,
+    private readonly audit: AuditService,
+  ) {}
 
   async findAll(viewer: AuthUser): Promise<Employee[]> {
     // "own" scope: a person sees only their own record.
@@ -71,7 +76,7 @@ export class EmployeesService {
     return result.rows;
   }
 
-  async create(data: CreateEmployeeDto): Promise<Employee> {
+  async create(data: CreateEmployeeDto, context: AuditContext): Promise<Employee> {
     // Hash before opening the transaction; argon2 takes tens of milliseconds.
     const passwordHash = await hashPassword(data.temporaryPassword);
     const connection = await this.pool.connect();
@@ -122,6 +127,24 @@ export class EmployeesService {
 
       const employee = await this.findById(connection, employeeId);
 
+      // Never the password, only that a temporary one was issued.
+      await this.audit.record(connection, context, {
+        action: 'employee.created',
+        entityType: 'Employee',
+        entityId: employee.id,
+        summary: `Added ${employee.name} (${employee.employeeCode})`,
+        changes: {
+          employeeCode: employee.employeeCode,
+          name: employee.name,
+          email: employee.email,
+          designation: employee.designation,
+          status: employee.status,
+          joinedDate: employee.joinedDate,
+          roles: employee.roles.map((role) => role.name),
+          temporaryPasswordIssued: true,
+        },
+      });
+
       await connection.query('COMMIT');
       return employee;
     } catch (error: unknown) {
@@ -135,7 +158,7 @@ export class EmployeesService {
   async updateStatus(
     employeeCode: string,
     status: EmployeeStatus,
-    actor: AuthUser,
+    context: AuditContext,
   ): Promise<Employee> {
     const connection = await this.pool.connect();
 
@@ -168,7 +191,14 @@ export class EmployeesService {
         throw new NotFoundException('Employee not found');
       }
 
-      if (current.id === actor.employeeId && status === 'Inactive') {
+      if (current.status === status) {
+        // Nothing changes, so nothing is recorded.
+        const unchanged = await this.findById(connection, current.id);
+        await connection.query('COMMIT');
+        return unchanged;
+      }
+
+      if (current.id === context.actor?.employeeId && status === 'Inactive') {
         throw new BadRequestException('You cannot deactivate yourself');
       }
 
@@ -208,6 +238,14 @@ export class EmployeesService {
       }
 
       const employee = await this.findById(connection, current.id);
+
+      await this.audit.record(connection, context, {
+        action: 'employee.status_changed',
+        entityType: 'Employee',
+        entityId: employee.id,
+        summary: `Marked ${employee.name} (${employee.employeeCode}) ${status.toLowerCase()}`,
+        changes: { status: { from: current.status, to: status } },
+      });
 
       await connection.query('COMMIT');
       return employee;

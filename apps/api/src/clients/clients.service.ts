@@ -1,5 +1,6 @@
 import { Inject, Injectable, ConflictException } from '@nestjs/common';
 import type { Pool } from 'pg';
+import { AuditService, type AuditContext } from '../audit/audit.service.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
 
 export interface Client {
@@ -28,7 +29,10 @@ export interface CreateClientDto {
 
 @Injectable()
 export class ClientsService {
-  constructor(@Inject(POSTGRES_POOL) private readonly pool: Pool) {}
+  constructor(
+    @Inject(POSTGRES_POOL) private readonly pool: Pool,
+    private readonly audit: AuditService,
+  ) {}
 
   async findAll(): Promise<Client[]> {
     const result = await this.pool.query<Client>(
@@ -38,9 +42,13 @@ export class ClientsService {
     return result.rows;
   }
 
-  async create(data: CreateClientDto): Promise<Client> {
+  async create(data: CreateClientDto, context: AuditContext): Promise<Client> {
+    const connection = await this.pool.connect();
+
     try {
-      const result = await this.pool.query<Client>(
+      await connection.query('BEGIN');
+
+      const result = await connection.query<Client>(
         `INSERT INTO "Client"
     ("clientCode", "name", "email", "phone", "companyName", "address", "notes", "updatedAt")
    VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
@@ -56,8 +64,28 @@ export class ClientsService {
         ],
       );
 
-      return result.rows[0];
+      const client = result.rows[0];
+
+      await this.audit.record(connection, context, {
+        action: 'client.created',
+        entityType: 'Client',
+        entityId: client.id,
+        summary: `Added client ${client.name} (${client.clientCode})`,
+        changes: {
+          clientCode: client.clientCode,
+          name: client.name,
+          email: client.email,
+          phone: client.phone,
+          companyName: client.companyName,
+          address: client.address,
+        },
+      });
+
+      await connection.query('COMMIT');
+      return client;
     } catch (error: unknown) {
+      await connection.query('ROLLBACK');
+
       if (
         typeof error === 'object' &&
         error !== null &&
@@ -68,6 +96,8 @@ export class ClientsService {
       }
 
       throw error;
+    } finally {
+      connection.release();
     }
   }
 }

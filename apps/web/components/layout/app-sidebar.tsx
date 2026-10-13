@@ -12,6 +12,7 @@ import {
   ClipboardList,
   FileClock,
   FileText,
+  History,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -66,6 +67,7 @@ const navigation: { label: string; items: NavItem[] }[] = [
     items: [
       { label: 'Employees', href: '/employees', icon: Users, permission: 'employees.view' },
       { label: 'Roles & Permissions', href: '/roles', icon: ShieldCheck, permission: 'roles.view' },
+      { label: 'Activity', href: '/activity', icon: History, permission: 'history.view' },
     ],
   },
 ];

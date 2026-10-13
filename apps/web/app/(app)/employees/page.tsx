@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useCurrentUser } from "@/components/auth/current-user";
+import EntityHistory from "@/components/audit/entity-history";
 import { api, ApiError } from "@/lib/api";
 
 type EmployeeStatus = "Active" | "Inactive";
@@ -17,7 +18,10 @@ type ApiRole = RoleSummary & {
 };
 
 type Employee = {
+  /** The employee code, e.g. EMP-001. */
   id: string;
+  /** Database id; audit entries refer to employees by it. */
+  recordId: number;
   name: string;
   email: string;
   phone: string;
@@ -57,6 +61,7 @@ const isSuperAdmin = (employee: Employee) =>
 function toEmployee(item: ApiEmployee): Employee {
   return {
     id: item.employeeCode,
+    recordId: item.id,
     name: item.name,
     email: item.email,
     phone: item.phone ?? "",
@@ -830,6 +835,13 @@ export default function EmployeesPage() {
                 </div>
               ))}
             </dl>
+
+            {can("history.view") && (
+              <EntityHistory
+                entityType="Employee"
+                entityId={String(selectedEmployee.recordId)}
+              />
+            )}
 
             <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button

@@ -7,6 +7,8 @@ import {
   Post,
   Version,
 } from '@nestjs/common';
+import { Audit } from '../audit/audit-context.decorator.js';
+import type { AuditContext } from '../audit/audit.service.js';
 import { CurrentUser, RequirePermission } from '../auth/decorators.js';
 import type { AuthUser } from '../auth/session.js';
 import { EmployeesService } from './employees.service.js';
@@ -29,8 +31,8 @@ export class EmployeesController {
   @Version('1')
   @RequirePermission('employees.create')
   @Post()
-  create(@Body() data: CreateEmployeeDto) {
-    return this.employeesService.create(data);
+  create(@Body() data: CreateEmployeeDto, @Audit() audit: AuditContext) {
+    return this.employeesService.create(data, audit);
   }
 
   @Version('1')
@@ -39,8 +41,8 @@ export class EmployeesController {
   updateStatus(
     @Param('employeeCode') employeeCode: string,
     @Body() data: UpdateEmployeeStatusDto,
-    @CurrentUser() user: AuthUser,
+    @Audit() audit: AuditContext,
   ) {
-    return this.employeesService.updateStatus(employeeCode, data.status, user);
+    return this.employeesService.updateStatus(employeeCode, data.status, audit);
   }
 }
