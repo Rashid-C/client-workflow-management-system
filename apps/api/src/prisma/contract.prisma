@@ -134,3 +134,34 @@ model AuditLog {
   @@index([actorEmployeeId, id])
   @@index([occurredAt])
 }
+
+// A kind of engagement (Audit, ICV...) and the stages it runs through.
+// Tasks copy the stages when they are created, so editing a type only
+// affects new tasks.
+model TaskType {
+  id          Int                        @id @default(autoincrement())
+  name        String
+  description String?
+  // A type already used by tasks is deactivated instead of deleted.
+  isActive    Boolean                    @default(true)
+  // Bumped on every save; a save based on an older version is refused,
+  // so two admins editing at once cannot overwrite each other unseen.
+  version     Int                        @default(1)
+  createdAt   TimestamptzString          @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index(expression: "lower(name)", unique: true, name: "TaskType_name_lower_key")
+}
+
+model TaskTypeStage {
+  id         Int               @id @default(autoincrement())
+  taskTypeId Int
+  taskType   TaskType          @relation(fields: [taskTypeId], references: [id], onDelete: Cascade)
+  // 1-based order in which the stages are worked.
+  position   Int
+  name       String
+  createdAt  TimestamptzString @default(now())
+
+  @@unique([taskTypeId, position])
+  @@check(expression: "\"position\" >= 1", name: "TaskTypeStage_position_positive")
+}

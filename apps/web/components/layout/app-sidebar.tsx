@@ -52,7 +52,7 @@ const navigation: { label: string; items: NavItem[] }[] = [
     label: 'OPERATIONS',
     items: [
       { label: 'Tasks', href: '/tasks', icon: ClipboardList, permission: 'tasks.view' },
-      { label: 'Workflows', href: '/workflows', icon: Activity, permission: 'workflows.view' },
+      { label: 'Task types', href: '/task-types', icon: Activity, permission: 'workflows.view' },
       { label: 'Time Logs', href: '/time-logs', icon: FileText, permission: 'time_logs.view' },
     ],
   },

@@ -1,0 +1,273 @@
+[
+  {
+    "id": "table.TaskType",
+    "label": "Create table \"TaskType\"",
+    "summary": "Creates table \"TaskType\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "TaskType"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"TaskType\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskType\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"TaskType\"",
+        "sql": "CREATE TABLE \"public\".\"TaskType\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"name\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"version\" int4 DEFAULT 1 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"TaskType\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskType\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.TaskTypeStage",
+    "label": "Create table \"TaskTypeStage\"",
+    "summary": "Creates table \"TaskTypeStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "TaskTypeStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"TaskTypeStage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskTypeStage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"TaskTypeStage\"",
+        "sql": "CREATE TABLE \"public\".\"TaskTypeStage\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"position\" int4 NOT NULL,\n  \"taskTypeId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"TaskTypeStage_position_positive_a9ae2887\" CHECK (\"position\" >= 1)\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"TaskTypeStage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskTypeStage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.TaskTypeStage.TaskTypeStage_taskTypeId_position_key",
+    "label": "Add unique constraint on \"TaskTypeStage\" (taskTypeId, position)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "TaskTypeStage_taskTypeId_position_key",
+        "table": "TaskTypeStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"TaskTypeStage_taskTypeId_position_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskTypeStage_taskTypeId_position_key",
+          "public",
+          "\"public\".\"TaskTypeStage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"TaskTypeStage_taskTypeId_position_key\"",
+        "sql": "ALTER TABLE \"public\".\"TaskTypeStage\" ADD CONSTRAINT \"TaskTypeStage_taskTypeId_position_key\" UNIQUE (\"taskTypeId\", \"position\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"TaskTypeStage_taskTypeId_position_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskTypeStage_taskTypeId_position_key",
+          "public",
+          "\"public\".\"TaskTypeStage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TaskType.TaskType_name_lower_key_e40b0be1",
+    "label": "Create index \"TaskType_name_lower_key_e40b0be1\" on \"TaskType\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TaskType_name_lower_key_e40b0be1",
+        "table": "TaskType"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TaskType_name_lower_key_e40b0be1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskType_name_lower_key_e40b0be1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TaskType_name_lower_key_e40b0be1\"",
+        "sql": "CREATE UNIQUE INDEX \"TaskType_name_lower_key_e40b0be1\" ON \"public\".\"TaskType\" (lower(name))",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TaskType_name_lower_key_e40b0be1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskType_name_lower_key_e40b0be1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TaskTypeStage.TaskTypeStage_taskTypeId_idx_8cf4fcb0",
+    "label": "Create index \"TaskTypeStage_taskTypeId_idx_8cf4fcb0\" on \"TaskTypeStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TaskTypeStage_taskTypeId_idx_8cf4fcb0",
+        "table": "TaskTypeStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TaskTypeStage_taskTypeId_idx_8cf4fcb0\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskTypeStage_taskTypeId_idx_8cf4fcb0\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TaskTypeStage_taskTypeId_idx_8cf4fcb0\"",
+        "sql": "CREATE INDEX \"TaskTypeStage_taskTypeId_idx_8cf4fcb0\" ON \"public\".\"TaskTypeStage\" (\"taskTypeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TaskTypeStage_taskTypeId_idx_8cf4fcb0\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskTypeStage_taskTypeId_idx_8cf4fcb0\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.TaskTypeStage.TaskTypeStage_taskTypeId_fkey",
+    "label": "Add foreign key \"TaskTypeStage_taskTypeId_fkey\" on \"TaskTypeStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "TaskTypeStage_taskTypeId_fkey",
+        "table": "TaskTypeStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"TaskTypeStage_taskTypeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskTypeStage_taskTypeId_fkey",
+          "public",
+          "\"public\".\"TaskTypeStage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"TaskTypeStage_taskTypeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"TaskTypeStage\"\nADD CONSTRAINT \"TaskTypeStage_taskTypeId_fkey\"\nFOREIGN KEY (\"taskTypeId\")\nREFERENCES \"public\".\"TaskType\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"TaskTypeStage_taskTypeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskTypeStage_taskTypeId_fkey",
+          "public",
+          "\"public\".\"TaskTypeStage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data.TaskType.seed",
+    "label": "Seed the starting task types and their stages",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "TaskType"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure no task types exist yet",
+        "sql": "SELECT NOT EXISTS (SELECT 1 FROM \"public\".\"TaskType\") AS \"result\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "insert Audit, Audit + ICV, ICV and ICV Renewal with their stages",
+        "sql": "WITH seed (\"name\", \"description\", \"stages\") AS (VALUES \n  ('Audit', 'Statutory / financial audit engagement'::text, ARRAY[\n    'Engagement & planning', 'Document collection', 'Fieldwork',\n    'Review', 'Draft report', 'Final report & sign-off']),\n  ('Audit + ICV', 'Combined audit and ICV certification', ARRAY[\n    'Engagement & planning', 'Document collection', 'Audit fieldwork',\n    'ICV calculation', 'Review', 'Final report & ICV certificate']),\n  ('ICV', 'In-Country Value certification', ARRAY[\n    'Document collection', 'ICV calculation', 'Review', 'Certificate issuance']),\n  ('ICV Renewal', NULL, ARRAY[\n    'Document collection', 'Client sign-off'])\n),\ninserted AS (\n  INSERT INTO \"public\".\"TaskType\" (\"name\", \"description\", \"updatedAt\")\n  SELECT \"name\", \"description\", now() FROM seed\n  RETURNING \"id\", \"name\"\n)\nINSERT INTO \"public\".\"TaskTypeStage\" (\"taskTypeId\", \"position\", \"name\")\nSELECT i.\"id\", s.\"position\", s.\"name\"\nFROM inserted i\nJOIN seed ON seed.\"name\" = i.\"name\"\nCROSS JOIN LATERAL unnest(seed.\"stages\") WITH ORDINALITY AS s(\"name\", \"position\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify 4 task types with 18 stages exist",
+        "sql": "SELECT (SELECT count(*) FROM \"public\".\"TaskType\") = 4\n  AND (SELECT count(*) FROM \"public\".\"TaskTypeStage\") = 18 AS \"result\""
+      }
+    ]
+  }
+]

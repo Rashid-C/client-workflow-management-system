@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${API_ORIGIN}/api/:path*` }];
   },
+  async redirects() {
+    // The product calls these task types; keep old bookmarks working.
+    return [{ source: "/workflows", destination: "/task-types", permanent: false }];
+  },
   experimental: {
     agentFeedback: true,
   },

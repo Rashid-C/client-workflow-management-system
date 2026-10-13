@@ -8,6 +8,7 @@ import { ClientsModule } from './clients/clients.module.js';
 import { DatabaseModule } from './database/database.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
 import { RolesModule } from './roles/roles.module.js';
+import { TaskTypesModule } from './task-types/task-types.module.js';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RolesModule } from './roles/roles.module.js';
     ClientsModule,
     EmployeesModule,
     RolesModule,
+    TaskTypesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
