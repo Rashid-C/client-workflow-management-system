@@ -59,6 +59,11 @@ export class TasksService {
     const where = [visibleTo(viewer, 'tasks.view', param)];
     if (!query.includeArchived) where.push('t."archivedAt" IS NULL');
     if (query.status) where.push(`t."status" = ${param(query.status)}`);
+    if (query.open) where.push(`t."status" <> 'Completed'`);
+    if (query.unassigned) {
+      where.push(`EXISTS (SELECT 1 FROM "TaskStage" us
+                  WHERE us."taskId" = t."id" AND us."assigneeId" IS NULL AND us."status" <> 'Completed')`);
+    }
     if (query.clientId) where.push(`t."clientId" = ${param(query.clientId)}`);
     if (query.assigneeId) {
       where.push(`EXISTS (SELECT 1 FROM "TaskStage" fs

@@ -112,6 +112,18 @@ export class ListTasksQuery {
   @IsBoolean()
   includeArchived?: boolean;
 
+  /** Not completed yet. */
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  open?: boolean;
+
+  /** Has an open stage nobody is assigned to. */
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  unassigned?: boolean;
+
   /** Title text, or a reference number such as "#0004" or "4". */
   @IsOptional()
   @IsString()
