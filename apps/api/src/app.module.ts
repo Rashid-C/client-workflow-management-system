@@ -9,6 +9,7 @@ import { DatabaseModule } from './database/database.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
 import { RolesModule } from './roles/roles.module.js';
 import { TaskTypesModule } from './task-types/task-types.module.js';
+import { TasksModule } from './tasks/tasks.module.js';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TaskTypesModule } from './task-types/task-types.module.js';
     EmployeesModule,
     RolesModule,
     TaskTypesModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

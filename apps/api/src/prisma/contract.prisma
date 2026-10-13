@@ -165,3 +165,83 @@ model TaskTypeStage {
   @@unique([taskTypeId, position])
   @@check(expression: "\"position\" >= 1", name: "TaskTypeStage_position_positive")
 }
+
+// Shared by stages and tasks. A task's status is derived from its stages
+// and stored alongside them in the same transaction, so lists and
+// dashboards never have to recompute it.
+enum WorkStatus {
+  @@type("pg/text@1")
+  Pending    = "Pending"
+  InProgress = "In progress"
+  Completed  = "Completed"
+  Blocked    = "Blocked"
+}
+
+// One engagement for one client, of one task type. Archived, never deleted.
+model Task {
+  id          Int                        @id @default(autoincrement())
+  title       String
+  description String?
+  clientId    Int
+  client      Client                     @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  taskTypeId  Int
+  taskType    TaskType                   @relation(fields: [taskTypeId], references: [id], onDelete: Restrict)
+  dueDate     DateString?
+  status      WorkStatus                 @default(Pending)
+  createdById Int
+  createdBy   Employee                   @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  archivedAt  TimestamptzString?
+  // Guards edits of title, description and due date against lost updates.
+  version     Int                        @default(1)
+  createdAt   TimestamptzString          @default(now())
+  updatedAt   temporal.updatedAtString()
+
+  @@index([status, dueDate])
+  @@index([createdById])
+}
+
+// A task's own copy of its type's stages, worked strictly in order.
+model TaskStage {
+  id            Int                        @id @default(autoincrement())
+  taskId        Int
+  task          Task                       @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  position      Int
+  name          String
+  status        WorkStatus                 @default(Pending)
+  assigneeId    Int?
+  assignee      Employee?                  @relation("TaskStageAssignee", fields: [assigneeId], references: [id], onDelete: Restrict)
+  startedAt     TimestamptzString?
+  completedAt   TimestamptzString?
+  // Kept on the stage so the "Blocked, with reasons" list needs no join
+  // into the audit log; the full history is in AuditLog.
+  blockedReason String?
+  blockedAt     TimestamptzString?
+  blockedById   Int?
+  blockedBy     Employee?                  @relation("TaskStageBlockedBy", fields: [blockedById], references: [id], onDelete: Restrict)
+  updatedAt     temporal.updatedAtString()
+
+  @@unique([taskId, position])
+  @@index([assigneeId, status])
+  @@check(expression: "\"position\" >= 1", name: "TaskStage_position_positive")
+}
+
+// Time spent on a stage, recorded when completing or blocking it.
+model TimeEntry {
+  id          Int               @id @default(autoincrement())
+  taskStageId Int
+  taskStage   TaskStage         @relation(fields: [taskStageId], references: [id], onDelete: Restrict)
+  // Copied from the stage so time-log reports filter tasks without a join.
+  taskId      Int
+  task        Task              @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  employeeId  Int
+  employee    Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  // The office day the work was done.
+  workDate    DateString
+  minutes     Int
+  note        String?
+  createdAt   TimestamptzString @default(now())
+
+  @@index([employeeId, workDate])
+  @@index([workDate])
+  @@check(expression: "\"minutes\" BETWEEN 1 AND 720", name: "TimeEntry_minutes_range")
+}

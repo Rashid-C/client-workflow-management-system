@@ -1,0 +1,1046 @@
+[
+  {
+    "id": "table.Task",
+    "label": "Create table \"Task\"",
+    "summary": "Creates table \"Task\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Task"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Task\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Task\"",
+        "sql": "CREATE TABLE \"public\".\"Task\" (\n  \"archivedAt\" timestamptz,\n  \"clientId\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" int4 NOT NULL,\n  \"description\" text,\n  \"dueDate\" date,\n  \"id\" SERIAL NOT NULL,\n  \"status\" text DEFAULT 'Pending' NOT NULL,\n  \"taskTypeId\" int4 NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"version\" int4 DEFAULT 1 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Task_status_check_94a13573\" CHECK (\"status\" IN ('Pending', 'In progress', 'Completed', 'Blocked'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Task\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.TaskStage",
+    "label": "Create table \"TaskStage\"",
+    "summary": "Creates table \"TaskStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"TaskStage\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"TaskStage\"",
+        "sql": "CREATE TABLE \"public\".\"TaskStage\" (\n  \"assigneeId\" int4,\n  \"blockedAt\" timestamptz,\n  \"blockedById\" int4,\n  \"blockedReason\" text,\n  \"completedAt\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"position\" int4 NOT NULL,\n  \"startedAt\" timestamptz,\n  \"status\" text DEFAULT 'Pending' NOT NULL,\n  \"taskId\" int4 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"TaskStage_position_positive_a9ae2887\" CHECK (\"position\" >= 1),\n  CONSTRAINT \"TaskStage_status_check_94a13573\" CHECK (\"status\" IN ('Pending', 'In progress', 'Completed', 'Blocked'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"TaskStage\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.TimeEntry",
+    "label": "Create table \"TimeEntry\"",
+    "summary": "Creates table \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"TimeEntry\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"TimeEntry\"",
+        "sql": "CREATE TABLE \"public\".\"TimeEntry\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"employeeId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"minutes\" int4 NOT NULL,\n  \"note\" text,\n  \"taskId\" int4 NOT NULL,\n  \"taskStageId\" int4 NOT NULL,\n  \"workDate\" date NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"TimeEntry_minutes_range_c582cb6b\" CHECK (\"minutes\" BETWEEN 1 AND 720)\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"TimeEntry\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.TaskStage.TaskStage_taskId_position_key",
+    "label": "Add unique constraint on \"TaskStage\" (taskId, position)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "TaskStage_taskId_position_key",
+        "table": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"TaskStage_taskId_position_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskStage_taskId_position_key",
+          "public",
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"TaskStage_taskId_position_key\"",
+        "sql": "ALTER TABLE \"public\".\"TaskStage\" ADD CONSTRAINT \"TaskStage_taskId_position_key\" UNIQUE (\"taskId\", \"position\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"TaskStage_taskId_position_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskStage_taskId_position_key",
+          "public",
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Task.Task_clientId_idx_153a9a49",
+    "label": "Create index \"Task_clientId_idx_153a9a49\" on \"Task\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Task_clientId_idx_153a9a49",
+        "table": "Task"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Task_clientId_idx_153a9a49\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task_clientId_idx_153a9a49\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Task_clientId_idx_153a9a49\"",
+        "sql": "CREATE INDEX \"Task_clientId_idx_153a9a49\" ON \"public\".\"Task\" (\"clientId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Task_clientId_idx_153a9a49\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task_clientId_idx_153a9a49\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Task.Task_createdById_idx_8bf640ed",
+    "label": "Create index \"Task_createdById_idx_8bf640ed\" on \"Task\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Task_createdById_idx_8bf640ed",
+        "table": "Task"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Task_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Task_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"Task_createdById_idx_8bf640ed\" ON \"public\".\"Task\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Task_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Task.Task_status_dueDate_idx_ec56e113",
+    "label": "Create index \"Task_status_dueDate_idx_ec56e113\" on \"Task\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Task_status_dueDate_idx_ec56e113",
+        "table": "Task"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Task_status_dueDate_idx_ec56e113\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task_status_dueDate_idx_ec56e113\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Task_status_dueDate_idx_ec56e113\"",
+        "sql": "CREATE INDEX \"Task_status_dueDate_idx_ec56e113\" ON \"public\".\"Task\" (\"status\", \"dueDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Task_status_dueDate_idx_ec56e113\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task_status_dueDate_idx_ec56e113\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Task.Task_taskTypeId_idx_8cf4fcb0",
+    "label": "Create index \"Task_taskTypeId_idx_8cf4fcb0\" on \"Task\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Task_taskTypeId_idx_8cf4fcb0",
+        "table": "Task"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Task_taskTypeId_idx_8cf4fcb0\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task_taskTypeId_idx_8cf4fcb0\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Task_taskTypeId_idx_8cf4fcb0\"",
+        "sql": "CREATE INDEX \"Task_taskTypeId_idx_8cf4fcb0\" ON \"public\".\"Task\" (\"taskTypeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Task_taskTypeId_idx_8cf4fcb0\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Task_taskTypeId_idx_8cf4fcb0\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TaskStage.TaskStage_assigneeId_idx_fd12ae38",
+    "label": "Create index \"TaskStage_assigneeId_idx_fd12ae38\" on \"TaskStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TaskStage_assigneeId_idx_fd12ae38",
+        "table": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TaskStage_assigneeId_idx_fd12ae38\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage_assigneeId_idx_fd12ae38\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TaskStage_assigneeId_idx_fd12ae38\"",
+        "sql": "CREATE INDEX \"TaskStage_assigneeId_idx_fd12ae38\" ON \"public\".\"TaskStage\" (\"assigneeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TaskStage_assigneeId_idx_fd12ae38\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage_assigneeId_idx_fd12ae38\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TaskStage.TaskStage_assigneeId_status_idx_80e4cf3c",
+    "label": "Create index \"TaskStage_assigneeId_status_idx_80e4cf3c\" on \"TaskStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TaskStage_assigneeId_status_idx_80e4cf3c",
+        "table": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TaskStage_assigneeId_status_idx_80e4cf3c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage_assigneeId_status_idx_80e4cf3c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TaskStage_assigneeId_status_idx_80e4cf3c\"",
+        "sql": "CREATE INDEX \"TaskStage_assigneeId_status_idx_80e4cf3c\" ON \"public\".\"TaskStage\" (\"assigneeId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TaskStage_assigneeId_status_idx_80e4cf3c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage_assigneeId_status_idx_80e4cf3c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TaskStage.TaskStage_blockedById_idx_60a57bcc",
+    "label": "Create index \"TaskStage_blockedById_idx_60a57bcc\" on \"TaskStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TaskStage_blockedById_idx_60a57bcc",
+        "table": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TaskStage_blockedById_idx_60a57bcc\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage_blockedById_idx_60a57bcc\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TaskStage_blockedById_idx_60a57bcc\"",
+        "sql": "CREATE INDEX \"TaskStage_blockedById_idx_60a57bcc\" ON \"public\".\"TaskStage\" (\"blockedById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TaskStage_blockedById_idx_60a57bcc\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage_blockedById_idx_60a57bcc\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TaskStage.TaskStage_taskId_idx_4965c936",
+    "label": "Create index \"TaskStage_taskId_idx_4965c936\" on \"TaskStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TaskStage_taskId_idx_4965c936",
+        "table": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TaskStage_taskId_idx_4965c936\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage_taskId_idx_4965c936\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TaskStage_taskId_idx_4965c936\"",
+        "sql": "CREATE INDEX \"TaskStage_taskId_idx_4965c936\" ON \"public\".\"TaskStage\" (\"taskId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TaskStage_taskId_idx_4965c936\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TaskStage_taskId_idx_4965c936\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TimeEntry.TimeEntry_employeeId_idx_087dd4a6",
+    "label": "Create index \"TimeEntry_employeeId_idx_087dd4a6\" on \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TimeEntry_employeeId_idx_087dd4a6",
+        "table": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TimeEntry_employeeId_idx_087dd4a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TimeEntry_employeeId_idx_087dd4a6\"",
+        "sql": "CREATE INDEX \"TimeEntry_employeeId_idx_087dd4a6\" ON \"public\".\"TimeEntry\" (\"employeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TimeEntry_employeeId_idx_087dd4a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TimeEntry.TimeEntry_employeeId_workDate_idx_2630e2ab",
+    "label": "Create index \"TimeEntry_employeeId_workDate_idx_2630e2ab\" on \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TimeEntry_employeeId_workDate_idx_2630e2ab",
+        "table": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TimeEntry_employeeId_workDate_idx_2630e2ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_employeeId_workDate_idx_2630e2ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TimeEntry_employeeId_workDate_idx_2630e2ab\"",
+        "sql": "CREATE INDEX \"TimeEntry_employeeId_workDate_idx_2630e2ab\" ON \"public\".\"TimeEntry\" (\"employeeId\", \"workDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TimeEntry_employeeId_workDate_idx_2630e2ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_employeeId_workDate_idx_2630e2ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TimeEntry.TimeEntry_taskId_idx_4965c936",
+    "label": "Create index \"TimeEntry_taskId_idx_4965c936\" on \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TimeEntry_taskId_idx_4965c936",
+        "table": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TimeEntry_taskId_idx_4965c936\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_taskId_idx_4965c936\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TimeEntry_taskId_idx_4965c936\"",
+        "sql": "CREATE INDEX \"TimeEntry_taskId_idx_4965c936\" ON \"public\".\"TimeEntry\" (\"taskId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TimeEntry_taskId_idx_4965c936\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_taskId_idx_4965c936\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TimeEntry.TimeEntry_taskStageId_idx_c18cb3d4",
+    "label": "Create index \"TimeEntry_taskStageId_idx_c18cb3d4\" on \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TimeEntry_taskStageId_idx_c18cb3d4",
+        "table": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TimeEntry_taskStageId_idx_c18cb3d4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_taskStageId_idx_c18cb3d4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TimeEntry_taskStageId_idx_c18cb3d4\"",
+        "sql": "CREATE INDEX \"TimeEntry_taskStageId_idx_c18cb3d4\" ON \"public\".\"TimeEntry\" (\"taskStageId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TimeEntry_taskStageId_idx_c18cb3d4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_taskStageId_idx_c18cb3d4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.TimeEntry.TimeEntry_workDate_idx_8d1c6484",
+    "label": "Create index \"TimeEntry_workDate_idx_8d1c6484\" on \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TimeEntry_workDate_idx_8d1c6484",
+        "table": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TimeEntry_workDate_idx_8d1c6484\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_workDate_idx_8d1c6484\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TimeEntry_workDate_idx_8d1c6484\"",
+        "sql": "CREATE INDEX \"TimeEntry_workDate_idx_8d1c6484\" ON \"public\".\"TimeEntry\" (\"workDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TimeEntry_workDate_idx_8d1c6484\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"TimeEntry_workDate_idx_8d1c6484\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Task.Task_clientId_fkey",
+    "label": "Add foreign key \"Task_clientId_fkey\" on \"Task\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Task_clientId_fkey",
+        "table": "Task"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Task_clientId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Task_clientId_fkey",
+          "public",
+          "\"public\".\"Task\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Task_clientId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Task\"\nADD CONSTRAINT \"Task_clientId_fkey\"\nFOREIGN KEY (\"clientId\")\nREFERENCES \"public\".\"Client\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Task_clientId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Task_clientId_fkey",
+          "public",
+          "\"public\".\"Task\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Task.Task_taskTypeId_fkey",
+    "label": "Add foreign key \"Task_taskTypeId_fkey\" on \"Task\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Task_taskTypeId_fkey",
+        "table": "Task"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Task_taskTypeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Task_taskTypeId_fkey",
+          "public",
+          "\"public\".\"Task\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Task_taskTypeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Task\"\nADD CONSTRAINT \"Task_taskTypeId_fkey\"\nFOREIGN KEY (\"taskTypeId\")\nREFERENCES \"public\".\"TaskType\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Task_taskTypeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Task_taskTypeId_fkey",
+          "public",
+          "\"public\".\"Task\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Task.Task_createdById_fkey",
+    "label": "Add foreign key \"Task_createdById_fkey\" on \"Task\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Task_createdById_fkey",
+        "table": "Task"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Task_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Task_createdById_fkey",
+          "public",
+          "\"public\".\"Task\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Task_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Task\"\nADD CONSTRAINT \"Task_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Task_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Task_createdById_fkey",
+          "public",
+          "\"public\".\"Task\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.TaskStage.TaskStage_taskId_fkey",
+    "label": "Add foreign key \"TaskStage_taskId_fkey\" on \"TaskStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "TaskStage_taskId_fkey",
+        "table": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"TaskStage_taskId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskStage_taskId_fkey",
+          "public",
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"TaskStage_taskId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"TaskStage\"\nADD CONSTRAINT \"TaskStage_taskId_fkey\"\nFOREIGN KEY (\"taskId\")\nREFERENCES \"public\".\"Task\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"TaskStage_taskId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskStage_taskId_fkey",
+          "public",
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.TaskStage.TaskStage_assigneeId_fkey",
+    "label": "Add foreign key \"TaskStage_assigneeId_fkey\" on \"TaskStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "TaskStage_assigneeId_fkey",
+        "table": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"TaskStage_assigneeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskStage_assigneeId_fkey",
+          "public",
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"TaskStage_assigneeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"TaskStage\"\nADD CONSTRAINT \"TaskStage_assigneeId_fkey\"\nFOREIGN KEY (\"assigneeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"TaskStage_assigneeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskStage_assigneeId_fkey",
+          "public",
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.TaskStage.TaskStage_blockedById_fkey",
+    "label": "Add foreign key \"TaskStage_blockedById_fkey\" on \"TaskStage\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "TaskStage_blockedById_fkey",
+        "table": "TaskStage"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"TaskStage_blockedById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskStage_blockedById_fkey",
+          "public",
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"TaskStage_blockedById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"TaskStage\"\nADD CONSTRAINT \"TaskStage_blockedById_fkey\"\nFOREIGN KEY (\"blockedById\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"TaskStage_blockedById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TaskStage_blockedById_fkey",
+          "public",
+          "\"public\".\"TaskStage\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.TimeEntry.TimeEntry_taskStageId_fkey",
+    "label": "Add foreign key \"TimeEntry_taskStageId_fkey\" on \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "TimeEntry_taskStageId_fkey",
+        "table": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"TimeEntry_taskStageId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TimeEntry_taskStageId_fkey",
+          "public",
+          "\"public\".\"TimeEntry\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"TimeEntry_taskStageId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"TimeEntry\"\nADD CONSTRAINT \"TimeEntry_taskStageId_fkey\"\nFOREIGN KEY (\"taskStageId\")\nREFERENCES \"public\".\"TaskStage\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"TimeEntry_taskStageId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TimeEntry_taskStageId_fkey",
+          "public",
+          "\"public\".\"TimeEntry\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.TimeEntry.TimeEntry_taskId_fkey",
+    "label": "Add foreign key \"TimeEntry_taskId_fkey\" on \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "TimeEntry_taskId_fkey",
+        "table": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"TimeEntry_taskId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TimeEntry_taskId_fkey",
+          "public",
+          "\"public\".\"TimeEntry\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"TimeEntry_taskId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"TimeEntry\"\nADD CONSTRAINT \"TimeEntry_taskId_fkey\"\nFOREIGN KEY (\"taskId\")\nREFERENCES \"public\".\"Task\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"TimeEntry_taskId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TimeEntry_taskId_fkey",
+          "public",
+          "\"public\".\"TimeEntry\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.TimeEntry.TimeEntry_employeeId_fkey",
+    "label": "Add foreign key \"TimeEntry_employeeId_fkey\" on \"TimeEntry\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "TimeEntry_employeeId_fkey",
+        "table": "TimeEntry"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"TimeEntry_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TimeEntry_employeeId_fkey",
+          "public",
+          "\"public\".\"TimeEntry\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"TimeEntry_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"TimeEntry\"\nADD CONSTRAINT \"TimeEntry_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"TimeEntry_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TimeEntry_employeeId_fkey",
+          "public",
+          "\"public\".\"TimeEntry\""
+        ]
+      }
+    ]
+  }
+]

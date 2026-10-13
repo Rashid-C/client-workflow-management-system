@@ -175,7 +175,10 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">
           {loaded ? loaded.name : "New task type"}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">Changes apply to new tasks only.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          {loaded ? `Used by ${loaded.taskCount} ${loaded.taskCount === 1 ? "task" : "tasks"}. ` : ""}
+          Changes apply to new tasks only.
+        </p>
       </div>
 
       <form onSubmit={save} className="space-y-6" noValidate>
@@ -328,6 +331,44 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
           </div>
         )}
       </form>
+
+      {loaded && canManage && (
+        <section className="flex flex-col justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:p-5">
+          <div>
+            <h2 className="text-sm font-semibold">Delete task type</h2>
+            <p className="text-xs text-slate-500">
+              Types used by existing tasks are deactivated instead of deleted.
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={saving}
+            onClick={async () => {
+              const verb = loaded.taskCount > 0 ? "Deactivate" : "Delete";
+              if (!window.confirm(`${verb} ${loaded.name}?`)) return;
+              setSaving(true);
+              try {
+                const result = await api<{ deleted: boolean; taskType: TaskType | null }>(
+                  `/task-types/${loaded.id}`,
+                  { method: "DELETE" },
+                );
+                if (result.deleted || !result.taskType) {
+                  router.replace("/task-types");
+                  return;
+                }
+                setLoaded(result.taskType);
+                setIsActive(result.taskType.isActive);
+              } catch (err) {
+                setError(err instanceof Error ? err.message : "Unable to delete.");
+              }
+              setSaving(false);
+            }}
+            className="shrink-0 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+          >
+            {loaded.taskCount > 0 ? "Deactivate" : "Delete"}
+          </button>
+        </section>
+      )}
 
       {loaded && can("history.view") && (
         <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">

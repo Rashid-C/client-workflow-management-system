@@ -22,6 +22,7 @@ describe('TaskTypesService', () => {
     description: 'In-Country Value certification',
     isActive: true,
     version: 2,
+    taskCount: 0,
     stages: [
       { position: 1, name: 'Document collection' },
       { position: 2, name: 'ICV calculation' },

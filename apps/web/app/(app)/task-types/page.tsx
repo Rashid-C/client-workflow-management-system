@@ -115,6 +115,9 @@ export default function TaskTypesPage() {
                     </li>
                   ))}
                 </ol>
+                <p className="mt-3 text-xs text-slate-500">
+                  {type.taskCount} {type.taskCount === 1 ? "task" : "tasks"}
+                </p>
               </Link>
             </li>
           ))}

@@ -1,0 +1,359 @@
+"use client";
+
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { Archive, ArchiveRestore, ArrowLeft, Ban, CheckCircle2, Pencil, Play, RotateCcw, UserRound } from "lucide-react";
+import EntityHistory from "@/components/audit/entity-history";
+import { useCurrentUser } from "@/components/auth/current-user";
+import StageActionDialog, { type StageDialogKind } from "@/components/tasks/stage-action-dialog";
+import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
+import { api, ApiError } from "@/lib/api";
+import { formatOfficeTime } from "@/lib/audit";
+import {
+  canOnStage,
+  earlierStagesDone,
+  formatDay,
+  formatMinutes,
+  isOverdue,
+  STATUS_STYLES,
+  taskRef,
+  type Assignable,
+  type TaskDetail,
+  type TaskStage,
+} from "@/lib/tasks";
+
+const smallButton =
+  "inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium hover:bg-slate-100 disabled:opacity-50";
+
+export default function TaskView({ taskId }: { taskId: number }) {
+  const { user, can } = useCurrentUser();
+  const [task, setTask] = useState<TaskDetail | null>(null);
+  const [people, setPeople] = useState<Assignable[]>([]);
+  const [error, setError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [dialog, setDialog] = useState<{ kind: StageDialogKind; stage: TaskStage } | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [historyKey, setHistoryKey] = useState(0);
+
+  const canAssign = can("tasks.assign");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    api<TaskDetail>(`/tasks/${taskId}`, { signal: controller.signal })
+      .then(setTask)
+      .catch((err: unknown) => {
+        if (err instanceof Error && err.name === "AbortError") return;
+        setError(err instanceof ApiError && err.status === 404 ? "This task does not exist, or you cannot see it." : err instanceof Error ? err.message : "Unable to load the task.");
+      });
+    return () => controller.abort();
+  }, [taskId]);
+
+  useEffect(() => {
+    if (!canAssign) return;
+    api<Assignable[]>("/tasks/assignable-employees").then(setPeople).catch(() => {});
+  }, [canAssign]);
+
+  const updated = useCallback((next: TaskDetail) => {
+    setTask(next);
+    setDialog(null);
+    setEditing(false);
+    setActionError("");
+    setHistoryKey((key) => key + 1);
+  }, []);
+
+  async function quickAction(stage: TaskStage, action: "start" | "resume") {
+    setBusy(true);
+    setActionError("");
+    try {
+      updated(await api<TaskDetail>(`/tasks/${taskId}/stages/${stage.position}/${action}`, { method: "POST" }));
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Unable to update the stage.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function setArchived(archived: boolean) {
+    if (archived && !window.confirm("Archive this task? It is kept with its history and can be restored.")) return;
+    setBusy(true);
+    try {
+      updated(await api<TaskDetail>(`/tasks/${taskId}/${archived ? "archive" : "restore"}`, { method: "POST" }));
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Unable to update the task.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <p role="alert" className="text-sm text-red-700">{error}</p>
+        <Link href="/tasks" className="mt-3 inline-block text-sm text-blue-700 hover:underline">Back to tasks</Link>
+      </div>
+    );
+  }
+  if (!task) return <p role="status" className="p-6 text-sm text-slate-500">Loading task...</p>;
+
+  const live = !task.archivedAt;
+  const completedCount = task.stages.filter((s) => s.status === "Completed").length;
+
+  return (
+    <div className="mx-auto w-full max-w-7xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+        <div className="min-w-0">
+          <Link href="/tasks" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900">
+            <ArrowLeft size={15} aria-hidden="true" />
+            Tasks
+          </Link>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span className="text-sm text-slate-400">{taskRef(task.id)}</span>
+            <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[task.status]}`}>{task.status}</span>
+            {!live && <span className="rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs">Archived</span>}
+          </div>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{task.title}</h1>
+          <p className="text-sm text-slate-500">{task.client.name} · {task.taskType.name}</p>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          {live && can("tasks.edit") && (
+            <button type="button" onClick={() => setEditing(true)} className={smallButton}>
+              <Pencil size={14} aria-hidden="true" /> Edit
+            </button>
+          )}
+          {can("tasks.delete") && (
+            <button type="button" onClick={() => void setArchived(live)} disabled={busy} className={smallButton}>
+              {live ? <Archive size={14} aria-hidden="true" /> : <ArchiveRestore size={14} aria-hidden="true" />}
+              {live ? "Archive" : "Restore"}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {actionError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{actionError}</p>}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_18rem]">
+        <section aria-labelledby="stages-title" className="rounded-xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
+            <h2 id="stages-title" className="font-semibold">Stages</h2>
+            <span className="text-xs text-slate-500">{completedCount}/{task.stages.length}</span>
+          </div>
+          <ol className="divide-y divide-slate-100">
+            {task.stages.map((stage) => {
+              const ready = earlierStagesDone(task.stages, stage.position);
+              const canWork = live && canOnStage(user, "tasks.complete", stage);
+              const canMove = live && canOnStage(user, "tasks.assign", stage);
+              const mine = stage.assignee?.id === user?.employeeId;
+              return (
+                <li key={stage.id} className={`px-4 py-4 ${stage.status === "Blocked" ? "bg-red-50/40" : ""}`}>
+                  <div className="flex items-start gap-3">
+                    <span className={`flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-medium ${
+                      stage.status === "Completed" ? "border-emerald-600 bg-emerald-600 text-white"
+                      : stage.status === "Blocked" ? "border-red-600 bg-red-600 text-white"
+                      : stage.status === "In progress" ? "border-blue-600 bg-blue-600 text-white"
+                      : "border-slate-300 text-slate-600"}`}>
+                      {stage.position}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-medium">{stage.name}</p>
+                        <span className={`rounded-full border px-2 py-0.5 text-xs ${STATUS_STYLES[stage.status]}`}>{stage.status}</span>
+                      </div>
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        {stage.assignee ? (
+                          <span className={mine ? "font-medium text-blue-700" : ""}>
+                            {stage.assignee.name}{mine ? " (you)" : ""}
+                            {stage.assignee.status !== "Active" ? " · inactive" : ""}
+                          </span>
+                        ) : <em>Unassigned</em>}
+                        {stage.minutes > 0 && ` · ${formatMinutes(stage.minutes)} logged`}
+                      </p>
+                      {stage.status === "Pending" && !ready && (
+                        <p className="mt-0.5 text-xs text-slate-400">Starts after earlier stages are completed</p>
+                      )}
+                      {stage.status === "Blocked" && stage.blockedReason && (
+                        <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-xs text-red-800">
+                          &ldquo;{stage.blockedReason}&rdquo;
+                          {stage.blockedBy && stage.blockedAt && (
+                            <span className="text-red-600"> — {stage.blockedBy.name}, {formatOfficeTime(stage.blockedAt)}</span>
+                          )}
+                        </p>
+                      )}
+
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {canWork && stage.status === "Pending" && ready && (
+                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "start")} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
+                            <Play size={13} aria-hidden="true" /> Start
+                          </button>
+                        )}
+                        {canWork && stage.status === "In progress" && (
+                          <button type="button" onClick={() => setDialog({ kind: "complete", stage })} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
+                            <CheckCircle2 size={13} aria-hidden="true" /> Complete
+                          </button>
+                        )}
+                        {canWork && stage.status === "Blocked" && ready && (
+                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "resume")} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
+                            <Play size={13} aria-hidden="true" /> Resume
+                          </button>
+                        )}
+                        {canWork && (stage.status === "In progress" || (stage.status === "Pending" && ready)) && (
+                          <button type="button" onClick={() => setDialog({ kind: "block", stage })} className={smallButton}>
+                            <Ban size={13} aria-hidden="true" /> Block
+                          </button>
+                        )}
+                        {canMove && stage.status !== "Completed" && (
+                          <button type="button" onClick={() => setDialog({ kind: "reassign", stage })} className={smallButton}>
+                            <UserRound size={13} aria-hidden="true" /> {stage.assignee ? "Reassign" : "Assign"}
+                          </button>
+                        )}
+                        {live && can("tasks.reopen") && stage.status === "Completed" && (
+                          <button type="button" onClick={() => setDialog({ kind: "reopen", stage })} className={smallButton}>
+                            <RotateCcw size={13} aria-hidden="true" /> Reopen
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+
+        <aside className="h-fit rounded-xl border border-slate-200 bg-white p-4 text-sm">
+          <dl className="space-y-3">
+            <Fact label="Client">{task.client.name} <span className="text-slate-400">({task.client.clientCode})</span></Fact>
+            <Fact label="Task type">{task.taskType.name}</Fact>
+            <Fact label="Due date">
+              {task.dueDate ? (
+                <span className={isOverdue(task) ? "font-semibold text-red-700" : ""}>
+                  {formatDay(task.dueDate)}{isOverdue(task) ? " · overdue" : ""}
+                </span>
+              ) : "—"}
+            </Fact>
+            <Fact label="Total time">{formatMinutes(task.totalMinutes)}</Fact>
+            <Fact label="Created by">{task.createdBy.name}</Fact>
+            <Fact label="Created">{formatOfficeTime(task.createdAt)}</Fact>
+          </dl>
+          {task.description && <p className="mt-4 whitespace-pre-wrap border-t border-slate-100 pt-3 text-slate-700">{task.description}</p>}
+        </aside>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <section aria-labelledby="time-title" className="rounded-xl border border-slate-200 bg-white p-4">
+          <h2 id="time-title" className="text-sm font-semibold">Time logs</h2>
+          {task.timeEntries.length === 0 ? (
+            <p className="py-3 text-xs text-slate-500">No time logged yet.</p>
+          ) : (
+            <ul className="mt-2 divide-y divide-slate-100">
+              {task.timeEntries.map((entry) => (
+                <li key={entry.id} className="flex items-start justify-between gap-3 py-2 text-xs">
+                  <div className="min-w-0">
+                    <p className="font-medium text-slate-800">{entry.employee.name} · {entry.stagePosition}. {entry.stageName}</p>
+                    <p className="text-slate-500">{formatDay(entry.workDate)}{entry.note ? ` · ${entry.note}` : ""}</p>
+                  </div>
+                  <span className="shrink-0 font-medium">{formatMinutes(entry.minutes)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {can("history.view") && (
+          <section className="rounded-xl border border-slate-200 bg-white p-4">
+            <EntityHistory key={historyKey} entityType="Task" entityId={String(task.id)} />
+          </section>
+        )}
+      </div>
+
+      {dialog && (
+        <StageActionDialog
+          kind={dialog.kind}
+          task={task}
+          stage={dialog.stage}
+          people={people}
+          canHandOver={canAssign}
+          onClose={() => setDialog(null)}
+          onDone={updated}
+        />
+      )}
+      {editing && <EditTaskDialog task={task} onClose={() => setEditing(false)} onSaved={updated} />}
+    </div>
+  );
+}
+
+function Fact({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</dt>
+      <dd className="mt-0.5 text-slate-800">{children}</dd>
+    </div>
+  );
+}
+
+function EditTaskDialog({
+  task,
+  onClose,
+  onSaved,
+}: {
+  task: TaskDetail;
+  onClose: () => void;
+  onSaved: (task: TaskDetail) => void;
+}) {
+  const [title, setTitle] = useState(task.title);
+  const [description, setDescription] = useState(task.description ?? "");
+  const [dueDate, setDueDate] = useState(task.dueDate ?? "");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (!title.trim()) return setError("Give the task a title.");
+    setSaving(true);
+    try {
+      onSaved(
+        await api<TaskDetail>(`/tasks/${task.id}`, {
+          method: "PATCH",
+          body: JSON.stringify({
+            title: title.trim(),
+            description: description.trim() || undefined,
+            dueDate: dueDate || null,
+            version: task.version,
+          }),
+        }),
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save.");
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Modal
+      title="Edit task"
+      subtitle={taskRef(task.id)}
+      onClose={onClose}
+      footer={
+        <>
+          <button type="button" onClick={onClose} className={secondaryButton}>Cancel</button>
+          <button type="button" onClick={() => void save()} disabled={saving} className={primaryButton}>
+            {saving ? "Saving..." : "Save"}
+          </button>
+        </>
+      }
+    >
+      <div>
+        <label htmlFor="edit-title" className="text-sm font-medium">Title *</label>
+        <input id="edit-title" value={title} maxLength={200} onChange={(event) => setTitle(event.target.value)} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="edit-due" className="text-sm font-medium">Due date</label>
+        <input id="edit-due" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="edit-description" className="text-sm font-medium">Description</label>
+        <textarea id="edit-description" rows={4} maxLength={2000} value={description} onChange={(event) => setDescription(event.target.value)} className={inputClass} />
+      </div>
+      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+    </Modal>
+  );
+}

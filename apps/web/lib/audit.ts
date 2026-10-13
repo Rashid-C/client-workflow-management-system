@@ -44,6 +44,19 @@ export const ACTION_LABELS: Record<string, string> = {
   "auth.login_failed": "Failed sign-in",
   "auth.account_locked": "Account locked",
   "auth.password_changed": "Password changed",
+  "task_type.created": "Task type added",
+  "task_type.updated": "Task type changed",
+  "task_type.deleted": "Task type deleted",
+  "task.created": "Task created",
+  "task.updated": "Task edited",
+  "task.archived": "Task archived",
+  "task.restored": "Task restored",
+  "task.stage_started": "Stage started",
+  "task.stage_completed": "Stage completed",
+  "task.stage_blocked": "Stage blocked",
+  "task.stage_resumed": "Stage resumed",
+  "task.stage_reassigned": "Stage reassigned",
+  "task.stage_reopened": "Stage reopened",
 };
 
 export type AuditFilters = {

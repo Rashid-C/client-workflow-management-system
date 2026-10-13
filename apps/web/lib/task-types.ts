@@ -9,6 +9,7 @@ export type TaskType = {
   description: string | null;
   isActive: boolean;
   version: number;
+  taskCount: number;
   stages: TaskTypeStage[];
 };
 

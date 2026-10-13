@@ -21,12 +21,15 @@ export interface TaskType {
   description: string | null;
   isActive: boolean;
   version: number;
+  /** Tasks created from this type, archived ones included. */
+  taskCount: number;
   stages: TaskTypeStage[];
 }
 
 // Types with their ordered stages in one query.
 const SELECT_TASK_TYPES = `
   SELECT t."id", t."name", t."description", t."isActive", t."version",
+         (SELECT count(*)::int FROM "Task" k WHERE k."taskTypeId" = t."id") AS "taskCount",
          COALESCE(
            json_agg(
              json_build_object('position', s."position", 'name', s."name")
@@ -154,6 +157,57 @@ export class TaskTypesService {
         changes,
       });
       return type;
+    });
+  }
+
+  /**
+   * Delete an unused type. A type that tasks were made from is deactivated
+   * instead, so those tasks keep pointing at a real type.
+   */
+  async remove(
+    id: number,
+    context: AuditContext,
+  ): Promise<{ deleted: boolean; taskType: TaskType | null }> {
+    return this.transaction(async (db) => {
+      const locked = await db.query(
+        `SELECT 1 FROM "TaskType" WHERE "id" = $1 FOR UPDATE`,
+        [id],
+      );
+      if (!locked.rowCount) throw new NotFoundException('Task type not found');
+      const current = (await this.findById(db, id))!;
+
+      if (current.taskCount > 0) {
+        if (current.isActive) {
+          await db.query(
+            `UPDATE "TaskType" SET "isActive" = false, "version" = "version" + 1, "updatedAt" = NOW()
+             WHERE "id" = $1`,
+            [id],
+          );
+          await this.audit.record(db, context, {
+            action: 'task_type.updated',
+            entityType: 'TaskType',
+            entityId: id,
+            summary: `Deactivated task type ${current.name} instead of deleting it (used by ${current.taskCount} tasks)`,
+            changes: { isActive: { from: true, to: false } },
+          });
+        }
+        return { deleted: false, taskType: (await this.findById(db, id))! };
+      }
+
+      // Its stages go with it (ON DELETE CASCADE).
+      await db.query(`DELETE FROM "TaskType" WHERE "id" = $1`, [id]);
+      await this.audit.record(db, context, {
+        action: 'task_type.deleted',
+        entityType: 'TaskType',
+        entityId: id,
+        summary: `Deleted task type ${current.name}`,
+        changes: {
+          name: current.name,
+          description: current.description,
+          stages: current.stages.map((stage) => stage.name),
+        },
+      });
+      return { deleted: true, taskType: null };
     });
   }
 

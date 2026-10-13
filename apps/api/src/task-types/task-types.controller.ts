@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -55,5 +56,13 @@ export class TaskTypesController {
     @Audit() audit: AuditContext,
   ) {
     return this.taskTypesService.update(id, data, audit);
+  }
+
+  /** Deletes an unused type; deactivates one that tasks were made from. */
+  @Version('1')
+  @RequirePermission('workflows.manage')
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number, @Audit() audit: AuditContext) {
+    return this.taskTypesService.remove(id, audit);
   }
 }

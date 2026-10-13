@@ -1,6 +1,7 @@
 import { Inject, Injectable, ConflictException } from '@nestjs/common';
 import type { Pool } from 'pg';
 import { AuditService, type AuditContext } from '../audit/audit.service.js';
+import type { AuthUser } from '../auth/session.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
 
 export interface Client {
@@ -34,9 +35,23 @@ export class ClientsService {
     private readonly audit: AuditService,
   ) {}
 
-  async findAll(): Promise<Client[]> {
+  async findAll(viewer: AuthUser): Promise<Client[]> {
+    // "own" scope: clients of tasks the viewer created or holds a stage of.
+    const ownOnly = viewer.permissions['clients.view'] === 'own';
     const result = await this.pool.query<Client>(
-      'SELECT * FROM "Client" ORDER BY "id" ASC',
+      `SELECT c.* FROM "Client" c
+       ${
+         ownOnly
+           ? `WHERE EXISTS (
+                SELECT 1 FROM "Task" t
+                WHERE t."clientId" = c."id"
+                  AND (t."createdById" = $1 OR EXISTS (
+                    SELECT 1 FROM "TaskStage" s
+                    WHERE s."taskId" = t."id" AND s."assigneeId" = $1)))`
+           : ''
+       }
+       ORDER BY c."id" ASC`,
+      ownOnly ? [viewer.employeeId] : [],
     );
 
     return result.rows;

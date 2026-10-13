@@ -7,7 +7,8 @@ import {
 } from '@nestjs/common';
 import { Audit } from '../audit/audit-context.decorator.js';
 import type { AuditContext } from '../audit/audit.service.js';
-import { RequirePermission } from '../auth/decorators.js';
+import { CurrentUser, RequirePermission } from '../auth/decorators.js';
+import type { AuthUser } from '../auth/session.js';
 import { ClientsService } from './clients.service.js';
 import { CreateClientDto } from './dto/create-client.dto.js';
 
@@ -18,8 +19,8 @@ export class ClientsController {
   @Version('1')
   @RequirePermission('clients.view')
   @Get()
-  findAll() {
-    return this.clientsService.findAll();
+  findAll(@CurrentUser() user: AuthUser) {
+    return this.clientsService.findAll(user);
   }
 
   @Version('1')
