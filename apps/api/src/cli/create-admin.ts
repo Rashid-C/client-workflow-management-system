@@ -35,26 +35,61 @@ async function prompter() {
     };
   }
 
-  let muted = false;
-  const rl = createInterface({ input: stdin, output: stdout, terminal: true });
-  const internal = rl as unknown as { _writeToOutput: (s: string) => void };
-  internal._writeToOutput = (text) => {
-    if (!muted) stdout.write(text);
+  // Visible answers go through readline, with the question as its prompt:
+  // readline clears the line before drawing its prompt, so a question written
+  // separately would be wiped and the terminal would look frozen.
+  let rl: ReturnType<typeof createInterface> | null = null;
+  const closeReadline = () => {
+    rl?.close();
+    rl = null;
   };
 
   return {
-    ask: (question: string, hidden = false) =>
-      new Promise<string>((resolve) => {
-        stdout.write(question);
-        muted = hidden;
-        rl.question('', (answer) => {
-          if (hidden) stdout.write('\n');
-          muted = false;
-          resolve(answer);
-        });
-      }),
-    close: () => rl.close(),
+    ask: (question: string, hidden = false) => {
+      if (hidden) {
+        // readline would echo the password, so it must not be listening.
+        closeReadline();
+        return askHidden(question);
+      }
+      rl ??= createInterface({ input: stdin, output: stdout, terminal: true });
+      return new Promise<string>((resolve) => rl!.question(question, resolve));
+    },
+    close: closeReadline,
   };
+}
+
+/** Read one line in raw mode without echoing it. */
+function askHidden(question: string): Promise<string> {
+  return new Promise((resolve) => {
+    stdout.write(question);
+    stdin.setRawMode(true);
+    stdin.resume();
+    let value = '';
+
+    const onData = (chunk: Buffer) => {
+      for (const char of chunk.toString('utf8')) {
+        if (char === '\r' || char === '\n') {
+          stdin.off('data', onData);
+          stdin.setRawMode(false);
+          stdin.pause();
+          stdout.write('\n');
+          resolve(value);
+          return;
+        }
+        // Raw mode turns Ctrl+C into a character instead of a signal.
+        if (char === '\u0003') {
+          stdout.write('\n');
+          process.exit(130);
+        }
+        if (char === '\u007f' || char === '\b') {
+          value = value.slice(0, -1);
+        } else if (char >= ' ') {
+          value += char;
+        }
+      }
+    };
+    stdin.on('data', onData);
+  });
 }
 
 function fail(message: string): never {
