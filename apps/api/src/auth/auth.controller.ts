@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Put,
   Res,
   Version,
 } from '@nestjs/common';
@@ -16,7 +17,7 @@ import {
   CurrentUser,
   Public,
 } from './decorators.js';
-import { ChangePasswordDto, LoginDto } from './dto.js';
+import { ChangePasswordDto, LoginDto, SetLanguageDto } from './dto.js';
 import { SESSION_COOKIE, type AuthUser } from './session.js';
 
 const cookieOptions = {
@@ -67,6 +68,14 @@ export class AuthController {
   @Get('me')
   me(@CurrentUser() user: AuthUser) {
     return toMe(user);
+  }
+
+  @Version('1')
+  @AllowPendingPassword()
+  @Put('me/language')
+  @HttpCode(204)
+  async setLanguage(@CurrentUser() user: AuthUser, @Body() data: SetLanguageDto) {
+    await this.authService.setLanguage(user, data.language);
   }
 
   @Version('1')

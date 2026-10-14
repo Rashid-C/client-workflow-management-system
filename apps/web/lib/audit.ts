@@ -3,19 +3,6 @@ import { api } from "@/lib/api";
 // Office time, whatever time zone the viewer's computer is set to.
 export const OFFICE_TIME_ZONE = "Asia/Dubai";
 
-const dateTime = new Intl.DateTimeFormat("en-GB", {
-  timeZone: OFFICE_TIME_ZONE,
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
-export function formatOfficeTime(iso: string) {
-  return dateTime.format(new Date(iso));
-}
-
 export type AuditLogEntry = {
   id: number;
   occurredAt: string;
@@ -35,29 +22,30 @@ export type AuditLogPage = {
   nextBefore: number | null;
 };
 
-export const ACTION_LABELS: Record<string, string> = {
-  "employee.created": "Employee added",
-  "employee.status_changed": "Employee status changed",
-  "client.created": "Client added",
-  "auth.login": "Signed in",
-  "auth.logout": "Signed out",
-  "auth.login_failed": "Failed sign-in",
-  "auth.account_locked": "Account locked",
-  "auth.password_changed": "Password changed",
-  "task_type.created": "Task type added",
-  "task_type.updated": "Task type changed",
-  "task_type.deleted": "Task type deleted",
-  "task.created": "Task created",
-  "task.updated": "Task edited",
-  "task.archived": "Task archived",
-  "task.restored": "Task restored",
-  "task.stage_started": "Stage started",
-  "task.stage_completed": "Stage completed",
-  "task.stage_blocked": "Stage blocked",
-  "task.stage_resumed": "Stage resumed",
-  "task.stage_reassigned": "Stage reassigned",
-  "task.stage_reopened": "Stage reopened",
-};
+/** Actions the Activity filter offers; labels come from useI18n().action(). */
+export const AUDIT_ACTIONS = [
+  "employee.created",
+  "employee.status_changed",
+  "client.created",
+  "auth.login",
+  "auth.logout",
+  "auth.login_failed",
+  "auth.account_locked",
+  "auth.password_changed",
+  "task_type.created",
+  "task_type.updated",
+  "task_type.deleted",
+  "task.created",
+  "task.updated",
+  "task.archived",
+  "task.restored",
+  "task.stage_started",
+  "task.stage_completed",
+  "task.stage_blocked",
+  "task.stage_resumed",
+  "task.stage_reassigned",
+  "task.stage_reopened",
+] as const;
 
 export type AuditFilters = {
   entityType?: string;

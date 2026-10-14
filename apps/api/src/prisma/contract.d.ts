@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'550b02fb5e30ae28ca1bc059765b3e93be77c801fd37b4957d9520c34ee2cfc8'>;
+  StorageHashBase<'8045fff9643ff004e4c768087ed0142d2dce8c94df6786c1a33a4c2aa4270796'>;
 export type ExecutionHash =
   ExecutionHashBase<'ba0cddf96f5eddaab600b11cfd37c7d5f90fb3c395ea4de55b9cfa6cba7c0cc5'>;
 export type ProfileHash =
@@ -270,6 +270,7 @@ export type FieldOutputTypes = {
       readonly joinedDate: CodecTypes['pg/date-string@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly preferredLanguage: 'en' | 'ar';
       readonly status: 'Active' | 'Inactive';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -409,6 +410,7 @@ export type FieldInputTypes = {
       readonly joinedDate: CodecTypes['pg/date-string@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly preferredLanguage: 'en' | 'ar';
       readonly status: 'Active' | 'Inactive';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -548,6 +550,7 @@ export type StorageColumnTypes = {
       readonly joinedDate: CodecTypes['pg/date-string@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly preferredLanguage: 'en' | 'ar';
       readonly status: 'Active' | 'Inactive';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -687,6 +690,7 @@ export type StorageColumnInputTypes = {
       readonly joinedDate: CodecTypes['pg/date-string@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly preferredLanguage: 'en' | 'ar';
       readonly status: 'Active' | 'Inactive';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -829,6 +833,7 @@ export namespace Models {
     joinedDate: CodecTypes['pg/date-string@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     phone: CodecTypes['pg/text@1']['output'] | null;
+    preferredLanguage: 'en' | 'ar';
     status: 'Active' | 'Inactive';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     readonly [RelationKeys]?: never;
@@ -1251,6 +1256,16 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly preferredLanguage: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'en'>;
+                  };
                   readonly many: false;
                 };
                 readonly status: {
@@ -2224,6 +2239,10 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['Active', 'Inactive'];
             };
+            readonly Language: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['en', 'ar'];
+            };
             readonly PermissionScope: {
               readonly kind: 'valueSet';
               readonly values: readonly ['own', 'all'];
@@ -2469,6 +2488,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly preferredLanguage: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly status: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2494,6 +2517,7 @@ type ContractBase = Omit<
                 readonly joinedDate: { readonly column: 'joinedDate' };
                 readonly name: { readonly column: 'name' };
                 readonly phone: { readonly column: 'phone' };
+                readonly preferredLanguage: { readonly column: 'preferredLanguage' };
                 readonly status: { readonly column: 'status' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
@@ -3240,6 +3264,13 @@ type ContractBase = Omit<
               { readonly name: 'Inactive'; readonly value: 'Inactive' },
             ];
           };
+          readonly Language: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'En'; readonly value: 'en' },
+              { readonly name: 'Ar'; readonly value: 'ar' },
+            ];
+          };
           readonly PermissionScope: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -3261,6 +3292,10 @@ type ContractBase = Omit<
           readonly EmployeeStatus: readonly [
             { readonly name: 'Active'; readonly value: 'Active' },
             { readonly name: 'Inactive'; readonly value: 'Inactive' },
+          ];
+          readonly Language: readonly [
+            { readonly name: 'En'; readonly value: 'en' },
+            { readonly name: 'Ar'; readonly value: 'ar' },
           ];
           readonly PermissionScope: readonly [
             { readonly name: 'Own'; readonly value: 'own' },

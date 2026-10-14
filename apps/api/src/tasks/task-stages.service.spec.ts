@@ -84,6 +84,7 @@ const staff: AuthUser = {
   email: 'sam@firm.ae',
   isSuperAdmin: false,
   mustChangePassword: false,
+  preferredLanguage: 'en',
   permissions: { 'tasks.view': 'own', 'tasks.complete': 'own', 'tasks.assign': 'own' },
 };
 const manager: AuthUser = {

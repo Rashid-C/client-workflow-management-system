@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useCurrentUser } from "@/components/auth/current-user";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import type { TaskType } from "@/lib/task-types";
@@ -17,6 +18,7 @@ export default function NewTaskDialog({
   onCreated: (task: TaskDetail) => void;
 }) {
   const { can } = useCurrentUser();
+  const { t } = useI18n();
   const canAssign = can("tasks.assign");
 
   const [clients, setClients] = useState<ClientOption[]>([]);
@@ -48,18 +50,19 @@ export default function NewTaskDialog({
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setLoadError(err instanceof Error ? err.message : "Unable to load the form.");
+        setLoadError(err instanceof Error ? err.message : t.tasks.unableToLoadForm);
       });
     return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
   }, [canAssign]);
 
   const type = types.find((t) => String(t.id) === typeId);
 
   async function create() {
     setError("");
-    if (!title.trim()) return setError("Give the task a title.");
-    if (!clientId) return setError("Choose a client.");
-    if (!type) return setError("Choose a task type.");
+    if (!title.trim()) return setError(t.tasks.needTitle);
+    if (!clientId) return setError(t.tasks.needClient);
+    if (!type) return setError(t.tasks.needType);
 
     setSaving(true);
     try {
@@ -81,20 +84,20 @@ export default function NewTaskDialog({
       });
       onCreated(task);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to create the task.");
+      setError(err instanceof Error ? err.message : t.tasks.unableToCreate);
       setSaving(false);
     }
   }
 
   return (
     <Modal
-      title="New task"
+      title={t.tasks.newTask}
       onClose={onClose}
       footer={
         <>
-          <button type="button" onClick={onClose} className={secondaryButton}>Cancel</button>
+          <button type="button" onClick={onClose} className={secondaryButton}>{t.common.cancel}</button>
           <button type="button" onClick={() => void create()} disabled={saving} className={primaryButton}>
-            {saving ? "Creating..." : "Create task"}
+            {saving ? t.tasks.creating : t.tasks.create}
           </button>
         </>
       }
@@ -102,22 +105,22 @@ export default function NewTaskDialog({
       {loadError && <p role="alert" className="text-sm text-red-700">{loadError}</p>}
 
       <div>
-        <label htmlFor="task-title" className="text-sm font-medium">Title *</label>
+        <label htmlFor="task-title" className="text-sm font-medium">{t.tasks.titleLabel} *</label>
         <input
           id="task-title"
           value={title}
           maxLength={200}
           onChange={(event) => setTitle(event.target.value)}
-          placeholder="e.g. FY2026 ICV certificate"
+          placeholder={t.tasks.titlePlaceholder}
           className={inputClass}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="task-client" className="text-sm font-medium">Client *</label>
+          <label htmlFor="task-client" className="text-sm font-medium">{t.common.client} *</label>
           <select id="task-client" value={clientId} onChange={(event) => setClientId(event.target.value)} className={inputClass}>
-            <option value="">Choose a client</option>
+            <option value="">{t.tasks.chooseClient}</option>
             {clients.map((client) => (
               <option key={client.id} value={client.id}>
                 {client.name} ({client.clientCode})
@@ -126,7 +129,7 @@ export default function NewTaskDialog({
           </select>
         </div>
         <div>
-          <label htmlFor="task-type" className="text-sm font-medium">Task type *</label>
+          <label htmlFor="task-type" className="text-sm font-medium">{t.tasks.taskType} *</label>
           <select
             id="task-type"
             value={typeId}
@@ -136,7 +139,7 @@ export default function NewTaskDialog({
             }}
             className={inputClass}
           >
-            <option value="">Choose a type</option>
+            <option value="">{t.tasks.chooseType}</option>
             {types.map((t) => (
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}
@@ -145,12 +148,12 @@ export default function NewTaskDialog({
       </div>
 
       <div>
-        <label htmlFor="task-due" className="text-sm font-medium">Due date</label>
+        <label htmlFor="task-due" className="text-sm font-medium">{t.tasks.dueDate}</label>
         <input id="task-due" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} className={inputClass} />
       </div>
 
       <div>
-        <label htmlFor="task-description" className="text-sm font-medium">Description</label>
+        <label htmlFor="task-description" className="text-sm font-medium">{t.tasks.description}</label>
         <textarea
           id="task-description"
           rows={3}
@@ -163,9 +166,9 @@ export default function NewTaskDialog({
 
       {type && canAssign && (
         <fieldset>
-          <legend className="text-sm font-medium">Stage assignees</legend>
+          <legend className="text-sm font-medium">{t.tasks.stageAssignees}</legend>
           <p className="text-xs text-slate-500">
-            Optional; stages can also be assigned later or handed over as work progresses.
+            {t.tasks.stageAssigneesHint}
           </p>
           <ol className="mt-2 space-y-2">
             {type.stages.map((stage) => (
@@ -181,7 +184,7 @@ export default function NewTaskDialog({
                   }
                   className="w-44 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm"
                 >
-                  <option value="">Unassigned</option>
+                  <option value="">{t.common.unassigned}</option>
                   {people.map((person) => (
                     <option key={person.id} value={person.id}>{person.name}</option>
                   ))}

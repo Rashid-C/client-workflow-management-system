@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AuditTimeline from "@/components/audit/audit-timeline";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { fetchAuditLogs, type AuditLogEntry } from "@/lib/audit";
 
 const PAGE_SIZE = 10;
@@ -14,6 +15,7 @@ export default function EntityHistory({
   entityType: string;
   entityId: string;
 }) {
+  const { t } = useI18n();
   const [entries, setEntries] = useState<AuditLogEntry[]>([]);
   const [nextBefore, setNextBefore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,12 +30,13 @@ export default function EntityHistory({
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : "Unable to load history.");
+        setError(err instanceof Error ? err.message : t.activity.unableToLoadHistory);
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
   }, [entityType, entityId]);
 
   async function loadOlder() {
@@ -48,25 +51,25 @@ export default function EntityHistory({
       setEntries((current) => [...current, ...page.items]);
       setNextBefore(page.nextBefore);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to load history.");
+      setError(err instanceof Error ? err.message : t.activity.unableToLoadHistory);
     }
   }
 
   return (
     <section aria-labelledby="entity-history-title" className="mt-5">
       <h3 id="entity-history-title" className="text-sm font-semibold">
-        History
+        {t.activity.history}
       </h3>
       {loading ? (
-        <p className="py-3 text-xs text-slate-500">Loading history...</p>
+        <p className="py-3 text-xs text-slate-500">{t.activity.loadingHistory}</p>
       ) : error ? (
         <p role="alert" className="py-3 text-xs text-red-700">
           {error}
         </p>
       ) : entries.length === 0 ? (
-        <p className="py-3 text-xs text-slate-500">No recorded activity yet.</p>
+        <p className="py-3 text-xs text-slate-500">{t.activity.noHistory}</p>
       ) : (
-        <div className="max-h-64 overflow-y-auto pr-1">
+        <div className="max-h-64 overflow-y-auto pe-1">
           <AuditTimeline entries={entries} />
           {nextBefore !== null && (
             <button
@@ -74,7 +77,7 @@ export default function EntityHistory({
               onClick={() => void loadOlder()}
               className="mt-1 text-xs font-medium text-blue-700 hover:underline"
             >
-              Show older
+              {t.common.showOlder}
             </button>
           )}
         </div>

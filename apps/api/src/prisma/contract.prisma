@@ -28,8 +28,16 @@ model Employee {
   designation  String
   status       EmployeeStatus             @default(Active)
   joinedDate   DateString
+  // UI language; follows the person to any computer they sign in on.
+  preferredLanguage Language              @default(En)
   createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()
+}
+
+enum Language {
+  @@type("pg/text@1")
+  En = "en"
+  Ar = "ar"
 }
 
 // Permissions themselves are a fixed catalogue in API code; the database

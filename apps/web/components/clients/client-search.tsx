@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { api } from "@/lib/api";
 
 type Client = {
@@ -19,6 +20,7 @@ type Client = {
 
 
 export default function ClientSearch() {
+  const { t } = useI18n();
   const [clients, setClients] = useState<Client[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -36,7 +38,7 @@ export default function ClientSearch() {
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") return;
 
-        setError(err instanceof Error ? err.message : "Something went wrong.");
+        setError(err instanceof Error ? err.message : t.common.noJson);
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -45,6 +47,7 @@ export default function ClientSearch() {
     void loadClients();
 
     return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once; t is stable per language
   }, []);
 
   const filteredClients = useMemo(() => {
@@ -62,7 +65,7 @@ export default function ClientSearch() {
   }, [clients, search]);
 
   if (loading) {
-    return <p className="py-8 text-sm text-slate-500">Loading clients…</p>;
+    return <p className="py-8 text-sm text-slate-500">{t.clients.loading}</p>;
   }
 
   if (error) {
@@ -80,33 +83,33 @@ export default function ClientSearch() {
           htmlFor="client-search"
           className="mb-2 block text-sm font-medium text-slate-700"
         >
-          Search clients
+          {t.clients.searchLabel}
         </label>
         <input
           id="client-search"
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search by name, code, company, email or phone..."
+          placeholder={t.clients.searchPlaceholder}
           className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
         />
       </div>
 
       <div className="overflow-hidden rounded-lg border border-slate-200">
         <div className="overflow-x-auto">
-          <table className="w-full table-fixed border-collapse text-left text-sm">
+          <table className="w-full table-fixed border-collapse text-start text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="w-[28%] px-3 py-3 font-medium sm:px-5">
-                  Client
+                  {t.clients.client}
                 </th>
                 <th className="w-[22%] px-3 py-3 font-medium sm:px-5">
-                  Company
+                  {t.clients.company}
                 </th>
-                <th className="w-[22%] px-3 py-3 font-medium sm:px-5">Email</th>
-                <th className="w-[16%] px-3 py-3 font-medium sm:px-5">Phone</th>
+                <th className="w-[22%] px-3 py-3 font-medium sm:px-5">{t.clients.email}</th>
+                <th className="w-[16%] px-3 py-3 font-medium sm:px-5">{t.clients.phone}</th>
                 <th className="w-[12%] px-3 py-3 font-medium sm:px-5">
-                  Status
+                  {t.common.status}
                 </th>
               </tr>
             </thead>
@@ -126,10 +129,29 @@ export default function ClientSearch() {
                     {client.companyName || "—"}
                   </td>
                   <td className="px-5 py-4 text-slate-600">
-                    {client.email || "—"}
+                    {client.email ? (
+                      <a
+                        href={`mailto:${client.email}`}
+                        className="hover:text-blue-700 hover:underline"
+                      >
+                        {client.email}
+                      </a>
+                    ) : (
+                      "—"
+                    )}
                   </td>
                   <td className="px-5 py-4 text-slate-600">
-                    {client.phone || "—"}
+                    {client.phone ? (
+                      <a
+                        href={`tel:${client.phone.replace(/[^\d+]/g, "")}`}
+                        className="whitespace-nowrap hover:text-blue-700 hover:underline"
+                        dir="ltr"
+                      >
+                        {client.phone}
+                      </a>
+                    ) : (
+                      "—"
+                    )}
                   </td>
                   <td className="px-5 py-4">
                     <span
@@ -139,7 +161,7 @@ export default function ClientSearch() {
                           : "inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600"
                       }
                     >
-                      {client.isActive ? "Active" : "Archived"}
+                      {client.isActive ? t.clients.active : t.clients.archived}
                     </span>
                   </td>
                 </tr>
@@ -150,7 +172,7 @@ export default function ClientSearch() {
                     colSpan={5}
                     className="px-5 py-12 text-center text-sm text-slate-500"
                   >
-                    No clients found.
+                    {t.clients.noneFound}
                   </td>
                 </tr>
               )}

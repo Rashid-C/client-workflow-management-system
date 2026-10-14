@@ -1,9 +1,9 @@
 "use client";
 
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { inputClass } from "@/components/ui/modal";
 
 const QUICK_PICKS = [15, 30, 60, 120, 240];
-const pickLabel = (minutes: number) => (minutes < 60 ? `${minutes}m` : `${minutes / 60}h`);
 
 /** Hours + minutes with quick picks from 15 minutes to 4 hours (slide 14). */
 export default function TimeInput({
@@ -19,6 +19,7 @@ export default function TimeInput({
   minutes: number;
   onChange: (minutes: number) => void;
 }) {
+  const { t, minutes: formatMinutes } = useI18n();
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
   const set = (h: number, m: number) =>
@@ -41,9 +42,9 @@ export default function TimeInput({
             placeholder="0"
             onChange={(event) => set(Number(event.target.value), rest)}
             className={`${inputClass} mt-0`}
-            aria-label={`${label}: hours`}
+            aria-label={t.tasks.hoursLabel(label)}
           />
-          <span className="text-sm text-slate-500">h</span>
+          <span className="text-sm text-slate-500">{t.duration.hourUnit}</span>
         </label>
         <label className="flex flex-1 items-center gap-1">
           <input
@@ -56,9 +57,9 @@ export default function TimeInput({
             placeholder="0"
             onChange={(event) => set(hours, Math.min(59, Number(event.target.value)))}
             className={`${inputClass} mt-0`}
-            aria-label={`${label}: minutes`}
+            aria-label={t.tasks.minutesLabel(label)}
           />
-          <span className="text-sm text-slate-500">m</span>
+          <span className="text-sm text-slate-500">{t.duration.minuteUnit}</span>
         </label>
       </div>
       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -75,7 +76,7 @@ export default function TimeInput({
                 : "border-slate-200 text-slate-700 hover:bg-slate-100",
             ].join(" ")}
           >
-            {pickLabel(pick)}
+            {formatMinutes(pick)}
           </button>
         ))}
       </div>

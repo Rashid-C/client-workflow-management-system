@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowLeft, ArrowUp, Copy, Plus, Trash2 } from "lucide-react";
 import EntityHistory from "@/components/audit/entity-history";
 import { useCurrentUser } from "@/components/auth/current-user";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import Link, { useRouter } from "@/components/i18n/link";
 import { api, ApiError } from "@/lib/api";
 import { MAX_STAGES, type TaskType } from "@/lib/task-types";
 
@@ -22,6 +22,7 @@ const draft = (names: string[]): DraftStage[] =>
 export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
   const router = useRouter();
   const { can } = useCurrentUser();
+  const { t } = useI18n();
   const canManage = can("workflows.manage");
 
   const [loaded, setLoaded] = useState<TaskType | null>(null);
@@ -59,13 +60,14 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setLoadError(err instanceof Error ? err.message : "Unable to load the task type.");
+        setLoadError(err instanceof Error ? err.message : t.taskTypes.unableToLoadOne);
       })
       .finally(() => {
         if (!signal.aborted) setLoading(false);
       });
 
     return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
   }, [typeId]);
 
   const dirty = useMemo(() => {
@@ -113,11 +115,11 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
     setError("");
 
     const names = stages.map((stage) => stage.name.trim());
-    if (!name.trim()) return setError("Give the task type a name.");
-    if (names.length === 0) return setError("Add at least one stage.");
-    if (names.some((stageName) => !stageName)) return setError("Name every stage or remove the empty ones.");
+    if (!name.trim()) return setError(t.taskTypes.needName);
+    if (names.length === 0) return setError(t.taskTypes.needStage);
+    if (names.some((stageName) => !stageName)) return setError(t.taskTypes.needStageNames);
     const lower = names.map((stageName) => stageName.toLowerCase());
-    if (new Set(lower).size !== lower.length) return setError("Each stage needs a different name.");
+    if (new Set(lower).size !== lower.length) return setError(t.taskTypes.needDistinct);
 
     setSaving(true);
     try {
@@ -140,24 +142,24 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 409 && loaded
-          ? `${err.message} Your edits are still on screen; copy anything you need first.`
+          ? `${err.message}${t.taskTypes.staleSuffix}`
           : err instanceof Error
             ? err.message
-            : "Unable to save.",
+            : t.tasks.unableToSave,
       );
       setSaving(false);
     }
   }
 
   if (loading) {
-    return <p role="status" className="p-6 text-sm text-slate-500">Loading task type...</p>;
+    return <p role="status" className="p-6 text-sm text-slate-500">{t.taskTypes.loadingOne}</p>;
   }
   if (loadError) {
     return (
       <div className="p-6">
         <p role="alert" className="text-sm text-red-700">{loadError}</p>
         <Link href="/task-types" className="mt-3 inline-block text-sm text-blue-700 hover:underline">
-          Back to task types
+          {t.taskTypes.back}
         </Link>
       </div>
     );
@@ -169,15 +171,15 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
     <div className="mx-auto w-full max-w-3xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
       <div>
         <Link href="/task-types" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900">
-          <ArrowLeft size={15} aria-hidden="true" />
-          Task types
+          <ArrowLeft size={15} className="rtl:rotate-180" aria-hidden="true" />
+          {t.taskTypes.title}
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-          {loaded ? loaded.name : "New task type"}
+          {loaded ? loaded.name : t.taskTypes.newTypeTitle}
         </h1>
         <p className="mt-1 text-sm text-slate-500">
-          {loaded ? `Used by ${loaded.taskCount} ${loaded.taskCount === 1 ? "task" : "tasks"}. ` : ""}
-          Changes apply to new tasks only.
+          {loaded ? t.taskTypes.usedBy(loaded.taskCount) : ""}
+          {t.taskTypes.newOnly}
         </p>
       </div>
 
@@ -185,7 +187,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
         <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="type-name" className="text-sm font-medium">Name *</label>
+              <label htmlFor="type-name" className="text-sm font-medium">{t.taskTypes.name} *</label>
               <input
                 id="type-name"
                 value={name}
@@ -196,7 +198,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
               />
             </div>
             <div>
-              <label htmlFor="type-description" className="text-sm font-medium">Description</label>
+              <label htmlFor="type-description" className="text-sm font-medium">{t.taskTypes.description}</label>
               <input
                 id="type-description"
                 value={description}
@@ -217,9 +219,9 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                 className="mt-0.5"
               />
               <span>
-                <span className="font-medium">Active</span>
+                <span className="font-medium">{t.taskTypes.active}</span>
                 <span className="block text-xs text-slate-500">
-                  Inactive types can&apos;t be chosen for new tasks.
+                  {t.taskTypes.activeHint}
                 </span>
               </span>
             </label>
@@ -229,9 +231,9 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
         <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h2 className="font-semibold">Stages ({stages.length})</h2>
+              <h2 className="font-semibold">{t.taskTypes.stagesCount(stages.length)}</h2>
               <p className="text-xs text-slate-500">
-                Stages run in order. Every stage is Pending, In progress, Completed or Blocked.
+                {t.taskTypes.stagesHint}
               </p>
             </div>
             {canManage && copySources.length > 0 && (
@@ -241,7 +243,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                 className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-100"
               >
                 <Copy size={15} aria-hidden="true" />
-                Copy from...
+                {t.taskTypes.copyFrom}
               </button>
             )}
           </div>
@@ -253,7 +255,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                   {index + 1}
                 </span>
                 <label htmlFor={`stage-${stage.key}`} className="sr-only">
-                  Stage {index + 1} name
+                  {t.taskTypes.stageNameLabel(index + 1)}
                 </label>
                 <input
                   id={`stage-${stage.key}`}
@@ -262,7 +264,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                   maxLength={100}
                   disabled={!canManage}
                   onChange={(event) => updateStage(stage.key, event.target.value)}
-                  placeholder="Stage name"
+                  placeholder={t.taskTypes.stageName}
                   className={`${inputClass} mt-0`}
                 />
                 {canManage && (
@@ -271,7 +273,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                       type="button"
                       onClick={() => moveStage(index, -1)}
                       disabled={index === 0}
-                      aria-label={`Move stage ${index + 1} up`}
+                      aria-label={t.taskTypes.moveUp(index + 1)}
                       className="rounded-md p-2 text-slate-500 hover:bg-slate-100 disabled:opacity-30"
                     >
                       <ArrowUp size={16} />
@@ -280,7 +282,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                       type="button"
                       onClick={() => moveStage(index, 1)}
                       disabled={index === stages.length - 1}
-                      aria-label={`Move stage ${index + 1} down`}
+                      aria-label={t.taskTypes.moveDown(index + 1)}
                       className="rounded-md p-2 text-slate-500 hover:bg-slate-100 disabled:opacity-30"
                     >
                       <ArrowDown size={16} />
@@ -289,7 +291,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                       type="button"
                       onClick={() => setStages((current) => current.filter((s) => s.key !== stage.key))}
                       disabled={stages.length === 1}
-                      aria-label={`Remove stage ${index + 1}`}
+                      aria-label={t.taskTypes.remove(index + 1)}
                       className="rounded-md p-2 text-red-600 hover:bg-red-50 disabled:opacity-30"
                     >
                       <Trash2 size={16} />
@@ -308,7 +310,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
               className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50"
             >
               <Plus size={15} aria-hidden="true" />
-              Add stage
+              {t.taskTypes.addStage}
             </button>
           )}
         </section>
@@ -326,7 +328,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
               disabled={saving || !dirty}
               className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
             >
-              {saving ? "Saving..." : loaded ? "Save changes" : "Create task type"}
+              {saving ? t.common.saving : loaded ? t.taskTypes.saveChanges : t.taskTypes.create}
             </button>
           </div>
         )}
@@ -335,17 +337,17 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
       {loaded && canManage && (
         <section className="flex flex-col justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:p-5">
           <div>
-            <h2 className="text-sm font-semibold">Delete task type</h2>
+            <h2 className="text-sm font-semibold">{t.taskTypes.deleteTitle}</h2>
             <p className="text-xs text-slate-500">
-              Types used by existing tasks are deactivated instead of deleted.
+              {t.taskTypes.deleteHint}
             </p>
           </div>
           <button
             type="button"
             disabled={saving}
             onClick={async () => {
-              const verb = loaded.taskCount > 0 ? "Deactivate" : "Delete";
-              if (!window.confirm(`${verb} ${loaded.name}?`)) return;
+              const verb = loaded.taskCount > 0 ? t.taskTypes.deactivate : t.common.delete;
+              if (!window.confirm(t.taskTypes.confirmRemove(verb, loaded.name))) return;
               setSaving(true);
               try {
                 const result = await api<{ deleted: boolean; taskType: TaskType | null }>(
@@ -359,13 +361,13 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                 setLoaded(result.taskType);
                 setIsActive(result.taskType.isActive);
               } catch (err) {
-                setError(err instanceof Error ? err.message : "Unable to delete.");
+                setError(err instanceof Error ? err.message : t.taskTypes.unableToDelete);
               }
               setSaving(false);
             }}
             className="shrink-0 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
           >
-            {loaded.taskCount > 0 ? "Deactivate" : "Delete"}
+            {loaded.taskCount > 0 ? t.taskTypes.deactivate : t.common.delete}
           </button>
         </section>
       )}
@@ -402,6 +404,7 @@ function CopyStagesDialog({
   onClose: () => void;
   onCopy: (names: string[], mode: "replace" | "append") => void;
 }) {
+  const { t } = useI18n();
   const [sourceId, setSourceId] = useState(sources[0]?.id ?? 0);
   const [mode, setMode] = useState<"replace" | "append">("replace");
   const source = sources.find((type) => type.id === sourceId);
@@ -414,12 +417,12 @@ function CopyStagesDialog({
         aria-labelledby="copy-stages-title"
         className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-xl"
       >
-        <h2 id="copy-stages-title" className="font-semibold">Copy stages from another task type</h2>
+        <h2 id="copy-stages-title" className="font-semibold">{t.taskTypes.copyTitle}</h2>
         <p className="mt-1 text-xs text-slate-500">
-          Copied stages are added to the editor; nothing is saved until you click Save.
+          {t.taskTypes.copyHint}
         </p>
 
-        <label htmlFor="copy-source" className="mt-4 block text-sm font-medium">Copy from</label>
+        <label htmlFor="copy-source" className="mt-4 block text-sm font-medium">{t.taskTypes.copySource}</label>
         <select
           id="copy-source"
           value={sourceId}
@@ -428,7 +431,7 @@ function CopyStagesDialog({
         >
           {sources.map((type) => (
             <option key={type.id} value={type.id}>
-              {type.name} ({type.stages.length} stages){type.isActive ? "" : " — inactive"}
+              {t.taskTypes.copyOption(type.name, type.stages.length, type.isActive)}
             </option>
           ))}
         </select>
@@ -444,14 +447,14 @@ function CopyStagesDialog({
         )}
 
         <fieldset className="mt-4 space-y-1 text-sm">
-          <legend className="sr-only">How to copy</legend>
+          <legend className="sr-only">{t.taskTypes.howToCopy}</legend>
           <label className="flex items-center gap-2">
             <input type="radio" name="copy-mode" checked={mode === "replace"} onChange={() => setMode("replace")} />
-            Replace current stages
+            {t.taskTypes.replace}
           </label>
           <label className="flex items-center gap-2">
             <input type="radio" name="copy-mode" checked={mode === "append"} onChange={() => setMode("append")} />
-            Add after current stages
+            {t.taskTypes.append}
           </label>
         </fieldset>
 
@@ -461,7 +464,7 @@ function CopyStagesDialog({
             onClick={onClose}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm hover:bg-slate-100"
           >
-            Cancel
+            {t.common.cancel}
           </button>
           <button
             type="button"
@@ -469,7 +472,7 @@ function CopyStagesDialog({
             onClick={() => source && onCopy(source.stages.map((stage) => stage.name), mode)}
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
-            Copy stages
+            {t.taskTypes.copyStages}
           </button>
         </div>
       </section>

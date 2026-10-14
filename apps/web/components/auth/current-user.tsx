@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { api, type CurrentUser } from "@/lib/api";
+import { currentLocale, withLocale } from "@/lib/i18n/config";
 
 type CurrentUserState = {
   user: CurrentUser | null;
@@ -32,8 +33,7 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
     await api<void>("/auth/logout", { method: "POST" }).catch(() => {});
     // A full reload, not router.push: nothing the previous user loaded may
     // survive in memory for whoever uses this browser next.
-    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-    window.location.assign("/login");
+    window.location.assign(withLocale(currentLocale(), "/login"));
   }
 
   const can = (permission: string) => Boolean(user?.permissions[permission]);

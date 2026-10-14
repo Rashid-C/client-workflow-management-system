@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, safeNextPath } from "@/lib/api";
+import { withLocale } from "@/lib/i18n/config";
 
 const MIN_LENGTH = 12;
 
@@ -9,6 +11,7 @@ const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
 
 export default function ChangePasswordForm() {
+  const { t, locale } = useI18n();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,11 +23,11 @@ export default function ChangePasswordForm() {
     setError("");
 
     if (newPassword.length < MIN_LENGTH) {
-      setError(`Use at least ${MIN_LENGTH} characters.`);
+      setError(t.auth.tooShort(MIN_LENGTH));
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError("The new passwords do not match.");
+      setError(t.auth.mismatch);
       return;
     }
 
@@ -35,10 +38,10 @@ export default function ChangePasswordForm() {
         body: JSON.stringify({ currentPassword, newPassword }),
       });
       window.location.assign(
-        safeNextPath(new URLSearchParams(window.location.search).get("next")),
+        withLocale(locale, safeNextPath(new URLSearchParams(window.location.search).get("next"))),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to change password.");
+      setError(err instanceof Error ? err.message : t.auth.unableToChange);
       setSubmitting(false);
     }
   }
@@ -47,11 +50,12 @@ export default function ChangePasswordForm() {
     <form onSubmit={changePassword} className="space-y-4" noValidate>
       <div>
         <label htmlFor="current-password" className="text-sm font-medium">
-          Current or temporary password
+          {t.auth.currentPassword}
         </label>
         <input
           id="current-password"
           type="password"
+          dir="ltr"
           autoComplete="current-password"
           value={currentPassword}
           onChange={(event) => setCurrentPassword(event.target.value)}
@@ -61,11 +65,12 @@ export default function ChangePasswordForm() {
 
       <div>
         <label htmlFor="new-password" className="text-sm font-medium">
-          New password
+          {t.auth.newPassword}
         </label>
         <input
           id="new-password"
           type="password"
+          dir="ltr"
           autoComplete="new-password"
           aria-describedby="new-password-hint"
           value={newPassword}
@@ -73,17 +78,18 @@ export default function ChangePasswordForm() {
           className={inputClass}
         />
         <p id="new-password-hint" className="mt-1 text-xs text-slate-500">
-          At least {MIN_LENGTH} characters. A short sentence is easy to remember.
+          {t.auth.newPasswordHint(MIN_LENGTH)}
         </p>
       </div>
 
       <div>
         <label htmlFor="confirm-password" className="text-sm font-medium">
-          Repeat new password
+          {t.auth.repeatPassword}
         </label>
         <input
           id="confirm-password"
           type="password"
+          dir="ltr"
           autoComplete="new-password"
           value={confirmPassword}
           onChange={(event) => setConfirmPassword(event.target.value)}
@@ -102,7 +108,7 @@ export default function ChangePasswordForm() {
         disabled={submitting || !currentPassword || !newPassword}
         className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
       >
-        {submitting ? "Saving..." : "Change password"}
+        {submitting ? t.common.saving : t.auth.changePassword}
       </button>
     </form>
   );

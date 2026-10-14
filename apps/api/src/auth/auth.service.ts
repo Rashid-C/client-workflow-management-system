@@ -178,6 +178,7 @@ export class AuthService {
     >(
       `SELECT s."id" AS "sessionId", s."lastSeenAt",
               e."id" AS "employeeId", e."employeeCode", e."name", e."email",
+              e."preferredLanguage",
               COALESCE(c."mustChangePassword", false) AS "mustChangePassword",
               EXISTS (
                 SELECT 1 FROM "EmployeeRole" er
@@ -222,6 +223,14 @@ export class AuthService {
         ? Object.fromEntries(PERMISSIONS.map((p) => [p.key, 'all']))
         : user.permissions,
     };
+  }
+
+  /** A personal display preference, so it is not written to the audit log. */
+  async setLanguage(user: AuthUser, language: 'en' | 'ar'): Promise<void> {
+    await this.pool.query(
+      `UPDATE "Employee" SET "preferredLanguage" = $2, "updatedAt" = NOW() WHERE "id" = $1`,
+      [user.employeeId, language],
+    );
   }
 
   async logout(user: AuthUser, context: AuditContext): Promise<void> {

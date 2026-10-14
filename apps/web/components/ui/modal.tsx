@@ -2,6 +2,7 @@
 
 import { useEffect, useId, type ReactNode } from "react";
 import { X } from "lucide-react";
+import { useI18n } from "@/components/i18n/i18n-provider";
 
 /** Dialog that opens from the bottom on phones and centred on larger screens. */
 export default function Modal({
@@ -18,6 +19,7 @@ export default function Modal({
   footer: ReactNode;
 }) {
   const titleId = useId();
+  const { t } = useI18n();
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
@@ -41,7 +43,7 @@ export default function Modal({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t.common.close}
             className="rounded-md p-1 text-slate-500 hover:bg-slate-100"
           >
             <X size={18} />

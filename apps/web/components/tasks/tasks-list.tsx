@@ -1,15 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { useCurrentUser } from "@/components/auth/current-user";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import Link, { useRouter } from "@/components/i18n/link";
 import NewTaskDialog from "@/components/tasks/new-task-dialog";
 import { inputClass } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import {
-  formatDay,
   isOverdue,
   STATUS_STYLES,
   taskRef,
@@ -25,6 +25,7 @@ export default function TasksList() {
   const router = useRouter();
   const initial = useSearchParams();
   const { can } = useCurrentUser();
+  const { t, day } = useI18n();
 
   const [search, setSearch] = useState(initial.get("search") ?? "");
   const [status, setStatus] = useState(initial.get("status") ?? "");
@@ -64,7 +65,7 @@ export default function TasksList() {
         })
         .catch((err: unknown) => {
           if (err instanceof Error && err.name === "AbortError") return;
-          setError(err instanceof Error ? err.message : "Unable to load tasks.");
+          setError(err instanceof Error ? err.message : t.tasks.unableToLoad);
         })
         .finally(() => {
           if (!controller.signal.aborted) setLoading(false);
@@ -99,8 +100,8 @@ export default function TasksList() {
     <div className="mx-auto w-full max-w-7xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
       <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
-          <p className="mt-1 text-sm text-slate-500">Client engagements, tracked stage by stage.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t.tasks.title}</h1>
+          <p className="mt-1 text-sm text-slate-500">{t.tasks.subtitle}</p>
         </div>
         {can("tasks.create") && (
           <button
@@ -109,7 +110,7 @@ export default function TasksList() {
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
           >
             <Plus size={16} aria-hidden="true" />
-            New task
+            {t.tasks.newTask}
           </button>
         )}
       </header>
@@ -117,27 +118,27 @@ export default function TasksList() {
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
           <div className="md:col-span-2">
-            <label htmlFor="task-search" className="text-sm font-medium">Search</label>
+            <label htmlFor="task-search" className="text-sm font-medium">{t.common.search}</label>
             <input
               id="task-search"
               value={search}
               onChange={(event) => filterChanged(() => setSearch(event.target.value))}
-              placeholder="Title or number, e.g. #0004"
+              placeholder={t.tasks.searchPlaceholder}
               className={inputClass}
             />
           </div>
           <div>
-            <label htmlFor="task-status" className="text-sm font-medium">Status</label>
+            <label htmlFor="task-status" className="text-sm font-medium">{t.common.status}</label>
             <select id="task-status" value={status} onChange={(event) => filterChanged(() => setStatus(event.target.value))} className={inputClass}>
-              <option value="">All statuses</option>
-              {WORK_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+              <option value="">{t.tasks.allStatuses}</option>
+              {WORK_STATUSES.map((s) => <option key={s} value={s}>{t.status[s]}</option>)}
             </select>
           </div>
           {canFilterPeople ? (
             <div>
-              <label htmlFor="task-assignee" className="text-sm font-medium">Assignee</label>
+              <label htmlFor="task-assignee" className="text-sm font-medium">{t.tasks.assignee}</label>
               <select id="task-assignee" value={assigneeId} onChange={(event) => filterChanged(() => setAssigneeId(event.target.value))} className={inputClass}>
-                <option value="">Anyone</option>
+                <option value="">{t.common.anyone}</option>
                 {people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
             </div>
@@ -146,38 +147,38 @@ export default function TasksList() {
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
           <label className="inline-flex items-center gap-2">
             <input type="checkbox" checked={open} onChange={(event) => filterChanged(() => setOpen(event.target.checked))} />
-            Open only
+            {t.tasks.openOnly}
           </label>
           <label className="inline-flex items-center gap-2">
             <input type="checkbox" checked={overdue} onChange={(event) => filterChanged(() => setOverdue(event.target.checked))} />
-            Overdue only
+            {t.tasks.overdueOnly}
           </label>
           <label className="inline-flex items-center gap-2">
             <input type="checkbox" checked={unassigned} onChange={(event) => filterChanged(() => setUnassigned(event.target.checked))} />
-            Has unassigned stages
+            {t.tasks.hasUnassigned}
           </label>
         </div>
 
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
 
         {loading ? (
-          <p role="status" className="py-8 text-center text-sm text-slate-500">Loading tasks...</p>
+          <p role="status" className="py-8 text-center text-sm text-slate-500">{t.tasks.loading}</p>
         ) : tasks.length === 0 ? (
           <div className="rounded-lg border border-dashed border-slate-200 px-4 py-12 text-center">
-            <p className="font-medium">No tasks found</p>
-            <p className="mt-1 text-sm text-slate-500">Try other filters, or create a task.</p>
+            <p className="font-medium">{t.tasks.noneFound}</p>
+            <p className="mt-1 text-sm text-slate-500">{t.tasks.noneFoundHint}</p>
           </div>
         ) : (
           <>
             <div className="hidden overflow-x-auto md:block">
-              <table className="w-full min-w-212.5 text-left text-sm">
+              <table className="w-full min-w-212.5 text-start text-sm">
                 <thead>
                   <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-                    <th className="px-3 py-3 font-medium">Task</th>
-                    <th className="px-3 py-3 font-medium">Current stage</th>
-                    <th className="px-3 py-3 font-medium">Progress</th>
-                    <th className="px-3 py-3 font-medium">Due</th>
-                    <th className="px-3 py-3 font-medium">Status</th>
+                    <th className="px-3 py-3 font-medium">{t.tasks.task}</th>
+                    <th className="px-3 py-3 font-medium">{t.tasks.currentStage}</th>
+                    <th className="px-3 py-3 font-medium">{t.tasks.progress}</th>
+                    <th className="px-3 py-3 font-medium">{t.tasks.due}</th>
+                    <th className="px-3 py-3 font-medium">{t.common.status}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -189,7 +190,7 @@ export default function TasksList() {
                     >
                       <td className="px-3 py-3">
                         <Link href={`/tasks/${task.id}`} className="font-medium hover:underline" onClick={(event) => event.stopPropagation()}>
-                          <span className="text-slate-400">{taskRef(task.id)}</span> {task.title}
+                          <span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span> {task.title}
                         </Link>
                         <div className="text-xs text-slate-500">{task.client.name} · {task.taskType.name}</div>
                       </td>
@@ -197,13 +198,13 @@ export default function TasksList() {
                         {task.currentStage ? (
                           <>
                             <div>{task.currentStage.position}. {task.currentStage.name}</div>
-                            <div className="text-slate-500">{task.currentStage.assignee?.name ?? "Unassigned"}</div>
+                            <div className="text-slate-500">{task.currentStage.assignee?.name ?? t.common.unassigned}</div>
                           </>
-                        ) : <span className="text-slate-500">All stages done</span>}
+                        ) : <span className="text-slate-500">{t.tasks.allStagesDone}</span>}
                       </td>
                       <td className="px-3 py-3"><Progress task={task} /></td>
                       <td className={`px-3 py-3 text-xs ${isOverdue(task) ? "font-semibold text-red-700" : "text-slate-600"}`}>
-                        {task.dueDate ? formatDay(task.dueDate) : "—"}
+                        {task.dueDate ? day(task.dueDate) : t.common.none}
                       </td>
                       <td className="px-3 py-3"><StatusBadge status={task.status} /></td>
                     </tr>
@@ -218,7 +219,7 @@ export default function TasksList() {
                   <Link href={`/tasks/${task.id}`} className="block rounded-lg border border-slate-200 p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="font-medium"><span className="text-slate-400">{taskRef(task.id)}</span> {task.title}</p>
+                        <p className="font-medium"><span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span> {task.title}</p>
                         <p className="mt-0.5 text-xs text-slate-500">{task.client.name} · {task.taskType.name}</p>
                       </div>
                       <StatusBadge status={task.status} />
@@ -227,7 +228,7 @@ export default function TasksList() {
                       <Progress task={task} />
                       {task.dueDate && (
                         <span className={isOverdue(task) ? "font-semibold text-red-700" : "text-slate-600"}>
-                          Due {formatDay(task.dueDate)}
+                          {t.tasks.dueOn(day(task.dueDate))}
                         </span>
                       )}
                     </div>
@@ -239,7 +240,7 @@ export default function TasksList() {
             {nextBefore !== null && (
               <div className="text-center">
                 <button type="button" onClick={() => void loadOlder()} className="rounded-lg border border-slate-200 px-4 py-2 text-sm hover:bg-slate-100">
-                  Load more
+                  {t.common.loadMore}
                 </button>
               </div>
             )}
@@ -258,9 +259,10 @@ export default function TasksList() {
 }
 
 function StatusBadge({ status }: { status: TaskListItem["status"] }) {
+  const { status: statusLabel } = useI18n();
   return (
     <span className={`inline-flex shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[status]}`}>
-      {status}
+      {statusLabel(status)}
     </span>
   );
 }
@@ -272,7 +274,7 @@ function Progress({ task }: { task: TaskListItem }) {
       <div className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
         <div className="h-full rounded-full bg-blue-600" style={{ width: `${percent}%` }} />
       </div>
-      <span className="text-xs text-slate-500">{task.stagesCompleted}/{task.stagesTotal}</span>
+      <span className="text-xs text-slate-500" dir="ltr">{task.stagesCompleted}/{task.stagesTotal}</span>
     </div>
   );
 }

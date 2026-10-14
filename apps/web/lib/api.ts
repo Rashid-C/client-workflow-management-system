@@ -1,3 +1,5 @@
+import { currentLocale, withLocale, withoutLocale } from "@/lib/i18n/config";
+
 // Same-origin path; next.config.ts rewrites /api to the NestJS API.
 export const API_BASE = "/api/v1";
 
@@ -10,6 +12,7 @@ export type CurrentUser = {
   email: string;
   isSuperAdmin: boolean;
   mustChangePassword: boolean;
+  preferredLanguage: "en" | "ar";
   permissions: Record<string, PermissionScope | undefined>;
 };
 
@@ -30,12 +33,14 @@ async function readApiError(response: Response, fallback: string) {
   return typeof message === "string" ? message : fallback;
 }
 
+/** `path` without a language, e.g. "/login"; the current language is kept. */
 function redirectTo(path: string) {
-  const here = window.location.pathname + window.location.search;
-  if (window.location.pathname !== path) {
+  const page = withoutLocale(window.location.pathname);
+  if (page !== path) {
+    const here = page + window.location.search;
     // Full reload on purpose: drop every piece of state from the old session.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-    window.location.assign(`${path}?next=${encodeURIComponent(here)}`);
+    window.location.assign(`${withLocale(currentLocale(), path)}?next=${encodeURIComponent(here)}`);
   }
 }
 
@@ -77,5 +82,5 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 
 /** Only same-site paths, so ?next= cannot bounce users to another site. */
 export function safeNextPath(next: string | null): string {
-  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+  return next && next.startsWith("/") && !next.startsWith("//") ? next : "/overview";
 }

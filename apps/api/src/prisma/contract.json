@@ -74,6 +74,19 @@
               }
             ]
           },
+          "Language": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "En",
+                "value": "en"
+              },
+              {
+                "name": "Ar",
+                "value": "ar"
+              }
+            ]
+          },
           "PermissionScope": {
             "codecId": "pg/text@1",
             "members": [
@@ -437,6 +450,19 @@
                   "kind": "scalar"
                 }
               },
+              "preferredLanguage": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Language",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "status": {
                 "nullable": false,
                 "type": {
@@ -484,6 +510,9 @@
                 },
                 "phone": {
                   "column": "phone"
+                },
+                "preferredLanguage": {
+                  "column": "preferredLanguage"
                 },
                 "status": {
                   "column": "status"
@@ -1866,6 +1895,11 @@
             "Employee": {
               "checks": [
                 {
+                  "expression": "\"preferredLanguage\" IN ('en', 'ar')",
+                  "name": "Employee_preferredLanguage_check_e4285cbd",
+                  "prefix": "Employee_preferredLanguage_check"
+                },
+                {
                   "expression": "\"status\" IN ('Active', 'Inactive')",
                   "name": "Employee_status_check_cf0b2206",
                   "prefix": "Employee_status_check"
@@ -1919,6 +1953,21 @@
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": true
+                },
+                "preferredLanguage": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "en"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Language",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "status": {
                   "codecId": "pg/text@1",
@@ -3166,6 +3215,13 @@
                 "Inactive"
               ]
             },
+            "Language": {
+              "kind": "valueSet",
+              "values": [
+                "en",
+                "ar"
+              ]
+            },
             "PermissionScope": {
               "kind": "valueSet",
               "values": [
@@ -3188,7 +3244,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "550b02fb5e30ae28ca1bc059765b3e93be77c801fd37b4957d9520c34ee2cfc8"
+    "storageHash": "8045fff9643ff004e4c768087ed0142d2dce8c94df6786c1a33a4c2aa4270796"
   },
   "execution": {
     "executionHash": "ba0cddf96f5eddaab600b11cfd37c7d5f90fb3c395ea4de55b9cfa6cba7c0cc5",

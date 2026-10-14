@@ -16,6 +16,7 @@ describe('AuditService', () => {
     email: 'viewer@firm.ae',
     isSuperAdmin: false,
     mustChangePassword: false,
+    preferredLanguage: 'en',
     permissions: { 'history.view': scope },
   });
 

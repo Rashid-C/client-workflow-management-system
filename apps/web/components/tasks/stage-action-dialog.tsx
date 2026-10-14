@@ -1,19 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import TimeInput from "@/components/tasks/time-input";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { officeToday, type Assignable, type TaskDetail, type TaskStage } from "@/lib/tasks";
 
 export type StageDialogKind = "complete" | "block" | "reassign" | "reopen";
-
-const TITLES: Record<StageDialogKind, string> = {
-  complete: "Complete stage",
-  block: "Block stage",
-  reassign: "Reassign stage",
-  reopen: "Reopen stage",
-};
 
 /** One dialog per stage action, asking exactly what that action needs (slide 13). */
 export default function StageActionDialog({
@@ -33,7 +27,14 @@ export default function StageActionDialog({
   onClose: () => void;
   onDone: (task: TaskDetail) => void;
 }) {
+  const { t } = useI18n();
   const nextStage = task.stages.find((s) => s.position === stage.position + 1);
+  const titles: Record<StageDialogKind, string> = {
+    complete: t.tasks.completeStage,
+    block: t.tasks.blockStage,
+    reassign: t.tasks.reassignStage,
+    reopen: t.tasks.reopenStage,
+  };
 
   const [minutes, setMinutes] = useState(0);
   const [workDate, setWorkDate] = useState(officeToday());
@@ -50,7 +51,7 @@ export default function StageActionDialog({
     let body: Record<string, unknown>;
 
     if (kind === "complete") {
-      if (minutes < 1) return setError("Enter the time spent.");
+      if (minutes < 1) return setError(t.tasks.needTime);
       body = {
         minutes,
         workDate,
@@ -62,17 +63,17 @@ export default function StageActionDialog({
             : undefined,
       };
     } else if (kind === "block") {
-      if (!text.trim()) return setError("Say why the stage is blocked.");
+      if (!text.trim()) return setError(t.tasks.needReason);
       body = { reason: text.trim(), ...(minutes ? { minutes, workDate } : {}) };
     } else if (kind === "reassign") {
       const to = assigneeId ? Number(assigneeId) : null;
-      if (to === (stage.assignee?.id ?? null)) return setError("Choose someone else.");
+      if (to === (stage.assignee?.id ?? null)) return setError(t.tasks.needSomeoneElse);
       if (stage.assignee && !text.trim()) {
-        return setError("Add a comment when moving a stage from one person to another.");
+        return setError(t.tasks.needComment);
       }
       body = { assigneeId: to, comment: text.trim() || undefined, ...(minutes ? { minutes, workDate } : {}) };
     } else {
-      if (!text.trim()) return setError("Say why the stage is reopened.");
+      if (!text.trim()) return setError(t.tasks.needReopenReason);
       body = { comment: text.trim() };
     }
 
@@ -84,7 +85,7 @@ export default function StageActionDialog({
       });
       onDone(updated);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to save.");
+      setError(err instanceof Error ? err.message : t.tasks.unableToSave);
       setSaving(false);
     }
   }
@@ -93,12 +94,12 @@ export default function StageActionDialog({
 
   return (
     <Modal
-      title={TITLES[kind]}
-      subtitle={`Stage ${stage.position} · ${stage.name}`}
+      title={titles[kind]}
+      subtitle={t.tasks.stageSubtitle(stage.position, stage.name)}
       onClose={onClose}
       footer={
         <>
-          <button type="button" onClick={onClose} className={secondaryButton}>Cancel</button>
+          <button type="button" onClick={onClose} className={secondaryButton}>{t.common.cancel}</button>
           <button
             type="button"
             onClick={() => void submit()}
@@ -106,17 +107,17 @@ export default function StageActionDialog({
             className={kind === "block" ? `${primaryButton} bg-red-600 hover:bg-red-700` : primaryButton}
           >
             {saving
-              ? "Saving..."
-              : { complete: "Mark completed", block: "Mark blocked", reassign: "Save", reopen: "Reopen stage" }[kind]}
+              ? t.common.saving
+              : { complete: t.tasks.markCompleted, block: t.tasks.markBlocked, reassign: t.common.save, reopen: t.tasks.reopenAction }[kind]}
           </button>
         </>
       }
     >
       {kind === "reassign" && (
         <div>
-          <label htmlFor="stage-assignee" className="text-sm font-medium">Assign to</label>
+          <label htmlFor="stage-assignee" className="text-sm font-medium">{t.tasks.assignTo}</label>
           <select id="stage-assignee" value={assigneeId} onChange={(event) => setAssigneeId(event.target.value)} className={inputClass}>
-            <option value="">Unassigned</option>
+            <option value="">{t.common.unassigned}</option>
             {people.map((p) => (
               <option key={p.id} value={p.id}>{p.name} · {p.designation}</option>
             ))}
@@ -128,13 +129,13 @@ export default function StageActionDialog({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto]">
           <TimeInput
             id="stage-time"
-            label={timeOptional ? "Time spent so far" : "Time spent"}
+            label={timeOptional ? t.tasks.timeSpentSoFar : t.tasks.timeSpent}
             required={!timeOptional}
             minutes={minutes}
             onChange={setMinutes}
           />
           <div>
-            <label htmlFor="stage-date" className="text-sm font-medium">Date</label>
+            <label htmlFor="stage-date" className="text-sm font-medium">{t.common.date}</label>
             <input
               id="stage-date"
               type="date"
@@ -150,12 +151,12 @@ export default function StageActionDialog({
       <div>
         <label htmlFor="stage-text" className="text-sm font-medium">
           {kind === "block"
-            ? "Why is it blocked? *"
+            ? `${t.tasks.whyBlocked} *`
             : kind === "reopen"
-              ? "Why reopen it? *"
+              ? `${t.tasks.whyReopen} *`
               : kind === "reassign" && stage.assignee
-                ? "Comment *"
-                : "Comment"}
+                ? `${t.common.comment} *`
+                : t.common.comment}
         </label>
         <textarea
           id="stage-text"
@@ -163,12 +164,12 @@ export default function StageActionDialog({
           maxLength={2000}
           value={text}
           onChange={(event) => setText(event.target.value)}
-          placeholder={kind === "complete" ? "Optional notes" : undefined}
+          placeholder={kind === "complete" ? t.tasks.optionalNotes : undefined}
           className={inputClass}
         />
         {kind === "reopen" && (
           <p className="mt-1 text-xs text-slate-500">
-            Later stages that are in progress or blocked go back to Pending.
+            {t.tasks.reopenHint}
           </p>
         )}
       </div>
@@ -176,15 +177,15 @@ export default function StageActionDialog({
       {kind === "complete" && nextStage && canHandOver && (
         <div>
           <label htmlFor="stage-next" className="text-sm font-medium">
-            Assign next stage: {nextStage.name}
+            {t.tasks.assignNext(nextStage.name)}
           </label>
           <select id="stage-next" value={nextAssigneeId} onChange={(event) => setNextAssigneeId(event.target.value)} className={inputClass}>
-            <option value="">{nextStage.assignee ? `Keep ${nextStage.assignee.name}` : "Leave unassigned"}</option>
+            <option value="">{nextStage.assignee ? t.tasks.keep(nextStage.assignee.name) : t.tasks.leaveUnassigned}</option>
             {people.map((p) => (
               <option key={p.id} value={p.id}>{p.name} · {p.designation}</option>
             ))}
           </select>
-          <p className="mt-1 text-xs text-slate-500">Hand the next stage over to a colleague.</p>
+          <p className="mt-1 text-xs text-slate-500">{t.tasks.handOverHint}</p>
         </div>
       )}
 

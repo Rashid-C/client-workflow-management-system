@@ -63,6 +63,7 @@ export type TaskListItem = {
 
 export type Assignable = PersonRef & { designation: string };
 
+/** Badge colours per status; the label comes from useI18n().status(). */
 export const STATUS_STYLES: Record<WorkStatus, string> = {
   Pending: "border-slate-200 bg-slate-100 text-slate-700",
   "In progress": "border-blue-200 bg-blue-50 text-blue-700",
@@ -73,28 +74,9 @@ export const STATUS_STYLES: Record<WorkStatus, string> = {
 /** 4 → "#0004", the number staff search for. */
 export const taskRef = (id: number) => `#${String(id).padStart(4, "0")}`;
 
-export function formatMinutes(minutes: number) {
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  if (!hours) return `${rest}m`;
-  return rest ? `${hours}h ${rest}m` : `${hours}h`;
-}
-
 /** Today's date in the office (Asia/Dubai), as YYYY-MM-DD. */
 export function officeToday() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: OFFICE_TIME_ZONE }).format(new Date());
-}
-
-const dayFormat = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-/** "2026-10-08" → "8 Oct 2026" (a calendar day, so no time zone shift). */
-export function formatDay(day: string) {
-  return dayFormat.format(new Date(`${day}T00:00:00Z`));
 }
 
 export function isOverdue(task: { dueDate: string | null; status: WorkStatus }) {

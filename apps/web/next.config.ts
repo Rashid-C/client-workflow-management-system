@@ -10,7 +10,10 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     // The product calls these task types; keep old bookmarks working.
-    return [{ source: "/workflows", destination: "/task-types", permanent: false }];
+    return [
+      { source: "/workflows", destination: "/task-types", permanent: false },
+      { source: "/:lang(en|ar)/workflows", destination: "/:lang/task-types", permanent: false },
+    ];
   },
   experimental: {
     agentFeedback: true,

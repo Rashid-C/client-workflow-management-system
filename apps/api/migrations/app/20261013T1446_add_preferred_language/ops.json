@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.Employee.preferredLanguage",
+    "label": "Add column \"preferredLanguage\" to \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "preferredLanguage",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"preferredLanguage\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "preferredLanguage"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"preferredLanguage\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD COLUMN \"preferredLanguage\" text DEFAULT 'en' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"preferredLanguage\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "preferredLanguage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Employee.Employee_preferredLanguage_check_e4285cbd",
+    "label": "Add check constraint \"Employee_preferredLanguage_check_e4285cbd\" on \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Employee_preferredLanguage_check_e4285cbd",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Employee_preferredLanguage_check_e4285cbd\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_preferredLanguage_check_e4285cbd",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Employee_preferredLanguage_check_e4285cbd\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD CONSTRAINT \"Employee_preferredLanguage_check_e4285cbd\" CHECK (\"preferredLanguage\" IN ('en', 'ar'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Employee_preferredLanguage_check_e4285cbd\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Employee_preferredLanguage_check_e4285cbd",
+          "public",
+          "\"public\".\"Employee\""
+        ]
+      }
+    ]
+  }
+]

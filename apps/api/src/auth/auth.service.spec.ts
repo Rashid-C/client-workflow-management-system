@@ -40,6 +40,7 @@ describe('AuthService', () => {
     email: 'sam@firm.ae',
     isSuperAdmin: false,
     mustChangePassword: false,
+    preferredLanguage: 'en',
     permissions: { 'tasks.view': 'own' },
     lastSeenAt: new Date(),
     ...overrides,

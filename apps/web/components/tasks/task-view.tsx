@@ -1,19 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Archive, ArchiveRestore, ArrowLeft, Ban, CheckCircle2, Pencil, Play, RotateCcw, UserRound } from "lucide-react";
 import EntityHistory from "@/components/audit/entity-history";
 import { useCurrentUser } from "@/components/auth/current-user";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import Link from "@/components/i18n/link";
 import StageActionDialog, { type StageDialogKind } from "@/components/tasks/stage-action-dialog";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api, ApiError } from "@/lib/api";
-import { formatOfficeTime } from "@/lib/audit";
 import {
   canOnStage,
   earlierStagesDone,
-  formatDay,
-  formatMinutes,
   isOverdue,
   STATUS_STYLES,
   taskRef,
@@ -27,6 +25,7 @@ const smallButton =
 
 export default function TaskView({ taskId }: { taskId: number }) {
   const { user, can } = useCurrentUser();
+  const { t, minutes, day, dateTime, status } = useI18n();
   const [task, setTask] = useState<TaskDetail | null>(null);
   const [people, setPeople] = useState<Assignable[]>([]);
   const [error, setError] = useState("");
@@ -44,9 +43,10 @@ export default function TaskView({ taskId }: { taskId: number }) {
       .then(setTask)
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof ApiError && err.status === 404 ? "This task does not exist, or you cannot see it." : err instanceof Error ? err.message : "Unable to load the task.");
+        setError(err instanceof ApiError && err.status === 404 ? t.tasks.notFound : err instanceof Error ? err.message : t.tasks.unableToLoadTask);
       });
     return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
   }, [taskId]);
 
   useEffect(() => {
@@ -68,19 +68,19 @@ export default function TaskView({ taskId }: { taskId: number }) {
     try {
       updated(await api<TaskDetail>(`/tasks/${taskId}/stages/${stage.position}/${action}`, { method: "POST" }));
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Unable to update the stage.");
+      setActionError(err instanceof Error ? err.message : t.tasks.unableToUpdate);
     } finally {
       setBusy(false);
     }
   }
 
   async function setArchived(archived: boolean) {
-    if (archived && !window.confirm("Archive this task? It is kept with its history and can be restored.")) return;
+    if (archived && !window.confirm(t.tasks.confirmArchive)) return;
     setBusy(true);
     try {
       updated(await api<TaskDetail>(`/tasks/${taskId}/${archived ? "archive" : "restore"}`, { method: "POST" }));
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "Unable to update the task.");
+      setActionError(err instanceof Error ? err.message : t.tasks.unableToUpdateTask);
     } finally {
       setBusy(false);
     }
@@ -90,11 +90,11 @@ export default function TaskView({ taskId }: { taskId: number }) {
     return (
       <div className="p-6">
         <p role="alert" className="text-sm text-red-700">{error}</p>
-        <Link href="/tasks" className="mt-3 inline-block text-sm text-blue-700 hover:underline">Back to tasks</Link>
+        <Link href="/tasks" className="mt-3 inline-block text-sm text-blue-700 hover:underline">{t.tasks.backToTasks}</Link>
       </div>
     );
   }
-  if (!task) return <p role="status" className="p-6 text-sm text-slate-500">Loading task...</p>;
+  if (!task) return <p role="status" className="p-6 text-sm text-slate-500">{t.tasks.loadingTask}</p>;
 
   const live = !task.archivedAt;
   const completedCount = task.stages.filter((s) => s.status === "Completed").length;
@@ -104,13 +104,13 @@ export default function TaskView({ taskId }: { taskId: number }) {
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div className="min-w-0">
           <Link href="/tasks" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900">
-            <ArrowLeft size={15} aria-hidden="true" />
-            Tasks
+            <ArrowLeft size={15} className="rtl:rotate-180" aria-hidden="true" />
+            {t.tasks.title}
           </Link>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-slate-400">{taskRef(task.id)}</span>
-            <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[task.status]}`}>{task.status}</span>
-            {!live && <span className="rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs">Archived</span>}
+            <span className="text-sm text-slate-400" dir="ltr">{taskRef(task.id)}</span>
+            <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[task.status]}`}>{status(task.status)}</span>
+            {!live && <span className="rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs">{t.tasks.archived}</span>}
           </div>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight">{task.title}</h1>
           <p className="text-sm text-slate-500">{task.client.name} · {task.taskType.name}</p>
@@ -118,13 +118,13 @@ export default function TaskView({ taskId }: { taskId: number }) {
         <div className="flex shrink-0 gap-2">
           {live && can("tasks.edit") && (
             <button type="button" onClick={() => setEditing(true)} className={smallButton}>
-              <Pencil size={14} aria-hidden="true" /> Edit
+              <Pencil size={14} aria-hidden="true" /> {t.common.edit}
             </button>
           )}
           {can("tasks.delete") && (
             <button type="button" onClick={() => void setArchived(live)} disabled={busy} className={smallButton}>
               {live ? <Archive size={14} aria-hidden="true" /> : <ArchiveRestore size={14} aria-hidden="true" />}
-              {live ? "Archive" : "Restore"}
+              {live ? t.tasks.archive : t.tasks.restore}
             </button>
           )}
         </div>
@@ -135,8 +135,8 @@ export default function TaskView({ taskId }: { taskId: number }) {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_18rem]">
         <section aria-labelledby="stages-title" className="rounded-xl border border-slate-200 bg-white">
           <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-3">
-            <h2 id="stages-title" className="font-semibold">Stages</h2>
-            <span className="text-xs text-slate-500">{completedCount}/{task.stages.length}</span>
+            <h2 id="stages-title" className="font-semibold">{t.tasks.stages}</h2>
+            <span className="text-xs text-slate-500" dir="ltr">{completedCount}/{task.stages.length}</span>
           </div>
           <ol className="divide-y divide-slate-100">
             {task.stages.map((stage) => {
@@ -157,25 +157,25 @@ export default function TaskView({ taskId }: { taskId: number }) {
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="font-medium">{stage.name}</p>
-                        <span className={`rounded-full border px-2 py-0.5 text-xs ${STATUS_STYLES[stage.status]}`}>{stage.status}</span>
+                        <span className={`rounded-full border px-2 py-0.5 text-xs ${STATUS_STYLES[stage.status]}`}>{status(stage.status)}</span>
                       </div>
                       <p className="mt-0.5 text-xs text-slate-500">
                         {stage.assignee ? (
                           <span className={mine ? "font-medium text-blue-700" : ""}>
-                            {stage.assignee.name}{mine ? " (you)" : ""}
-                            {stage.assignee.status !== "Active" ? " · inactive" : ""}
+                            {stage.assignee.name}{mine ? ` (${t.common.you})` : ""}
+                            {stage.assignee.status !== "Active" ? ` · ${t.tasks.inactive}` : ""}
                           </span>
-                        ) : <em>Unassigned</em>}
-                        {stage.minutes > 0 && ` · ${formatMinutes(stage.minutes)} logged`}
+                        ) : <em>{t.common.unassigned}</em>}
+                        {stage.minutes > 0 && ` · ${t.tasks.logged(minutes(stage.minutes))}`}
                       </p>
                       {stage.status === "Pending" && !ready && (
-                        <p className="mt-0.5 text-xs text-slate-400">Starts after earlier stages are completed</p>
+                        <p className="mt-0.5 text-xs text-slate-400">{t.tasks.startsAfter}</p>
                       )}
                       {stage.status === "Blocked" && stage.blockedReason && (
                         <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-xs text-red-800">
                           &ldquo;{stage.blockedReason}&rdquo;
                           {stage.blockedBy && stage.blockedAt && (
-                            <span className="text-red-600"> — {stage.blockedBy.name}, {formatOfficeTime(stage.blockedAt)}</span>
+                            <span className="text-red-600"> — {stage.blockedBy.name}, {dateTime(stage.blockedAt)}</span>
                           )}
                         </p>
                       )}
@@ -183,32 +183,32 @@ export default function TaskView({ taskId }: { taskId: number }) {
                       <div className="mt-2 flex flex-wrap gap-2">
                         {canWork && stage.status === "Pending" && ready && (
                           <button type="button" disabled={busy} onClick={() => void quickAction(stage, "start")} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
-                            <Play size={13} aria-hidden="true" /> Start
+                            <Play size={13} className="rtl:rotate-180" aria-hidden="true" /> {t.tasks.start}
                           </button>
                         )}
                         {canWork && stage.status === "In progress" && (
                           <button type="button" onClick={() => setDialog({ kind: "complete", stage })} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
-                            <CheckCircle2 size={13} aria-hidden="true" /> Complete
+                            <CheckCircle2 size={13} aria-hidden="true" /> {t.tasks.complete}
                           </button>
                         )}
                         {canWork && stage.status === "Blocked" && ready && (
                           <button type="button" disabled={busy} onClick={() => void quickAction(stage, "resume")} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
-                            <Play size={13} aria-hidden="true" /> Resume
+                            <Play size={13} className="rtl:rotate-180" aria-hidden="true" /> {t.tasks.resume}
                           </button>
                         )}
                         {canWork && (stage.status === "In progress" || (stage.status === "Pending" && ready)) && (
                           <button type="button" onClick={() => setDialog({ kind: "block", stage })} className={smallButton}>
-                            <Ban size={13} aria-hidden="true" /> Block
+                            <Ban size={13} aria-hidden="true" /> {t.tasks.block}
                           </button>
                         )}
                         {canMove && stage.status !== "Completed" && (
                           <button type="button" onClick={() => setDialog({ kind: "reassign", stage })} className={smallButton}>
-                            <UserRound size={13} aria-hidden="true" /> {stage.assignee ? "Reassign" : "Assign"}
+                            <UserRound size={13} aria-hidden="true" /> {stage.assignee ? t.tasks.reassign : t.tasks.assign}
                           </button>
                         )}
                         {live && can("tasks.reopen") && stage.status === "Completed" && (
                           <button type="button" onClick={() => setDialog({ kind: "reopen", stage })} className={smallButton}>
-                            <RotateCcw size={13} aria-hidden="true" /> Reopen
+                            <RotateCcw size={13} aria-hidden="true" /> {t.tasks.reopen}
                           </button>
                         )}
                       </div>
@@ -222,18 +222,18 @@ export default function TaskView({ taskId }: { taskId: number }) {
 
         <aside className="h-fit rounded-xl border border-slate-200 bg-white p-4 text-sm">
           <dl className="space-y-3">
-            <Fact label="Client">{task.client.name} <span className="text-slate-400">({task.client.clientCode})</span></Fact>
-            <Fact label="Task type">{task.taskType.name}</Fact>
-            <Fact label="Due date">
+            <Fact label={t.common.client}>{task.client.name} <span className="text-slate-400" dir="ltr">({task.client.clientCode})</span></Fact>
+            <Fact label={t.tasks.taskTypeLabel}>{task.taskType.name}</Fact>
+            <Fact label={t.tasks.dueDate}>
               {task.dueDate ? (
                 <span className={isOverdue(task) ? "font-semibold text-red-700" : ""}>
-                  {formatDay(task.dueDate)}{isOverdue(task) ? " · overdue" : ""}
+                  {day(task.dueDate)}{isOverdue(task) ? t.tasks.overdueSuffix : ""}
                 </span>
-              ) : "—"}
+              ) : t.common.none}
             </Fact>
-            <Fact label="Total time">{formatMinutes(task.totalMinutes)}</Fact>
-            <Fact label="Created by">{task.createdBy.name}</Fact>
-            <Fact label="Created">{formatOfficeTime(task.createdAt)}</Fact>
+            <Fact label={t.tasks.totalTime}>{minutes(task.totalMinutes)}</Fact>
+            <Fact label={t.tasks.createdBy}>{task.createdBy.name}</Fact>
+            <Fact label={t.tasks.created}>{dateTime(task.createdAt)}</Fact>
           </dl>
           {task.description && <p className="mt-4 whitespace-pre-wrap border-t border-slate-100 pt-3 text-slate-700">{task.description}</p>}
         </aside>
@@ -241,18 +241,18 @@ export default function TaskView({ taskId }: { taskId: number }) {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <section aria-labelledby="time-title" className="rounded-xl border border-slate-200 bg-white p-4">
-          <h2 id="time-title" className="text-sm font-semibold">Time logs</h2>
+          <h2 id="time-title" className="text-sm font-semibold">{t.tasks.timeLogs}</h2>
           {task.timeEntries.length === 0 ? (
-            <p className="py-3 text-xs text-slate-500">No time logged yet.</p>
+            <p className="py-3 text-xs text-slate-500">{t.tasks.noTime}</p>
           ) : (
             <ul className="mt-2 divide-y divide-slate-100">
               {task.timeEntries.map((entry) => (
                 <li key={entry.id} className="flex items-start justify-between gap-3 py-2 text-xs">
                   <div className="min-w-0">
                     <p className="font-medium text-slate-800">{entry.employee.name} · {entry.stagePosition}. {entry.stageName}</p>
-                    <p className="text-slate-500">{formatDay(entry.workDate)}{entry.note ? ` · ${entry.note}` : ""}</p>
+                    <p className="text-slate-500">{day(entry.workDate)}{entry.note ? ` · ${entry.note}` : ""}</p>
                   </div>
-                  <span className="shrink-0 font-medium">{formatMinutes(entry.minutes)}</span>
+                  <span className="shrink-0 font-medium">{minutes(entry.minutes)}</span>
                 </li>
               ))}
             </ul>
@@ -305,9 +305,10 @@ function EditTaskDialog({
   const [dueDate, setDueDate] = useState(task.dueDate ?? "");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const { t } = useI18n();
 
   async function save() {
-    if (!title.trim()) return setError("Give the task a title.");
+    if (!title.trim()) return setError(t.tasks.needTitle);
     setSaving(true);
     try {
       onSaved(
@@ -322,35 +323,35 @@ function EditTaskDialog({
         }),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to save.");
+      setError(err instanceof Error ? err.message : t.tasks.unableToSave);
       setSaving(false);
     }
   }
 
   return (
     <Modal
-      title="Edit task"
+      title={t.tasks.editTask}
       subtitle={taskRef(task.id)}
       onClose={onClose}
       footer={
         <>
-          <button type="button" onClick={onClose} className={secondaryButton}>Cancel</button>
+          <button type="button" onClick={onClose} className={secondaryButton}>{t.common.cancel}</button>
           <button type="button" onClick={() => void save()} disabled={saving} className={primaryButton}>
-            {saving ? "Saving..." : "Save"}
+            {saving ? t.common.saving : t.common.save}
           </button>
         </>
       }
     >
       <div>
-        <label htmlFor="edit-title" className="text-sm font-medium">Title *</label>
+        <label htmlFor="edit-title" className="text-sm font-medium">{t.tasks.titleLabel} *</label>
         <input id="edit-title" value={title} maxLength={200} onChange={(event) => setTitle(event.target.value)} className={inputClass} />
       </div>
       <div>
-        <label htmlFor="edit-due" className="text-sm font-medium">Due date</label>
+        <label htmlFor="edit-due" className="text-sm font-medium">{t.tasks.dueDate}</label>
         <input id="edit-due" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} className={inputClass} />
       </div>
       <div>
-        <label htmlFor="edit-description" className="text-sm font-medium">Description</label>
+        <label htmlFor="edit-description" className="text-sm font-medium">{t.tasks.description}</label>
         <textarea id="edit-description" rows={4} maxLength={2000} value={description} onChange={(event) => setDescription(event.target.value)} className={inputClass} />
       </div>
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}

@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, safeNextPath, type CurrentUser } from "@/lib/api";
+import { LOCALE_COOKIE, withLocale } from "@/lib/i18n/config";
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
 
 export default function LoginForm() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,17 +26,18 @@ export default function LoginForm() {
         body: JSON.stringify({ email: email.trim(), password }),
       });
 
-      const next = safeNextPath(
-        new URLSearchParams(window.location.search).get("next"),
-      );
-      // Full navigation so every page starts with the new session.
+      // Continue in the person's saved language, wherever they signed in.
+      const language = user.preferredLanguage;
+      document.cookie = `${LOCALE_COOKIE}=${language}; path=/; max-age=31536000; samesite=lax`;
+      const next = safeNextPath(new URLSearchParams(window.location.search).get("next"));
       window.location.assign(
-        user.mustChangePassword
-          ? `/change-password?next=${encodeURIComponent(next)}`
-          : next,
+        withLocale(
+          language,
+          user.mustChangePassword ? `/change-password?next=${encodeURIComponent(next)}` : next,
+        ),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to sign in.");
+      setError(err instanceof Error ? err.message : t.auth.unableToSignIn);
       setSubmitting(false);
     }
   }
@@ -42,11 +46,12 @@ export default function LoginForm() {
     <form onSubmit={signIn} className="space-y-4" noValidate>
       <div>
         <label htmlFor="login-email" className="text-sm font-medium">
-          Email
+          {t.auth.email}
         </label>
         <input
           id="login-email"
           type="email"
+          dir="ltr"
           autoComplete="username"
           required
           value={email}
@@ -57,11 +62,12 @@ export default function LoginForm() {
 
       <div>
         <label htmlFor="login-password" className="text-sm font-medium">
-          Password
+          {t.auth.password}
         </label>
         <input
           id="login-password"
           type="password"
+          dir="ltr"
           autoComplete="current-password"
           required
           value={password}
@@ -81,7 +87,7 @@ export default function LoginForm() {
         disabled={submitting || !email || !password}
         className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
       >
-        {submitting ? "Signing in..." : "Sign in"}
+        {submitting ? t.auth.signingIn : t.auth.signIn}
       </button>
     </form>
   );

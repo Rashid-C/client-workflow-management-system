@@ -33,6 +33,7 @@ describe('EmployeesService', () => {
     email: 'admin@firm.ae',
     isSuperAdmin: true,
     mustChangePassword: false,
+    preferredLanguage: 'en',
     permissions: { 'employees.view': 'all', 'employees.deactivate': 'all' },
   };
 
