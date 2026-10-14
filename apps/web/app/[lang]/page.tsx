@@ -17,6 +17,7 @@ import {
 import BrandLogo, { BRAND_NAME } from "@/components/brand/brand-logo";
 import Link from "@/components/i18n/link";
 import MobileNavigation from "@/components/marketing/mobile-navigation";
+import SocialLinks, { type SocialNetwork } from "@/components/marketing/social-icons";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
 import logo from "@/public/brand/alfath-logo.png";
 
@@ -25,8 +26,15 @@ import logo from "@/public/brand/alfath-logo.png";
 const OFFICE = {
   phones: ["+971 58 584 8008", "+971 55 776 9483"],
   email: "info@alfathuae.com",
-  mapsQuery: "Building No. 7.M6, Al Nahyan, Abu Dhabi, UAE",
+  // The office's pin, as given by the client.
+  coordinates: "24.47558,54.38038",
 };
+const DIRECTIONS_URL = `https://www.google.com/maps/search/?api=1&query=${OFFICE.coordinates}`;
+const MAP_EMBED_URL = `https://www.google.com/maps?q=${OFFICE.coordinates}&z=16&output=embed`;
+
+// Add each profile's address here when the client provides it; icons only
+// appear for networks listed (the old site's icons linked nowhere).
+const SOCIAL: readonly { network: SocialNetwork; url: string }[] = [];
 
 type Service = { title: string; text: string; icon: LucideIcon };
 
@@ -107,13 +115,18 @@ const content = {
     contactEyebrow: "Contact",
     contactHeading: "Visit or contact our office.",
     contactText: "Call, email or visit us in Abu Dhabi to discuss what your business needs.",
-    address: "Building No. 7.M6, Al Nahyan, Abu Dhabi, UAE",
+    address: "Building No. 33 M04, Defence Road, Al Nahyan, Abu Dhabi, UAE",
     addressLabel: "Office",
+    mapTitle: "Map showing the Al Fath office in Al Nahyan, Abu Dhabi",
     phoneLabel: "Phone",
     emailLabel: "Email",
     directions: "Get directions",
-    staffHeading: "Al Fath staff",
-    staffText: "Sign in to the internal workspace for clients, tasks and time.",
+    footerAbout:
+      "A trusted accounting and tax firm in Abu Dhabi, offering accounting, auditing, tax advisory and business consultancy services.",
+    quickLinks: "Quick links",
+    home: "Home",
+    ourServices: "Our services",
+    contactUs: "Contact us",
     copyright: "All rights reserved.",
     languageName: "العربية",
     languagePath: "/ar",
@@ -193,13 +206,18 @@ const content = {
     contactEyebrow: "تواصل معنا",
     contactHeading: "زوروا مكتبنا أو تواصلوا معنا.",
     contactText: "اتصلوا بنا أو راسلونا أو زورونا في أبوظبي لمناقشة احتياجات أعمالكم.",
-    address: "المبنى رقم 7.M6، آل نهيان، أبوظبي، الإمارات العربية المتحدة",
+    address: "المبنى رقم 33 M04، شارع الدفاع، آل نهيان، أبوظبي، الإمارات العربية المتحدة",
     addressLabel: "المكتب",
+    mapTitle: "خريطة توضح مكتب الفتح في آل نهيان، أبوظبي",
     phoneLabel: "الهاتف",
     emailLabel: "البريد الإلكتروني",
     directions: "الاتجاهات",
-    staffHeading: "موظفو الفتح",
-    staffText: "سجّلوا الدخول إلى مساحة العمل الداخلية للعملاء والمهام والوقت.",
+    footerAbout:
+      "شركة محاسبة وضرائب موثوقة في أبوظبي، تقدم خدمات المحاسبة والتدقيق والاستشارات الضريبية واستشارات الأعمال.",
+    quickLinks: "روابط سريعة",
+    home: "الرئيسية",
+    ourServices: "خدماتنا",
+    contactUs: "تواصل معنا",
     copyright: "جميع الحقوق محفوظة.",
     languageName: "English",
     languagePath: "/en",
@@ -220,6 +238,8 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">): Promis
 }
 
 const sectionEyebrow = "text-xs font-semibold uppercase tracking-[0.16em] text-brand-700";
+const footerHeading = "text-xs font-semibold uppercase tracking-[0.16em] text-white";
+const footerLink = "text-slate-400 transition hover:text-white";
 const sectionHeading = "mt-3 text-3xl font-semibold leading-tight tracking-[-0.03em] text-navy-950 sm:text-4xl";
 
 export default async function HomePage({ params }: PageProps<"/[lang]">) {
@@ -233,7 +253,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
   ] as const;
 
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <main id="top" className="min-h-screen bg-white text-slate-900">
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
           <Link href="/" aria-label={BRAND_NAME} className="shrink-0">
@@ -386,7 +406,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
               <ContactRow icon={MapPin} label={copy.addressLabel}>
                 <span>{copy.address}</span>
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(OFFICE.mapsQuery)}`}
+                  href={DIRECTIONS_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-1 inline-flex w-fit items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800"
@@ -410,32 +430,71 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             </dl>
           </div>
 
-          <div className="flex flex-col justify-end">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
-              <BrandLogo variant="mark" />
-              <h3 className="mt-5 text-lg font-semibold text-navy-950">{copy.staffHeading}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{copy.staffText}</p>
-              <Link
-                href="/login"
-                className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-navy-900 px-5 text-sm font-semibold text-white transition hover:bg-navy-800"
-              >
-                {copy.staffSignIn}
-                <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
-              </Link>
-            </div>
+          <div className="min-h-[320px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 lg:min-h-0">
+            <iframe
+              title={copy.mapTitle}
+              src={MAP_EMBED_URL}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="size-full min-h-[320px] border-0"
+            />
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <BrandLogo />
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link href="/login" className="transition hover:text-navy-900">{copy.staffSignIn}</Link>
-            <Link href={copy.languagePath} className="transition hover:text-navy-900">{copy.languageName}</Link>
-            <span>
-              © 2026 {BRAND_NAME}. {copy.copyright}
-            </span>
+      <footer className="bg-navy-950 text-slate-300">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 sm:px-8 lg:grid-cols-[1.3fr_0.7fr_1.4fr_1fr] lg:gap-12">
+          <div>
+            <BrandLogo variant="full" tone="dark" />
+            <p className="mt-5 max-w-sm text-sm leading-6 text-slate-400">{copy.footerAbout}</p>
+            <SocialLinks links={SOCIAL} className="mt-5" />
+          </div>
+
+          <nav aria-label={copy.quickLinks}>
+            <h2 className={footerHeading}>{copy.quickLinks}</h2>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li><a href="#top" className={footerLink}>{copy.home}</a></li>
+              {navItems.map((item) => (
+                <li key={item.href}><a href={item.href} className={footerLink}>{item.label}</a></li>
+              ))}
+              <li><Link href="/login" className={footerLink}>{copy.staffSignIn}</Link></li>
+            </ul>
+          </nav>
+
+          <div>
+            <h2 className={footerHeading}>{copy.ourServices}</h2>
+            <ul className="mt-4 grid gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
+              {[...copy.services.map((s) => s.title), ...copy.more].map((title) => (
+                <li key={title}><a href="#services" className={footerLink}>{title}</a></li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className={footerHeading}>{copy.contactUs}</h2>
+            <ul className="mt-4 space-y-3.5 text-sm">
+              <li className="flex gap-2.5">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-brand-300" aria-hidden="true" />
+                <a href={DIRECTIONS_URL} target="_blank" rel="noopener noreferrer" className={footerLink}>{copy.address}</a>
+              </li>
+              {OFFICE.phones.map((phone) => (
+                <li key={phone} className="flex gap-2.5">
+                  <Phone className="mt-0.5 size-4 shrink-0 text-brand-300" aria-hidden="true" />
+                  <a href={`tel:${phone.replace(/\s/g, "")}`} dir="ltr" className={footerLink}>{phone}</a>
+                </li>
+              ))}
+              <li className="flex gap-2.5">
+                <Mail className="mt-0.5 size-4 shrink-0 text-brand-300" aria-hidden="true" />
+                <a href={`mailto:${OFFICE.email}`} dir="ltr" className={footerLink}>{OFFICE.email}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-white/10">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+            <p>© 2026 {BRAND_NAME}. {copy.copyright}</p>
+            <Link href={copy.languagePath} className="w-fit transition hover:text-white">{copy.languageName}</Link>
           </div>
         </div>
       </footer>

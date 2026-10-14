@@ -43,7 +43,7 @@ const initialCompany: CompanySettings = {
   companyName: "Al Fath Accounts & Tax Solutions",
   email: "info@alfathuae.com",
   phone: "+971 58 584 8008",
-  address: "Building No. 7.M6, Al Nahyan, Abu Dhabi, UAE",
+  address: "Building No. 33 M04, Defence Road, Al Nahyan, Abu Dhabi, UAE",
   taxNumber: "",
 };
 
