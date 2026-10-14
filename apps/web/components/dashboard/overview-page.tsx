@@ -12,7 +12,7 @@ import { STATUS_STYLES, taskRef } from "@/lib/tasks";
 
 export default function OverviewPage() {
   const { user, can } = useCurrentUser();
-  const { t, minutes, day, dateTime, status } = useI18n();
+  const { t, minutes, day, dateTime, status, errorText } = useI18n();
   const [data, setData] = useState<Dashboard | null>(null);
   const [error, setError] = useState("");
 
@@ -22,7 +22,7 @@ export default function OverviewPage() {
       .then(setData)
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : t.dashboard.unableToLoad);
+        setError(errorText(err, t.dashboard.unableToLoad));
       });
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- load once
@@ -40,7 +40,7 @@ export default function OverviewPage() {
           <p className="mt-1 text-sm text-slate-500">{t.dashboard.subtitle}</p>
         </div>
         {can("tasks.create") && (
-          <Link href="/tasks" className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700">
+          <Link href="/tasks" className="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
             {t.dashboard.goToTasks}
           </Link>
         )}
@@ -61,7 +61,7 @@ export default function OverviewPage() {
           <section aria-labelledby="my-work-title" className="rounded-xl border border-slate-200 bg-white">
             <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
               <h2 id="my-work-title" className="text-sm font-semibold">{t.dashboard.myWork}</h2>
-              <Link href="/my-work" className="text-xs text-blue-700 hover:underline">{t.dashboard.seeAll}</Link>
+              <Link href="/my-work" className="text-xs text-brand-700 hover:underline">{t.dashboard.seeAll}</Link>
             </div>
             <MyWorkList items={data.myWork.slice(0, 8)} />
           </section>
@@ -199,7 +199,7 @@ function WorkloadList({ rows }: { rows: NonNullable<Dashboard["team"]>["workload
             </p>
           </div>
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-            <div className="h-full rounded-full bg-blue-600" style={{ width: `${(row.openStages / maxStages) * 100}%` }} />
+            <div className="h-full rounded-full bg-brand-600" style={{ width: `${(row.openStages / maxStages) * 100}%` }} />
           </div>
         </li>
       ))}

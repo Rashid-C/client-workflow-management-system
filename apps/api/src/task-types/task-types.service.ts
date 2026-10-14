@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import type { Pool, PoolClient } from 'pg';
 import { AuditService, type AuditContext } from '../audit/audit.service.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
@@ -59,7 +60,7 @@ export class TaskTypesService {
 
   async findOne(id: number): Promise<TaskType> {
     const type = await this.findById(this.pool, id);
-    if (!type) throw new NotFoundException('Task type not found');
+    if (!type) throw new NotFoundException(problem('task_types.not_found', 'Task type not found'));
     return type;
   }
 
@@ -104,12 +105,12 @@ export class TaskTypesService {
         `SELECT 1 FROM "TaskType" WHERE "id" = $1 FOR UPDATE`,
         [id],
       );
-      if (!locked.rowCount) throw new NotFoundException('Task type not found');
+      if (!locked.rowCount) throw new NotFoundException(problem('task_types.not_found', 'Task type not found'));
 
       const current = (await this.findById(db, id))!;
       if (current.version !== data.version) {
         throw new ConflictException(
-          'Someone else changed this task type. Reload it and make your changes again.',
+          problem('task_types.stale', 'Someone else changed this task type. Reload it and make your changes again.'),
         );
       }
 
@@ -173,7 +174,7 @@ export class TaskTypesService {
         `SELECT 1 FROM "TaskType" WHERE "id" = $1 FOR UPDATE`,
         [id],
       );
-      if (!locked.rowCount) throw new NotFoundException('Task type not found');
+      if (!locked.rowCount) throw new NotFoundException(problem('task_types.not_found', 'Task type not found'));
       const current = (await this.findById(db, id))!;
 
       if (current.taskCount > 0) {
@@ -241,7 +242,7 @@ export class TaskTypesService {
     } catch (error) {
       await connection.query('ROLLBACK');
       if ((error as { code?: string }).code === '23505') {
-        throw new ConflictException('A task type with this name already exists');
+        throw new ConflictException(problem('task_types.name_taken', 'A task type with this name already exists'));
       }
       throw error;
     } finally {
@@ -255,15 +256,17 @@ function normalize(data: CreateTaskTypeDto) {
   const name = data.name.trim();
   const stages = data.stages.map((stage) => stage.trim());
 
-  if (!name) throw new BadRequestException('Name is required');
+  if (!name) throw new BadRequestException(problem('task_types.name_required', 'Name is required'));
   if (stages.some((stage) => !stage)) {
-    throw new BadRequestException('Stage names cannot be blank');
+    throw new BadRequestException(problem('task_types.stage_blank', 'Stage names cannot be blank'));
   }
   const seen = new Set<string>();
   for (const stage of stages) {
     const key = stage.toLowerCase();
     if (seen.has(key)) {
-      throw new BadRequestException(`Stage "${stage}" appears more than once`);
+      throw new BadRequestException(
+        problem('task_types.stage_duplicate', `Stage "${stage}" appears more than once`, { stage }),
+      );
     }
     seen.add(key);
   }

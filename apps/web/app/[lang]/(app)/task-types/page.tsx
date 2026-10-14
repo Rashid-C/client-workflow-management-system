@@ -10,7 +10,7 @@ import type { TaskType } from "@/lib/task-types";
 
 export default function TaskTypesPage() {
   const { can } = useCurrentUser();
-  const { t } = useI18n();
+  const { t, errorText } = useI18n();
   const [showInactive, setShowInactive] = useState(false);
   const [types, setTypes] = useState<TaskType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function TaskTypesPage() {
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : t.taskTypes.unableToLoad);
+        setError(errorText(err, t.taskTypes.unableToLoad));
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
@@ -48,7 +48,7 @@ export default function TaskTypesPage() {
         {can("workflows.manage") && (
           <Link
             href="/task-types/new"
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
           >
             <Plus size={16} aria-hidden="true" />
             {t.taskTypes.newType}

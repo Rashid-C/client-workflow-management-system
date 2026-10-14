@@ -34,15 +34,17 @@ describe('transitionError', () => {
       expect(transitionError('start', stages('Pending', 'Pending'), 1)).toBeNull();
     });
     it('waits for earlier stages', () => {
-      expect(transitionError('start', stages('In progress', 'Pending'), 2)).toBe(
-        'Earlier stages must be completed first',
-      );
+      expect(transitionError('start', stages('In progress', 'Pending'), 2)?.code).toBe('tasks.earlier_stages_open');
     });
     it('starts once every earlier stage is completed', () => {
       expect(transitionError('start', stages('Completed', 'Completed', 'Pending'), 3)).toBeNull();
     });
     it('refuses a stage that is not pending', () => {
-      expect(transitionError('start', stages('In progress'), 1)).toMatch(/pending/);
+      expect(transitionError('start', stages('In progress'), 1)).toEqual({
+        code: 'tasks.start_needs_pending',
+        message: 'Only a pending stage can be started (this one is in progress)',
+        params: { status: 'In progress' },
+      });
     });
   });
 
@@ -63,9 +65,7 @@ describe('transitionError', () => {
       expect(transitionError('block', stages('Completed', 'Pending'), 2)).toBeNull();
     });
     it('does not block a pending stage that is still waiting', () => {
-      expect(transitionError('block', stages('Pending', 'Pending'), 2)).toBe(
-        'Earlier stages must be completed first',
-      );
+      expect(transitionError('block', stages('Pending', 'Pending'), 2)?.code).toBe('tasks.earlier_stages_open');
     });
     it.each(['Blocked', 'Completed'] as const)('refuses %s', (status) => {
       expect(transitionError('block', stages(status), 1)).not.toBeNull();
@@ -80,9 +80,7 @@ describe('transitionError', () => {
       expect(transitionError('resume', stages('In progress'), 1)).not.toBeNull();
     });
     it('waits for an earlier stage that was reopened', () => {
-      expect(transitionError('resume', stages('In progress', 'Blocked'), 2)).toBe(
-        'Earlier stages must be completed first',
-      );
+      expect(transitionError('resume', stages('In progress', 'Blocked'), 2)?.code).toBe('tasks.earlier_stages_open');
     });
   });
 
@@ -90,7 +88,7 @@ describe('transitionError', () => {
     for (const status of ['Pending', 'In progress', 'Blocked'] as const) {
       expect(transitionError('reassign', stages(status), 1)).toBeNull();
     }
-    expect(transitionError('reassign', stages('Completed'), 1)).toMatch(/reopen/);
+    expect(transitionError('reassign', stages('Completed'), 1)?.code).toBe('tasks.reassign_completed');
   });
 
   it('reopens only completed stages', () => {
@@ -99,7 +97,7 @@ describe('transitionError', () => {
   });
 
   it('reports an unknown position', () => {
-    expect(transitionError('start', stages('Pending'), 5)).toBe('Stage not found');
+    expect(transitionError('start', stages('Pending'), 5)?.code).toBe('tasks.stage_not_found');
   });
 });
 

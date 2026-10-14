@@ -25,11 +25,11 @@ const plexArabic = IBM_Plex_Sans_Arabic({
 
 export const metadata: Metadata = {
   title: {
-    default: "Tickwise | Client Workflow Management",
-    template: "%s | Tickwise",
+    default: "Al Fath Accounts & Tax Solutions",
+    template: "%s | Al Fath",
   },
   description:
-    "Manage client engagements, document expiries, employee workloads, and work progress in one place.",
+    "Accounting, audit, tax and compliance services in Abu Dhabi, UAE.",
 };
 
 // Both languages are known at build time, so every page is prerendered once

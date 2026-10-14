@@ -12,6 +12,36 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Al Fath brand colours, sampled from the logo. brand = the teal ribbon and
+   "Al" (600 is the primary action colour, 700 links and hover); navy = the
+   blue ribbon and "fath" (950 for dark surfaces). Both keep white text at
+   WCAG AA contrast from 600 up. */
+@theme {
+  --color-brand-50: #effaf8;
+  --color-brand-100: #d5f2ee;
+  --color-brand-200: #aee4dc;
+  --color-brand-300: #78cfc4;
+  --color-brand-400: #3fb2a6;
+  --color-brand-500: #1c968a;
+  --color-brand-600: #0b7d72;
+  --color-brand-700: #08695f;
+  --color-brand-800: #0a544d;
+  --color-brand-900: #0b4540;
+  --color-brand-950: #032a27;
+
+  --color-navy-50: #eef4fa;
+  --color-navy-100: #d9e6f3;
+  --color-navy-200: #b6cee6;
+  --color-navy-300: #86acd2;
+  --color-navy-400: #5285b9;
+  --color-navy-500: #30679e;
+  --color-navy-600: #1f5285;
+  --color-navy-700: #17426e;
+  --color-navy-800: #12365c;
+  --color-navy-900: #0d2c4c;
+  --color-navy-950: #061a2f;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
@@ -27,7 +57,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--color-brand-600);
   outline-offset: 3px;
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useMemo, type ReactNode } from "react";
+import { ApiError, type ErrorParams } from "@/lib/api";
 import { ar } from "@/lib/i18n/ar";
 import {
   directionOf,
@@ -27,6 +28,11 @@ type I18n = {
   dateTime: (iso: string) => string;
   status: (status: keyof Dictionary["status"]) => string;
   action: (action: string) => string;
+  /**
+   * What went wrong, in this language: the message for the server's error
+   * code, else one for the HTTP status, else `fallback`.
+   */
+  errorText: (error: unknown, fallback: string) => string;
   /** Save the choice, then reload the same page in that language. */
   switchTo: (locale: Locale) => Promise<void>;
 };
@@ -51,21 +57,50 @@ export function I18nProvider({ locale, children }: { locale: Locale; children: R
       minute: "2-digit",
     });
 
+    // Params arrive raw; show them the way the rest of the page does.
+    const formatParams = (params: ErrorParams): Record<string, string> =>
+      Object.fromEntries(
+        Object.entries(params).map(([key, value]) => {
+          if (key.endsWith("Minutes") && typeof value === "number") return [key, minutes(value)];
+          if (key === "day" && typeof value === "string") return [key, day(value)];
+          if (key === "status" && typeof value === "string") {
+            return [key, (t.status as Record<string, string>)[value] ?? value];
+          }
+          return [key, String(value)];
+        }),
+      );
+    const minutes = (total: number) => {
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      if (!h) return t.duration.minutes(m);
+      return m ? t.duration.hoursMinutes(h, m) : t.duration.hours(h);
+    };
+    const day = (value: string) => dayFormat.format(new Date(`${value}T00:00:00Z`));
+
     return {
       locale,
       dir: directionOf(locale),
       t,
-      minutes: (total) => {
-        const h = Math.floor(total / 60);
-        const m = total % 60;
-        if (!h) return t.duration.minutes(m);
-        return m ? t.duration.hoursMinutes(h, m) : t.duration.hours(h);
-      },
-      day: (day) => dayFormat.format(new Date(`${day}T00:00:00Z`)),
+      minutes,
+      day,
       dateTime: (iso) => dateTimeFormat.format(new Date(iso)),
       status: (status) => t.status[status] ?? status,
       action: (action) =>
         (t.activity.actions as Record<string, string>)[action] ?? action,
+      errorText: (error, fallback) => {
+        if (!(error instanceof ApiError)) return fallback;
+
+        const entry = error.code ? codeMessages(t)[error.code] : undefined;
+        if (typeof entry === "string") return entry;
+        if (entry) return entry(formatParams(error.params ?? {}));
+
+        if (error.status === 0) return t.errors.network;
+        if (error.status >= 500) return t.errors.server;
+        // An English reader can have the server's own sentence; it is
+        // usually more specific than a message chosen by status.
+        if (locale === "en" && error.message) return error.message;
+        return statusMessage(t, error.status) ?? fallback;
+      },
       switchTo: async (next) => {
         // A year, so the proxy remembers the choice on this computer.
         document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
@@ -83,6 +118,28 @@ export function I18nProvider({ locale, children }: { locale: Locale; children: R
   }, [locale]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+}
+
+type CodeMessage = string | ((params: Record<string, string>) => string);
+
+// The code comes from the server, so the params it brings are only known at
+// run time; each message reads just the names it declares.
+const codeMessages = (t: Dictionary) =>
+  t.errors.codes as unknown as Record<string, CodeMessage | undefined>;
+
+function statusMessage(t: Dictionary, status: number): string | undefined {
+  switch (status) {
+    case 401:
+      return t.errors.signIn;
+    case 403:
+      return t.errors.forbidden;
+    case 404:
+      return t.errors.notFound;
+    case 409:
+      return t.errors.conflict;
+    case 429:
+      return t.errors.tooMany;
+  }
 }
 
 export function useI18n(): I18n {

@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import type { Pool, PoolClient } from 'pg';
 import type { AuthUser } from '../auth/session.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
@@ -127,7 +128,7 @@ export class AuditService {
       .catch((error: { code?: string }) => {
         // An impossible day such as 2026-02-31 in from/to.
         if (error.code === '22007' || error.code === '22008') {
-          throw new BadRequestException('from and to must be real dates');
+          throw new BadRequestException(problem('invalid_date', 'from and to must be real dates'));
         }
         throw error;
       });

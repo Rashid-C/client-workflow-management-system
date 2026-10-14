@@ -66,7 +66,7 @@ const initialUpdates: DailyUpdate[] = [
 
 const statusStyles: Record<UpdateStatus, string> = {
   Completed: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
-  'In progress': 'bg-blue-50 text-blue-700 ring-blue-600/20',
+  'In progress': 'bg-navy-50 text-navy-700 ring-navy-600/20',
   Blocked: 'bg-rose-50 text-rose-700 ring-rose-600/20',
 };
 
@@ -175,7 +175,7 @@ export default function DailyUpdatesPage() {
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm font-medium text-teal-700">
+            <p className="text-sm font-medium text-brand-700">
               Team management
             </p>
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
@@ -193,7 +193,7 @@ export default function DailyUpdatesPage() {
               setShowForm((current) => !current);
               setMessage('');
             }}
-            className="inline-flex items-center justify-center rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
+            className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:ring-offset-2"
           >
             {showForm ? 'Cancel' : '+ Add daily update'}
           </button>
@@ -235,7 +235,7 @@ export default function DailyUpdatesPage() {
                     onChange={(event) => setEmployee(event.target.value)}
                     placeholder="Employee name"
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   />
                 </label>
 
@@ -248,7 +248,7 @@ export default function DailyUpdatesPage() {
                     onChange={(event) => setClient(event.target.value)}
                     placeholder="Client name"
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   />
                 </label>
 
@@ -261,7 +261,7 @@ export default function DailyUpdatesPage() {
                     onChange={(event) => setTask(event.target.value)}
                     placeholder="Work performed"
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   />
                 </label>
 
@@ -277,7 +277,7 @@ export default function DailyUpdatesPage() {
                     value={hours}
                     onChange={(event) => setHours(event.target.value)}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   />
                 </label>
 
@@ -290,7 +290,7 @@ export default function DailyUpdatesPage() {
                     onChange={(event) =>
                       setStatus(event.target.value as UpdateStatus)
                     }
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   >
                     <option value="In progress">In progress</option>
                     <option value="Completed">Completed</option>
@@ -307,7 +307,7 @@ export default function DailyUpdatesPage() {
                     value={dateFilter === 'All' ? '2026-10-11' : dateFilter}
                     onChange={(event) => setDateFilter(event.target.value)}
                     required
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   />
                 </label>
 
@@ -320,7 +320,7 @@ export default function DailyUpdatesPage() {
                     onChange={(event) => setNotes(event.target.value)}
                     rows={3}
                     placeholder="What was done? What remains? Is anything blocking progress?"
-                    className="w-full resize-y rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full resize-y rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   />
                 </label>
               </div>
@@ -328,7 +328,7 @@ export default function DailyUpdatesPage() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="rounded-lg bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
+                  className="rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:ring-offset-2"
                 >
                   Add update
                 </button>
@@ -382,7 +382,7 @@ export default function DailyUpdatesPage() {
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Employee, client, task..."
-                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   />
                 </label>
 
@@ -393,7 +393,7 @@ export default function DailyUpdatesPage() {
                   <select
                     value={dateFilter}
                     onChange={(event) => setDateFilter(event.target.value)}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   >
                     <option value="All">All dates</option>
                     <option value="2026-10-11">11 Oct 2026</option>
@@ -408,7 +408,7 @@ export default function DailyUpdatesPage() {
                   <select
                     value={statusFilter}
                     onChange={(event) => setStatusFilter(event.target.value)}
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
                   >
                     <option value="All">All statuses</option>
                     <option value="Completed">Completed</option>

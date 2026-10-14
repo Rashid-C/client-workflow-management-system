@@ -25,7 +25,7 @@ const smallButton =
 
 export default function TaskView({ taskId }: { taskId: number }) {
   const { user, can } = useCurrentUser();
-  const { t, minutes, day, dateTime, status } = useI18n();
+  const { t, minutes, day, dateTime, status, errorText } = useI18n();
   const [task, setTask] = useState<TaskDetail | null>(null);
   const [people, setPeople] = useState<Assignable[]>([]);
   const [error, setError] = useState("");
@@ -43,7 +43,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
       .then(setTask)
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof ApiError && err.status === 404 ? t.tasks.notFound : err instanceof Error ? err.message : t.tasks.unableToLoadTask);
+        setError(err instanceof ApiError && err.status === 404 ? t.tasks.notFound : errorText(err, t.tasks.unableToLoadTask));
       });
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
@@ -68,7 +68,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
     try {
       updated(await api<TaskDetail>(`/tasks/${taskId}/stages/${stage.position}/${action}`, { method: "POST" }));
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : t.tasks.unableToUpdate);
+      setActionError(errorText(err, t.tasks.unableToUpdate));
     } finally {
       setBusy(false);
     }
@@ -80,7 +80,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
     try {
       updated(await api<TaskDetail>(`/tasks/${taskId}/${archived ? "archive" : "restore"}`, { method: "POST" }));
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : t.tasks.unableToUpdateTask);
+      setActionError(errorText(err, t.tasks.unableToUpdateTask));
     } finally {
       setBusy(false);
     }
@@ -90,7 +90,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
     return (
       <div className="p-6">
         <p role="alert" className="text-sm text-red-700">{error}</p>
-        <Link href="/tasks" className="mt-3 inline-block text-sm text-blue-700 hover:underline">{t.tasks.backToTasks}</Link>
+        <Link href="/tasks" className="mt-3 inline-block text-sm text-brand-700 hover:underline">{t.tasks.backToTasks}</Link>
       </div>
     );
   }
@@ -150,7 +150,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
                     <span className={`flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-medium ${
                       stage.status === "Completed" ? "border-emerald-600 bg-emerald-600 text-white"
                       : stage.status === "Blocked" ? "border-red-600 bg-red-600 text-white"
-                      : stage.status === "In progress" ? "border-blue-600 bg-blue-600 text-white"
+                      : stage.status === "In progress" ? "border-navy-700 bg-navy-700 text-white"
                       : "border-slate-300 text-slate-600"}`}>
                       {stage.position}
                     </span>
@@ -161,7 +161,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
                       </div>
                       <p className="mt-0.5 text-xs text-slate-500">
                         {stage.assignee ? (
-                          <span className={mine ? "font-medium text-blue-700" : ""}>
+                          <span className={mine ? "font-medium text-brand-700" : ""}>
                             {stage.assignee.name}{mine ? ` (${t.common.you})` : ""}
                             {stage.assignee.status !== "Active" ? ` · ${t.tasks.inactive}` : ""}
                           </span>
@@ -182,17 +182,17 @@ export default function TaskView({ taskId }: { taskId: number }) {
 
                       <div className="mt-2 flex flex-wrap gap-2">
                         {canWork && stage.status === "Pending" && ready && (
-                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "start")} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
+                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "start")} className={`${smallButton} border-brand-600 bg-brand-600 text-white hover:bg-brand-700`}>
                             <Play size={13} className="rtl:rotate-180" aria-hidden="true" /> {t.tasks.start}
                           </button>
                         )}
                         {canWork && stage.status === "In progress" && (
-                          <button type="button" onClick={() => setDialog({ kind: "complete", stage })} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
+                          <button type="button" onClick={() => setDialog({ kind: "complete", stage })} className={`${smallButton} border-brand-600 bg-brand-600 text-white hover:bg-brand-700`}>
                             <CheckCircle2 size={13} aria-hidden="true" /> {t.tasks.complete}
                           </button>
                         )}
                         {canWork && stage.status === "Blocked" && ready && (
-                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "resume")} className={`${smallButton} border-blue-600 bg-blue-600 text-white hover:bg-blue-700`}>
+                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "resume")} className={`${smallButton} border-brand-600 bg-brand-600 text-white hover:bg-brand-700`}>
                             <Play size={13} className="rtl:rotate-180" aria-hidden="true" /> {t.tasks.resume}
                           </button>
                         )}
@@ -305,7 +305,7 @@ function EditTaskDialog({
   const [dueDate, setDueDate] = useState(task.dueDate ?? "");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
-  const { t } = useI18n();
+  const { t, errorText } = useI18n();
 
   async function save() {
     if (!title.trim()) return setError(t.tasks.needTitle);
@@ -323,7 +323,7 @@ function EditTaskDialog({
         }),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.tasks.unableToSave);
+      setError(errorText(err, t.tasks.unableToSave));
       setSaving(false);
     }
   }

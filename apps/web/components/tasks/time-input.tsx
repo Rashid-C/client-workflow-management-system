@@ -72,7 +72,7 @@ export default function TimeInput({
             className={[
               "rounded-full border px-3 py-1 text-xs",
               minutes === pick
-                ? "border-blue-600 bg-blue-600 text-white"
+                ? "border-brand-600 bg-brand-600 text-white"
                 : "border-slate-200 text-slate-700 hover:bg-slate-100",
             ].join(" ")}
           >

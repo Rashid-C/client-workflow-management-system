@@ -15,7 +15,7 @@ export default function EntityHistory({
   entityType: string;
   entityId: string;
 }) {
-  const { t } = useI18n();
+  const { t, errorText } = useI18n();
   const [entries, setEntries] = useState<AuditLogEntry[]>([]);
   const [nextBefore, setNextBefore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ export default function EntityHistory({
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : t.activity.unableToLoadHistory);
+        setError(errorText(err, t.activity.unableToLoadHistory));
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
@@ -51,7 +51,7 @@ export default function EntityHistory({
       setEntries((current) => [...current, ...page.items]);
       setNextBefore(page.nextBefore);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.activity.unableToLoadHistory);
+      setError(errorText(err, t.activity.unableToLoadHistory));
     }
   }
 
@@ -75,7 +75,7 @@ export default function EntityHistory({
             <button
               type="button"
               onClick={() => void loadOlder()}
-              className="mt-1 text-xs font-medium text-blue-700 hover:underline"
+              className="mt-1 text-xs font-medium text-brand-700 hover:underline"
             >
               {t.common.showOlder}
             </button>

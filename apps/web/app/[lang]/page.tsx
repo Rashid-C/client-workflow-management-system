@@ -1,142 +1,205 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import {
-  Activity,
   ArrowRight,
-  BriefcaseBusiness,
-  CalendarDays,
-  Clock3,
-  FileClock,
-  FileText,
-  GitBranch,
-  Users,
+  BadgeCheck,
+  BookOpenCheck,
+  Check,
+  Factory,
+  Landmark,
+  Mail,
+  MapPin,
+  Phone,
+  ReceiptText,
+  ShieldCheck,
+  type LucideIcon,
 } from "lucide-react";
+import BrandLogo, { BRAND_NAME } from "@/components/brand/brand-logo";
 import Link from "@/components/i18n/link";
 import MobileNavigation from "@/components/marketing/mobile-navigation";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
+import logo from "@/public/brand/alfath-logo.png";
+
+// Facts from the firm's own site (alfathuae.com) and new logo. Its team,
+// testimonials and client logos were template placeholders and are left out.
+const OFFICE = {
+  phones: ["+971 58 584 8008", "+971 55 776 9483"],
+  email: "info@alfathuae.com",
+  mapsQuery: "Building No. 7.M6, Al Nahyan, Abu Dhabi, UAE",
+};
+
+type Service = { title: string; text: string; icon: LucideIcon };
 
 const content = {
   en: {
-    title: "Client workflow management",
-    description:
-      "Keep client records, engagement workflows, document expiry, team assignments and time history connected in one workspace.",
-    navFeatures: "Features",
-    navWorkflow: "How work moves",
-    navTeam: "For your team",
-    signIn: "Sign in",
-    openWorkspace: "Open workspace",
-    eyebrow: "CLIENT WORK, CLEARLY COORDINATED",
-    heading: "Every client engagement, moving in step.",
+    metaTitle: "Accounting, Audit & Tax in Abu Dhabi",
+    metaDescription:
+      "Al Fath Accounts & Tax Solutions: auditing, accounting, VAT, corporate tax, ICV certification and ADNOC vendor registration for businesses in the UAE.",
+    nav: { services: "Services", about: "About", contact: "Contact" },
+    staffSignIn: "Staff sign in",
+    eyebrow: "Accounting · Audit · Tax — Abu Dhabi",
+    heading: "Your success. Our commitment.",
     intro:
-      "Tickwise brings client records, documents, work stages and team progress into one clear view—so the next step never gets lost.",
-    seeHow: "See how it works",
-    previewLabel: "A connected client workflow",
-    previewTitle: "From client record to completed work",
-    previewNote: "One shared view for the whole team",
-    steps: [
-      ["Client records", "Keep the relationship and its details in view."],
-      ["Documents & expiry", "See important files and dates together."],
-      ["Engagement stages", "Move work forward with clear ownership."],
-      ["Time & activity", "Keep progress and its history connected."],
+      "Al Fath Accounts & Tax Solutions supports businesses across the UAE with auditing, accounting, tax compliance and business advisory — from company setup to corporate compliance.",
+    contactCta: "Talk to us",
+    servicesCta: "Explore services",
+    highlights: [
+      "UAE VAT and corporate tax",
+      "ICV certification and ADNOC vendor registration",
+      "An office in Abu Dhabi",
     ],
-    workflowEyebrow: "A CLEARER WAY TO WORK",
-    workflowHeading: "The details around the work belong together.",
-    workflowIntro:
-      "Client services involve more than a task list. Tickwise connects the records, hand-offs and follow-through that keep an engagement moving.",
-    features: [
+    servicesEyebrow: "What we do",
+    servicesHeading: "Services for every stage of your business.",
+    servicesIntro:
+      "From keeping your books to preparing for an audit, we take care of the financial and regulatory work so you can focus on running the business.",
+    services: [
       {
-        title: "Know the client context",
-        text: "Keep client details and document expiry visible alongside the work they relate to.",
-        icon: BriefcaseBusiness,
+        title: "Auditing & Assurance",
+        text: "Independent audits that bring transparency and trust to your financial reporting.",
+        icon: ShieldCheck,
       },
       {
-        title: "Make every hand-off clear",
-        text: "Organize engagements into ordered stages, assign responsibility and see what is waiting or blocked.",
-        icon: GitBranch,
+        title: "ICV Certification",
+        text: "Support through the In-Country Value programme to strengthen your eligibility for government contracts.",
+        icon: BadgeCheck,
       },
       {
-        title: "See how work is progressing",
-        text: "Bring daily updates, time logs and activity history together for employees and managers.",
-        icon: Activity,
+        title: "Accounting & Bookkeeping",
+        text: "Accurate books, payroll and management reports, kept up to date.",
+        icon: BookOpenCheck,
       },
+      {
+        title: "Corporate Tax",
+        text: "Stay on top of your UAE corporate tax obligations and reduce financial risk.",
+        icon: Landmark,
+      },
+      {
+        title: "VAT Services",
+        text: "VAT registration, return filing and advice.",
+        icon: ReceiptText,
+      },
+      {
+        title: "ADNOC Vendor Registration",
+        text: "Guidance through vendor registration to open up opportunities in the UAE energy sector.",
+        icon: Factory,
+      },
+    ] satisfies Service[],
+    moreHeading: "We also help with",
+    more: [
+      "Business structuring",
+      "Management consultancy",
+      "Regulatory compliance",
+      "Virtual CFO services",
+      "Tax advisory",
+      "Company incorporation & winding-up",
     ],
-    operationsEyebrow: "BUILT AROUND YOUR OPERATIONS",
-    operationsHeading: "A practical view for every working day.",
-    operationsText:
-      "Employees can focus on their assigned work. Managers can monitor workload, overdue work and team progress—without losing the underlying detail.",
-    capabilities: [
-      ["My work", "Assigned stages and what needs attention"],
-      ["Daily updates", "A clear record of progress from the team"],
-      ["Time logs", "Time recorded against the work itself"],
-      ["Activity history", "An accountable trail of important changes"],
+    aboutEyebrow: "About Al Fath",
+    aboutHeading: "Built on accuracy, integrity and expertise.",
+    mission:
+      "We help businesses grow through accurate financial insight, professional tax compliance and strategic advice.",
+    vision:
+      "Our aim is to be recognised as a leading accounting and tax consultancy, known for integrity.",
+    values: [
+      ["Accuracy", "Numbers you can make decisions on."],
+      ["Integrity", "Transparent advice and honest reporting."],
+      ["Expertise", "Practical knowledge of UAE tax and compliance."],
     ],
-    closingHeading: "Bring the day's client work into focus.",
-    closingText:
-      "Sign in to see your assigned work, client engagements and team activity in Tickwise.",
-    closingAction: "Sign in to Tickwise",
-    footerText: "Client work, clearly coordinated.",
+    contactEyebrow: "Contact",
+    contactHeading: "Visit or contact our office.",
+    contactText: "Call, email or visit us in Abu Dhabi to discuss what your business needs.",
+    address: "Building No. 7.M6, Al Nahyan, Abu Dhabi, UAE",
+    addressLabel: "Office",
+    phoneLabel: "Phone",
+    emailLabel: "Email",
+    directions: "Get directions",
+    staffHeading: "Al Fath staff",
+    staffText: "Sign in to the internal workspace for clients, tasks and time.",
     copyright: "All rights reserved.",
     languageName: "العربية",
     languagePath: "/ar",
   },
   ar: {
-    title: "إدارة سير عمل العملاء",
-    description:
-      "اربط سجلات العملاء وسير العمل والمستندات وتوزيع المهام وسجل الوقت في مساحة عمل واحدة.",
-    navFeatures: "المزايا",
-    navWorkflow: "آلية العمل",
-    navTeam: "لفريقك",
-    signIn: "تسجيل الدخول",
-    openWorkspace: "افتح مساحة العمل",
-    eyebrow: "عملاء أوضح، وعمل أكثر تنسيقًا",
-    heading: "كل ارتباط عميل، بخطوات مترابطة.",
+    metaTitle: "المحاسبة والتدقيق والضرائب في أبوظبي",
+    metaDescription:
+      "الفتح لحلول الحسابات والضرائب: التدقيق والمحاسبة وضريبة القيمة المضافة وضريبة الشركات وشهادة القيمة المحلية المضافة والتسجيل كمورد لدى أدنوك للشركات في الإمارات.",
+    nav: { services: "الخدمات", about: "من نحن", contact: "تواصل معنا" },
+    staffSignIn: "دخول الموظفين",
+    eyebrow: "المحاسبة · التدقيق · الضرائب — أبوظبي",
+    heading: "نجاحكم، التزامنا.",
     intro:
-      "يجمع Tickwise سجلات العملاء والمستندات ومراحل العمل وتقدم الفريق في عرض واضح واحد، حتى لا تضيع الخطوة التالية.",
-    seeHow: "تعرّف على آلية العمل",
-    previewLabel: "سير عمل مترابط للعميل",
-    previewTitle: "من سجل العميل إلى إنجاز العمل",
-    previewNote: "عرض مشترك للفريق بأكمله",
-    steps: [
-      ["سجلات العملاء", "تابع العلاقة وتفاصيلها في مكان واحد."],
-      ["المستندات والانتهاء", "اجمع الملفات المهمة ومواعيد انتهائها."],
-      ["مراحل الارتباط", "قدّم العمل مع وضوح المسؤوليات."],
-      ["الوقت والنشاط", "اربط التقدم بسجله التاريخي."],
+      "تدعم الفتح لحلول الحسابات والضرائب الشركات في دولة الإمارات بخدمات التدقيق والمحاسبة والامتثال الضريبي والاستشارات، من تأسيس الشركة إلى الامتثال المؤسسي.",
+    contactCta: "تواصل معنا",
+    servicesCta: "استكشف خدماتنا",
+    highlights: [
+      "ضريبة القيمة المضافة وضريبة الشركات في الإمارات",
+      "شهادة القيمة المحلية المضافة والتسجيل كمورد لدى أدنوك",
+      "مكتبنا في أبوظبي",
     ],
-    workflowEyebrow: "طريقة عمل أوضح",
-    workflowHeading: "تفاصيل العمل المترابطة في مكان واحد.",
-    workflowIntro:
-      "خدمات العملاء أكثر من مجرد قائمة مهام. يربط Tickwise السجلات وتسليم المهام والمتابعة التي تحافظ على تقدم العمل.",
-    features: [
+    servicesEyebrow: "خدماتنا",
+    servicesHeading: "خدمات لكل مرحلة من مراحل أعمالكم.",
+    servicesIntro:
+      "من مسك الدفاتر إلى الاستعداد للتدقيق، نتولى العمل المالي والتنظيمي لتتفرغوا لإدارة أعمالكم.",
+    services: [
       {
-        title: "اعرف سياق العميل",
-        text: "تابع تفاصيل العميل وانتهاء المستندات إلى جانب العمل المرتبط بها.",
-        icon: BriefcaseBusiness,
+        title: "التدقيق والتأكيد",
+        text: "تدقيق مستقل يعزّز الشفافية والثقة في تقاريركم المالية.",
+        icon: ShieldCheck,
       },
       {
-        title: "اجعل تسليم العمل واضحًا",
-        text: "نظّم الارتباطات في مراحل مرتبة، وحدد المسؤوليات، وتابع العمل المنتظر أو المتعطل.",
-        icon: GitBranch,
+        title: "شهادة القيمة المحلية المضافة (ICV)",
+        text: "دعم خلال برنامج القيمة المحلية المضافة لتعزيز أهليتكم للعقود الحكومية.",
+        icon: BadgeCheck,
       },
       {
-        title: "تابع تقدم العمل",
-        text: "اجمع التحديثات اليومية وسجلات الوقت وسجل النشاط للموظفين والمديرين.",
-        icon: Activity,
+        title: "المحاسبة ومسك الدفاتر",
+        text: "دفاتر دقيقة ورواتب وتقارير إدارية محدّثة باستمرار.",
+        icon: BookOpenCheck,
       },
+      {
+        title: "ضريبة الشركات",
+        text: "التزموا بمتطلبات ضريبة الشركات في الإمارات وقلّلوا المخاطر المالية.",
+        icon: Landmark,
+      },
+      {
+        title: "خدمات ضريبة القيمة المضافة",
+        text: "التسجيل في ضريبة القيمة المضافة وتقديم الإقرارات والاستشارات.",
+        icon: ReceiptText,
+      },
+      {
+        title: "التسجيل كمورد لدى أدنوك",
+        text: "إرشاد خلال إجراءات تسجيل الموردين لفتح الفرص في قطاع الطاقة الإماراتي.",
+        icon: Factory,
+      },
+    ] satisfies Service[],
+    moreHeading: "نساعدكم أيضًا في",
+    more: [
+      "هيكلة الأعمال",
+      "الاستشارات الإدارية",
+      "الامتثال التنظيمي",
+      "خدمات المدير المالي الافتراضي",
+      "الاستشارات الضريبية",
+      "تأسيس الشركات وتصفيتها",
     ],
-    operationsEyebrow: "مصمم لعمليات فريقك",
-    operationsHeading: "عرض عملي لكل يوم عمل.",
-    operationsText:
-      "يركز الموظفون على المهام المسندة إليهم، ويتابع المديرون أعباء العمل والمهام المتأخرة وتقدم الفريق مع الحفاظ على التفاصيل.",
-    capabilities: [
-      ["مهامي", "المراحل المسندة وما يحتاج إلى متابعة"],
-      ["التحديثات اليومية", "سجل واضح لتقدم الفريق"],
-      ["سجلات الوقت", "الوقت المسجل على العمل نفسه"],
-      ["سجل النشاط", "تاريخ موثوق للتغييرات المهمة"],
+    aboutEyebrow: "عن الفتح",
+    aboutHeading: "قائمون على الدقة والنزاهة والخبرة.",
+    mission:
+      "نساعد الشركات على النمو من خلال رؤى مالية دقيقة وامتثال ضريبي احترافي واستشارات استراتيجية.",
+    vision: "نسعى لأن نكون من الشركات الرائدة في المحاسبة والاستشارات الضريبية، المعروفة بالنزاهة.",
+    values: [
+      ["الدقة", "أرقام يمكنكم الاعتماد عليها في قراراتكم."],
+      ["النزاهة", "استشارات شفافة وتقارير صادقة."],
+      ["الخبرة", "معرفة عملية بالضرائب والامتثال في الإمارات."],
     ],
-    closingHeading: "اجعل عمل العملاء اليومي أكثر وضوحًا.",
-    closingText:
-      "سجّل الدخول لمتابعة مهامك وارتباطات العملاء ونشاط الفريق في Tickwise.",
-    closingAction: "تسجيل الدخول إلى Tickwise",
-    footerText: "عملاء أوضح، وعمل أكثر تنسيقًا.",
+    contactEyebrow: "تواصل معنا",
+    contactHeading: "زوروا مكتبنا أو تواصلوا معنا.",
+    contactText: "اتصلوا بنا أو راسلونا أو زورونا في أبوظبي لمناقشة احتياجات أعمالكم.",
+    address: "المبنى رقم 7.M6، آل نهيان، أبوظبي، الإمارات العربية المتحدة",
+    addressLabel: "المكتب",
+    phoneLabel: "الهاتف",
+    emailLabel: "البريد الإلكتروني",
+    directions: "الاتجاهات",
+    staffHeading: "موظفو الفتح",
+    staffText: "سجّلوا الدخول إلى مساحة العمل الداخلية للعملاء والمهام والوقت.",
     copyright: "جميع الحقوق محفوظة.",
     languageName: "English",
     languagePath: "/en",
@@ -147,61 +210,60 @@ function copyFor(locale: string) {
   return content[isLocale(locale) ? locale : DEFAULT_LOCALE];
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[lang]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
   const { lang } = await params;
   const copy = copyFor(lang);
   return {
-    title: { absolute: `${copy.title} | Tickwise` },
-    description: copy.description,
+    title: { absolute: `${copy.metaTitle} | Al Fath` },
+    description: copy.metaDescription,
   };
 }
 
-export default async function MarketingPage({ params }: PageProps<"/[lang]">) {
+const sectionEyebrow = "text-xs font-semibold uppercase tracking-[0.16em] text-brand-700";
+const sectionHeading = "mt-3 text-3xl font-semibold leading-tight tracking-[-0.03em] text-navy-950 sm:text-4xl";
+
+export default async function HomePage({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
   const copy = copyFor(locale);
-  const isArabic = locale === "ar";
-  const featureIcons = [FileClock, GitBranch, Clock3, FileText] as const;
+  const navItems = [
+    { href: "#services", label: copy.nav.services },
+    { href: "#about", label: copy.nav.about },
+    { href: "#contact", label: copy.nav.contact },
+  ] as const;
 
   return (
-    <main className="min-h-screen bg-white text-[#111318]">
+    <main className="min-h-screen bg-white text-slate-900">
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
-          <Link
-            href="/"
-            aria-label="Tickwise home"
-            className="shrink-0 text-[25px] font-semibold tracking-[-0.06em]"
-            dir="ltr"
-          >
-            tickwise<span className="text-blue-600">.</span>
+        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
+          <Link href="/" aria-label={BRAND_NAME} className="shrink-0">
+            <BrandLogo variant="full" priority />
           </Link>
 
-          <nav aria-label={isArabic ? "التنقل الرئيسي" : "Main navigation"} className="hidden items-center gap-8 md:flex">
-            <a className="text-sm font-medium text-slate-600 transition hover:text-slate-950" href="#features">{copy.navFeatures}</a>
-            <a className="text-sm font-medium text-slate-600 transition hover:text-slate-950" href="#workflow">{copy.navWorkflow}</a>
-            <a className="text-sm font-medium text-slate-600 transition hover:text-slate-950" href="#team">{copy.navTeam}</a>
+          <nav aria-label={locale === "ar" ? "التنقل الرئيسي" : "Main navigation"} className="hidden items-center gap-8 md:flex">
+            {navItems.map((item) => (
+              <a key={item.href} className="text-sm font-medium text-slate-600 transition hover:text-navy-900" href={item.href}>
+                {item.label}
+              </a>
+            ))}
           </nav>
 
           <div className="flex shrink-0 items-center gap-2.5">
             <Link
-              href="/login"
-              className="hidden rounded-lg px-3.5 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 sm:inline-flex"
+              href={copy.languagePath}
+              className="hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 md:inline-flex"
             >
-              {copy.signIn}
+              {copy.languageName}
             </Link>
             <Link
               href="/login"
-              className="inline-flex min-h-10 items-center justify-center rounded-lg bg-[#17191e] px-4 text-sm font-medium text-white transition hover:bg-[#30343c]"
+              className="hidden min-h-10 items-center justify-center rounded-lg bg-navy-900 px-4 text-sm font-medium text-white transition hover:bg-navy-800 md:inline-flex"
             >
-              <span className="hidden sm:inline">{copy.openWorkspace}</span>
-              <span className="sm:hidden">{copy.signIn}</span>
+              {copy.staffSignIn}
             </Link>
             <MobileNavigation
-              features={copy.navFeatures}
-              workflow={copy.navWorkflow}
-              team={copy.navTeam}
+              items={navItems}
+              signIn={copy.staffSignIn}
               languageName={copy.languageName}
               languagePath={copy.languagePath}
               language={locale}
@@ -210,157 +272,195 @@ export default async function MarketingPage({ params }: PageProps<"/[lang]">) {
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1440px] border-x border-slate-100">
-        <section className="relative overflow-hidden px-5 pb-16 pt-20 text-center sm:px-8 sm:pb-20 sm:pt-28 lg:pt-32">
-          <div className="mx-auto max-w-4xl">
-            <p className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-600 sm:text-sm">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50/70 to-white">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-14 sm:px-8 sm:pb-24 sm:pt-20 lg:grid-cols-[1.15fr_0.85fr]">
+          <div>
+            <p className="inline-flex rounded-full border border-brand-200 bg-white px-4 py-1.5 text-xs font-medium text-brand-800 sm:text-sm">
               {copy.eyebrow}
             </p>
-            <h1 className="mx-auto mt-7 max-w-4xl text-4xl font-semibold leading-[1.08] tracking-[-0.055em] sm:text-6xl lg:text-[76px]">
+            <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-[-0.04em] text-navy-950 sm:text-6xl">
               {copy.heading}
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-slate-600 sm:text-xl sm:leading-8">
-              {copy.intro}
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/login"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#17191e] px-5 text-sm font-medium text-white transition hover:bg-[#30343c]"
-              >
-                {copy.openWorkspace}
-                <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
-              </Link>
+            <p className="mt-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">{copy.intro}</p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <a
-                href="#workflow"
-                className="inline-flex min-h-12 items-center justify-center rounded-lg border border-slate-200 bg-white px-5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                href="#contact"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand-600 px-5 text-sm font-semibold text-white transition hover:bg-brand-700"
               >
-                {copy.seeHow}
+                {copy.contactCta}
+                <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
+              </a>
+              <a
+                href="#services"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-semibold text-navy-900 transition hover:bg-slate-50"
+              >
+                {copy.servicesCta}
               </a>
             </div>
-          </div>
-
-          <div className="marketing-grid pointer-events-none absolute inset-x-0 bottom-0 -z-0 h-20 opacity-60" aria-hidden="true" />
-          <div className="relative mx-auto mt-16 max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white text-start shadow-[0_28px_90px_-48px_rgba(15,23,42,0.3)] sm:mt-20">
-            <div className="flex items-center justify-between gap-4 border-b border-slate-200 px-4 py-4 sm:px-7">
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
-                  <BriefcaseBusiness size={18} aria-hidden="true" />
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">{copy.previewTitle}</p>
-                  <p className="mt-0.5 truncate text-xs text-slate-500">{copy.previewLabel}</p>
-                </div>
-              </div>
-              <span className="hidden items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600 sm:inline-flex">
-                <span className="size-1.5 rounded-full bg-blue-500" />
-                {copy.previewNote}
-              </span>
-            </div>
-
-            <div className="bg-[#fafbfc] p-4 sm:p-8">
-              <div className="grid gap-3 sm:grid-cols-2">
-                {copy.steps.map(([title, detail], index) => {
-                  const Icon = featureIcons[index];
-                  return (
-                    <div
-                      className="flex min-h-[100px] items-start gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
-                      key={title}
-                    >
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-700">
-                        <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-900">{title}</p>
-                        <p className="mt-1.5 text-sm leading-5 text-slate-500">{detail}</p>
-                      </div>
-                      <span className="ms-auto hidden text-xs tabular-nums text-slate-400 sm:block">
-                        0{index + 1}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="workflow" className="scroll-mt-20 border-t border-slate-200 px-5 py-20 sm:px-8 sm:py-28">
-          <div className="mx-auto max-w-6xl">
-            <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{copy.workflowEyebrow}</p>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-5xl">{copy.workflowHeading}</h2>
-              <p className="mt-5 text-base leading-7 text-slate-600 sm:text-lg">{copy.workflowIntro}</p>
-            </div>
-            <div id="features" className="mt-12 grid scroll-mt-24 gap-4 md:grid-cols-3">
-              {copy.features.map(({ title, text, icon: Icon }) => (
-                <article key={title} className="rounded-xl border border-slate-200 bg-white p-6 sm:p-7">
-                  <span className="flex size-10 items-center justify-center rounded-lg bg-slate-100 text-slate-800">
-                    <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
-                  </span>
-                  <h3 className="mt-6 text-lg font-semibold tracking-tight">{title}</h3>
-                  <p className="mt-2.5 text-sm leading-6 text-slate-600">{text}</p>
-                </article>
+            <ul className="mt-10 grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
+              {copy.highlights.map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <Check className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
               ))}
+            </ul>
+          </div>
+
+          <div className="relative mx-auto w-full max-w-md">
+            <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-brand-100/70 via-white to-navy-100/70 blur-2xl" aria-hidden="true" />
+            <div className="relative rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_30px_80px_-40px_rgba(6,26,47,0.35)] sm:p-10">
+              <Image src={logo} alt={BRAND_NAME} priority sizes="(min-width: 1024px) 400px, 80vw" className="h-auto w-full" />
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="team" className="scroll-mt-20 border-t border-slate-200 bg-[#fafbfc] px-5 py-20 sm:px-8 sm:py-24">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{copy.operationsEyebrow}</p>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-5xl">{copy.operationsHeading}</h2>
-              <p className="mt-5 max-w-xl text-base leading-7 text-slate-600">{copy.operationsText}</p>
-              <Link href="/login" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-slate-900 hover:text-blue-700">
-                {copy.signIn}
+      {/* Services */}
+      <section id="services" className="scroll-mt-20 border-t border-slate-200 px-5 py-20 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="max-w-2xl">
+            <p className={sectionEyebrow}>{copy.servicesEyebrow}</p>
+            <h2 className={sectionHeading}>{copy.servicesHeading}</h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">{copy.servicesIntro}</p>
+          </div>
+
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {copy.services.map(({ title, text, icon: Icon }) => (
+              <article key={title} className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-brand-300 hover:shadow-sm sm:p-7">
+                <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                  <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
+                </span>
+                <h3 className="mt-5 text-lg font-semibold text-navy-950">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+            <h3 className="text-sm font-semibold text-navy-950">{copy.moreHeading}</h3>
+            <ul className="mt-4 flex flex-wrap gap-2.5">
+              {copy.more.map((item) => (
+                <li key={item} className="rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-sm text-slate-700">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="scroll-mt-20 bg-navy-950 px-5 py-20 text-white sm:px-8 sm:py-24">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-300">{copy.aboutEyebrow}</p>
+            <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-4xl">{copy.aboutHeading}</h2>
+            <p className="mt-6 text-base leading-7 text-slate-300">{copy.mission}</p>
+            <p className="mt-4 text-base leading-7 text-slate-300">{copy.vision}</p>
+          </div>
+          <ul className="grid gap-4 self-center">
+            {copy.values.map(([title, text]) => (
+              <li key={title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <span className="mt-1.5 size-2.5 shrink-0 rounded-full bg-brand-400" aria-hidden="true" />
+                <div>
+                  <h3 className="font-semibold">{title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-300">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="scroll-mt-20 px-5 py-20 sm:px-8 sm:py-24">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2">
+          <div>
+            <p className={sectionEyebrow}>{copy.contactEyebrow}</p>
+            <h2 className={sectionHeading}>{copy.contactHeading}</h2>
+            <p className="mt-4 max-w-md text-base leading-7 text-slate-600">{copy.contactText}</p>
+
+            <dl className="mt-8 space-y-5">
+              <ContactRow icon={MapPin} label={copy.addressLabel}>
+                <span>{copy.address}</span>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(OFFICE.mapsQuery)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 inline-flex w-fit items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800"
+                >
+                  {copy.directions}
+                  <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
+                </a>
+              </ContactRow>
+              <ContactRow icon={Phone} label={copy.phoneLabel}>
+                {OFFICE.phones.map((phone) => (
+                  <a key={phone} href={`tel:${phone.replace(/\s/g, "")}`} dir="ltr" className="w-fit hover:text-brand-700">
+                    {phone}
+                  </a>
+                ))}
+              </ContactRow>
+              <ContactRow icon={Mail} label={copy.emailLabel}>
+                <a href={`mailto:${OFFICE.email}`} dir="ltr" className="w-fit hover:text-brand-700">
+                  {OFFICE.email}
+                </a>
+              </ContactRow>
+            </dl>
+          </div>
+
+          <div className="flex flex-col justify-end">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+              <BrandLogo variant="mark" />
+              <h3 className="mt-5 text-lg font-semibold text-navy-950">{copy.staffHeading}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{copy.staffText}</p>
+              <Link
+                href="/login"
+                className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-navy-900 px-5 text-sm font-semibold text-white transition hover:bg-navy-800"
+              >
+                {copy.staffSignIn}
                 <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
               </Link>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {copy.capabilities.map(([title, detail], index) => {
-                const icons = [CalendarDays, Users, Clock3, FileText] as const;
-                const Icon = icons[index];
-                return (
-                  <div key={title} className="rounded-xl border border-slate-200 bg-white p-5">
-                    <Icon size={19} strokeWidth={1.8} className="text-slate-600" aria-hidden="true" />
-                    <h3 className="mt-5 text-sm font-semibold">{title}</h3>
-                    <p className="mt-1.5 text-sm leading-5 text-slate-500">{detail}</p>
-                  </div>
-                );
-              })}
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="border-t border-slate-200 bg-[#111318] px-5 py-20 text-center text-white sm:px-8 sm:py-24">
-          <div className="mx-auto max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Tickwise</p>
-            <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-5xl">{copy.closingHeading}</h2>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-slate-300">{copy.closingText}</p>
-            <Link
-              href="/login"
-              className="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-white px-5 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
-            >
-              {copy.closingAction}
-              <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
-            </Link>
-          </div>
-        </section>
-      </div>
-
-      <footer className="bg-[#111318] text-slate-400">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <Link href="/" className="text-xl font-semibold tracking-[-0.06em] text-white" dir="ltr">
-            tickwise<span className="text-blue-400">.</span>
-          </Link>
-          <p className="text-sm">{copy.footerText}</p>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm">
-            <Link href="/login" className="transition hover:text-white">{copy.signIn}</Link>
-            <Link href={copy.languagePath} className="transition hover:text-white">{copy.languageName}</Link>
-            <span>© 2026 Tickwise. {copy.copyright}</span>
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <BrandLogo />
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link href="/login" className="transition hover:text-navy-900">{copy.staffSignIn}</Link>
+            <Link href={copy.languagePath} className="transition hover:text-navy-900">{copy.languageName}</Link>
+            <span>
+              © 2026 {BRAND_NAME}. {copy.copyright}
+            </span>
           </div>
         </div>
       </footer>
     </main>
+  );
+}
+
+function ContactRow({
+  icon: Icon,
+  label,
+  children,
+}: {
+  icon: LucideIcon;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex gap-4">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+        <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
+      </span>
+      <div>
+        <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">{label}</dt>
+        <dd className="mt-1 flex flex-col text-base text-slate-800">{children}</dd>
+      </div>
+    </div>
   );
 }

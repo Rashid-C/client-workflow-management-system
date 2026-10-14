@@ -10,6 +10,10 @@ import type { Dictionary } from "./en";
  *   time logs سجلات الوقت · audit trail سجل التدقيق ·
  *   Super Admin المسؤول الأعلى · h س (ساعة) · m د (دقيقة)
  *
+ * The firm's Arabic name below (الفتح لحلول الحسابات والضرائب) is our own
+ * rendering of "Al Fath Accounts & Tax Solutions" — the client must confirm
+ * their registered Arabic trade name.
+ *
  * Digits stay Western (0-9), as agreed.
  */
 export const ar: Dictionary = {
@@ -59,11 +63,12 @@ export const ar: Dictionary = {
     signIn: "تسجيل الدخول",
     signingIn: "جارٍ تسجيل الدخول...",
     signInSubtitle: "استخدم البريد الإلكتروني وكلمة المرور المقدمة من المسؤول.",
-    workspaceLabel: "مساحة عمل Tickwise",
-    welcomeTitle: "عملاء أوضح، وعمل أكثر تنسيقًا.",
+    workspaceLabel: "مساحة عمل موظفي الفتح",
+    welcomeTitle: "نجاحكم، التزامنا.",
     welcomeSubtitle:
       "اربط سجلات العملاء ومراحل الارتباط وتوزيع المهام وسجل الوقت في مكان واحد.",
-    welcomeFooter: "مصمم لمساعدة فريقك في عمله اليومي.",
+    welcomeFooter: "الفتح لحلول الحسابات والضرائب · أبوظبي",
+    homeLink: "الصفحة الرئيسية للفتح",
     email: "البريد الإلكتروني",
     password: "كلمة المرور",
     signOut: "تسجيل الخروج",
@@ -450,5 +455,72 @@ export const ar: Dictionary = {
     archived: "مؤرشف",
     loading: "جارٍ تحميل العملاء…",
     noneFound: "لم يتم العثور على عملاء.",
+  },
+
+  errors: {
+    network: "تعذّر الاتصال بالخادم. تحقّق من الاتصال ثم حاول مرة أخرى.",
+    server: "حدث خطأ في الخادم. حاول مرة أخرى بعد قليل.",
+    signIn: "انتهت جلستك. سجّل الدخول مرة أخرى.",
+    forbidden: "ليست لديك صلاحية للقيام بذلك.",
+    notFound: "العنصر غير موجود. ربما تم حذفه.",
+    conflict: "قام شخص آخر بتعديل هذا العنصر. أعد التحميل ثم حاول مرة أخرى.",
+    tooMany: "محاولات كثيرة جدًا. انتظر بضع دقائق ثم حاول مرة أخرى.",
+    codes: {
+      validation_failed: "بعض البيانات ناقصة أو غير صحيحة. راجع النموذج ثم حاول مرة أخرى.",
+      invalid_date: "أحد التواريخ غير صحيح.",
+      "auth.origin_not_allowed": "تم حظر هذا الطلب لأسباب أمنية. أعد تحميل الصفحة ثم حاول مرة أخرى.",
+      "auth.sign_in_required": "سجّل الدخول للمتابعة.",
+      "auth.password_change_required": "غيّر كلمة المرور المؤقتة أولًا.",
+      "auth.forbidden": "ليست لديك صلاحية للقيام بذلك.",
+      "auth.invalid_login": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+      "auth.locked": "محاولات تسجيل دخول فاشلة كثيرة. حاول مرة أخرى بعد 15 دقيقة.",
+      "auth.current_password_incorrect": "كلمة المرور الحالية غير صحيحة.",
+      "auth.password_unchanged": "يجب أن تختلف كلمة المرور الجديدة عن الحالية.",
+      "auth.password_is_email": "لا يجوز أن تكون كلمة المرور هي بريدك الإلكتروني.",
+      "clients.code_taken": "يوجد عميل بهذا الرمز بالفعل.",
+      "employees.not_found": "الموظف غير موجود.",
+      "employees.role_missing": "دور واحد أو أكثر من الأدوار المحددة لم يعد موجودًا.",
+      "employees.cannot_deactivate_self": "لا يمكنك إلغاء تفعيل حسابك.",
+      "employees.last_super_admin": "يجب أن يبقى مسؤول أعلى نشط واحد على الأقل.",
+      "employees.code_or_email_taken": "يوجد موظف بهذا الرمز أو البريد الإلكتروني بالفعل.",
+      "task_types.not_found": "نوع المهمة غير موجود.",
+      "task_types.stale": "قام شخص آخر بتعديل نوع المهمة هذا. أعد تحميله ثم أجرِ تعديلاتك مرة أخرى.",
+      "task_types.name_taken": "يوجد نوع مهمة بهذا الاسم بالفعل.",
+      "task_types.name_required": "أدخل اسمًا.",
+      "task_types.stage_blank": "لا يمكن ترك أسماء المراحل فارغة.",
+      "task_types.stage_duplicate": (p) => `المرحلة "${p.stage}" مكررة.`,
+      "tasks.not_found": "المهمة غير موجودة.",
+      "tasks.stale": "قام شخص آخر بتعديل هذه المهمة. أعد تحميلها ثم أجرِ تعديلاتك مرة أخرى.",
+      "tasks.archived": "هذه المهمة مؤرشفة ولا يمكن تغييرها.",
+      "tasks.type_not_found": "نوع المهمة غير موجود.",
+      "tasks.type_inactive": (p) => `${p.name} غير نشط ولا يمكن استخدامه لمهام جديدة.`,
+      "tasks.type_no_stages": (p) => `${p.name} لا يحتوي على مراحل.`,
+      "tasks.type_too_few_stages": (p) => `${p.name} يحتوي على ${p.count} مراحل فقط.`,
+      "tasks.client_not_found": "العميل غير موجود.",
+      "tasks.client_archived": (p) => `العميل ${p.name} مؤرشف.`,
+      "tasks.assign_forbidden": "ليست لديك صلاحية لإسناد المراحل.",
+      "tasks.duplicate_assignee": "يمكن إسناد كل مرحلة إلى شخص واحد فقط.",
+      "tasks.inactive_assignee": "يمكن إسناد المراحل إلى الموظفين النشطين فقط.",
+      "tasks.handover_forbidden": "ليست لديك صلاحية لتسليم المراحل.",
+      "tasks.stage_not_yours": "هذه المرحلة غير مسندة إليك.",
+      "tasks.stage_not_found": "المرحلة غير موجودة.",
+      "tasks.earlier_stages_open": "يجب إكمال المراحل السابقة أولًا.",
+      "tasks.start_needs_pending": (p) =>
+        `لا يمكن بدء إلا مرحلة قيد الانتظار (هذه المرحلة ${p.status}).`,
+      "tasks.complete_needs_in_progress": "لا يمكن إكمال إلا مرحلة قيد التنفيذ.",
+      "tasks.cannot_block": (p) => `لا يمكن إيقاف مرحلة حالتها ${p.status}.`,
+      "tasks.resume_needs_blocked": "لا يمكن استئناف إلا مرحلة متوقفة.",
+      "tasks.reassign_completed": "لا يمكن إعادة إسناد مرحلة مكتملة. أعد فتحها أولًا.",
+      "tasks.reopen_needs_completed": "لا يمكن إعادة فتح إلا مرحلة مكتملة.",
+      "tasks.last_stage": "هذه هي المرحلة الأخيرة؛ لا توجد مرحلة تالية.",
+      "tasks.already_assigned": "المرحلة مسندة بالفعل إلى هذا الشخص.",
+      "tasks.reassign_comment_required": "أضف تعليقًا عند نقل مرحلة من شخص إلى آخر.",
+      "tasks.block_reason_required": "اذكر سبب إيقاف المرحلة.",
+      "tasks.reopen_reason_required": "اذكر سبب إعادة فتح المرحلة.",
+      "tasks.time_required": "أدخل الوقت المستغرق.",
+      "tasks.future_time": "لا يمكن تسجيل وقت لتاريخ مستقبلي.",
+      "tasks.day_full": (p) =>
+        `لديك بالفعل ${p.usedMinutes} مسجلة في ${p.day}؛ لا يتسع اليوم لأكثر من 24 ساعة.`,
+    },
   },
 };

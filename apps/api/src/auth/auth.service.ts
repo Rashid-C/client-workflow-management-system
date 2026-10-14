@@ -6,6 +6,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import type { Pool, PoolClient } from 'pg';
 import { AuditService, type AuditContext } from '../audit/audit.service.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
@@ -29,7 +30,7 @@ import {
 
 // One message for unknown email, wrong password and inactive account, so
 // the login form never reveals which emails exist.
-const INVALID_LOGIN = 'Email or password is incorrect';
+const INVALID_LOGIN = problem('auth.invalid_login', 'Email or password is incorrect');
 
 export interface LoginResult {
   token: string;
@@ -93,7 +94,7 @@ export class AuthService {
     if (account.lockedUntil && account.lockedUntil.getTime() > Date.now()) {
       await this.audit.record(this.pool, anonymous, failure('Account locked'));
       throw new HttpException(
-        'Too many failed sign-in attempts. Try again in 15 minutes.',
+        problem('auth.locked', 'Too many failed sign-in attempts. Try again in 15 minutes.'),
         HttpStatus.TOO_MANY_REQUESTS,
       );
     }
@@ -258,15 +259,15 @@ export class AuthService {
     const stored = found.rows[0]?.passwordHash;
 
     if (!stored || !(await verifyPassword(currentPassword, stored))) {
-      throw new BadRequestException('Current password is incorrect');
+      throw new BadRequestException(problem('auth.current_password_incorrect', 'Current password is incorrect'));
     }
     if (newPassword === currentPassword) {
       throw new BadRequestException(
-        'New password must differ from the current one',
+        problem('auth.password_unchanged', 'New password must differ from the current one'),
       );
     }
     if (newPassword.trim().toLowerCase() === user.email.toLowerCase()) {
-      throw new BadRequestException('Password must not be your email');
+      throw new BadRequestException(problem('auth.password_is_email', 'Password must not be your email'));
     }
 
     const newHash = await hashPassword(newPassword);

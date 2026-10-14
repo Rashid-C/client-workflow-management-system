@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import type { Pool, PoolClient } from 'pg';
 import type { AuditContext } from '../audit/audit.service.js';
 import { AuditService } from '../audit/audit.service.js';
@@ -90,7 +91,7 @@ export class EmployeesService {
       );
 
       if (roles.rowCount !== data.roleIds.length) {
-        throw new BadRequestException('One or more roles do not exist');
+        throw new BadRequestException(problem('employees.role_missing', 'One or more roles do not exist'));
       }
 
       const inserted = await connection.query<{ id: number }>(
@@ -188,7 +189,7 @@ export class EmployeesService {
       const current = found.rows[0];
 
       if (!current) {
-        throw new NotFoundException('Employee not found');
+        throw new NotFoundException(problem('employees.not_found', 'Employee not found'));
       }
 
       if (current.status === status) {
@@ -199,7 +200,7 @@ export class EmployeesService {
       }
 
       if (current.id === context.actor?.employeeId && status === 'Inactive') {
-        throw new BadRequestException('You cannot deactivate yourself');
+        throw new BadRequestException(problem('employees.cannot_deactivate_self', 'You cannot deactivate yourself'));
       }
 
       if (
@@ -218,7 +219,7 @@ export class EmployeesService {
 
         if (Number(others.rows[0].count) === 0) {
           throw new BadRequestException(
-            'At least one active Super Admin must remain',
+            problem('employees.last_super_admin', 'At least one active Super Admin must remain'),
           );
         }
       }
@@ -280,12 +281,12 @@ function translateDatabaseError(error: unknown): unknown {
 
   switch (code) {
     case '23505': // unique_violation
-      return new ConflictException('Employee code or email already exists');
+      return new ConflictException(problem('employees.code_or_email_taken', 'Employee code or email already exists'));
     case '23503': // foreign_key_violation — a role vanished mid-request
-      return new BadRequestException('One or more roles do not exist');
+      return new BadRequestException(problem('employees.role_missing', 'One or more roles do not exist'));
     case '22007': // invalid_datetime_format
     case '22008': // datetime_field_overflow, e.g. 2026-02-31
-      return new BadRequestException('joinedDate is not a valid date');
+      return new BadRequestException(problem('invalid_date', 'joinedDate is not a valid date'));
     default:
       return error;
   }

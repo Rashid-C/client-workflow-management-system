@@ -195,7 +195,7 @@ for (const roleName of roleNames) {
 }
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+  "mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
 
 export default function RolesPage() {
   const [selectedRole, setSelectedRole] = useState<RoleName>("Staff");
@@ -308,7 +308,7 @@ export default function RolesPage() {
         <button
           type="button"
           onClick={savePrototype}
-          className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+          className="rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700"
         >
           Save changes
         </button>
@@ -317,7 +317,7 @@ export default function RolesPage() {
       {message && (
         <div
           role="status"
-          className="flex items-start justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900"
+          className="flex items-start justify-between gap-3 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-900"
         >
           <span>{message}</span>
           <button
@@ -346,7 +346,7 @@ export default function RolesPage() {
               }}
               className={`rounded-xl border p-4 text-left transition ${
                 selected
-                  ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                  ? "border-brand-500 bg-brand-50 ring-2 ring-brand-100"
                   : "border-slate-200 bg-white hover:border-slate-300"
               }`}
             >
@@ -366,7 +366,7 @@ export default function RolesPage() {
                     roleName === "Super Admin"
                       ? "bg-purple-100 text-purple-800"
                       : roleName === "Manager"
-                        ? "bg-blue-100 text-blue-800"
+                        ? "bg-brand-100 text-brand-800"
                         : "bg-slate-100 text-slate-700"
                   }`}
                 >
@@ -382,7 +382,7 @@ export default function RolesPage() {
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200">
                 <div
                   className={`h-full rounded-full ${
-                    roleName === "Super Admin" ? "bg-purple-500" : "bg-blue-500"
+                    roleName === "Super Admin" ? "bg-purple-500" : "bg-brand-500"
                   }`}
                   style={{
                     width: `${(count / allPermissions.length) * 100}%`,
@@ -473,7 +473,7 @@ export default function RolesPage() {
                               checked={checked}
                               disabled={selectedRole === "Super Admin"}
                               onChange={() => togglePermission(permission.key)}
-                              className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 accent-blue-600 disabled:cursor-not-allowed"
+                              className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 accent-brand-600 disabled:cursor-not-allowed"
                             />
                             <div className="min-w-0">
                               <label
@@ -534,7 +534,7 @@ export default function RolesPage() {
           <button
             type="button"
             onClick={savePrototype}
-            className="shrink-0 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+            className="shrink-0 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700"
           >
             Save changes
           </button>

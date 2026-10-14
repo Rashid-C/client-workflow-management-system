@@ -83,14 +83,14 @@ const initialLeads: Lead[] = [
 
 const statusStyles: Record<LeadStatus, string> = {
   New: 'bg-slate-100 text-slate-700 ring-slate-500/20',
-  Contacted: 'bg-blue-50 text-blue-700 ring-blue-600/20',
+  Contacted: 'bg-brand-50 text-brand-700 ring-brand-600/20',
   Qualified: 'bg-violet-50 text-violet-700 ring-violet-600/20',
   Won: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
   Lost: 'bg-rose-50 text-rose-700 ring-rose-600/20',
 };
 
 const inputClass =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100';
+  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100';
 
 function formatDate(date: string) {
   if (!date) return 'Not scheduled';
@@ -247,7 +247,7 @@ export default function LeadsPage() {
       <div className="mx-auto max-w-7xl space-y-6">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm font-medium text-teal-700">
+            <p className="text-sm font-medium text-brand-700">
               Business development
             </p>
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
@@ -265,7 +265,7 @@ export default function LeadsPage() {
               setShowForm((current) => !current);
               setMessage('');
             }}
-            className="rounded-lg bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800"
+            className="rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800"
           >
             {showForm ? 'Cancel' : '+ Add lead'}
           </button>
@@ -341,7 +341,7 @@ export default function LeadsPage() {
               </div>
 
               <div className="flex justify-end">
-                <button type="submit" className="rounded-lg bg-teal-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-teal-800">
+                <button type="submit" className="rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
                   Save lead
                 </button>
               </div>
@@ -446,7 +446,7 @@ export default function LeadsPage() {
                               aria-label={`Update status for ${lead.name}`}
                               value={lead.status}
                               onChange={(event) => updateStatus(lead.id, event.target.value as LeadStatus)}
-                              className="max-w-40 rounded-lg border border-slate-300 bg-white px-2 py-2 text-xs outline-none focus:border-teal-600"
+                              className="max-w-40 rounded-lg border border-slate-300 bg-white px-2 py-2 text-xs outline-none focus:border-brand-600"
                             >
                               <option>New</option>
                               <option>Contacted</option>
@@ -454,7 +454,7 @@ export default function LeadsPage() {
                               <option>Won</option>
                               <option>Lost</option>
                             </select>
-                            <button type="button" onClick={() => setSelectedLeadId(selectedLeadId === lead.id ? null : lead.id)} className="mt-2 block text-xs font-semibold text-teal-700 hover:text-teal-900">
+                            <button type="button" onClick={() => setSelectedLeadId(selectedLeadId === lead.id ? null : lead.id)} className="mt-2 block text-xs font-semibold text-brand-700 hover:text-brand-900">
                               {selectedLeadId === lead.id ? 'Hide notes' : 'View notes'}
                             </button>
                             {selectedLeadId === lead.id && (

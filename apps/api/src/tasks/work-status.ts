@@ -10,6 +10,8 @@
  * A stage can start, resume or be blocked from Pending only once every
  * earlier stage is completed. Pure functions, so every rule is unit-tested.
  */
+import { problem, type Problem } from '../common/errors.js';
+
 export const WORK_STATUSES = ['Pending', 'In progress', 'Completed', 'Blocked'] as const;
 export type WorkStatus = (typeof WORK_STATUSES)[number];
 
@@ -43,36 +45,49 @@ export function transitionError(
   action: StageAction,
   stages: readonly StageState[],
   position: number,
-): string | null {
+): Problem | null {
   const stage = stages.find((s) => s.position === position);
-  if (!stage) return 'Stage not found';
+  if (!stage) return problem('tasks.stage_not_found', 'Stage not found');
 
   const earlierDone = stages
     .filter((s) => s.position < position)
     .every((s) => s.status === 'Completed');
-  const waiting = 'Earlier stages must be completed first';
+  const waiting = problem('tasks.earlier_stages_open', 'Earlier stages must be completed first');
+  const { status } = stage;
 
   switch (action) {
     case 'start':
-      if (stage.status !== 'Pending') return `Only a pending stage can be started (this one is ${stage.status.toLowerCase()})`;
+      if (status !== 'Pending') {
+        return problem(
+          'tasks.start_needs_pending',
+          `Only a pending stage can be started (this one is ${status.toLowerCase()})`,
+          { status },
+        );
+      }
       return earlierDone ? null : waiting;
     case 'complete':
-      return stage.status === 'In progress'
+      return status === 'In progress'
         ? null
-        : 'Only a stage in progress can be completed';
+        : problem('tasks.complete_needs_in_progress', 'Only a stage in progress can be completed');
     case 'block':
-      if (stage.status === 'In progress') return null;
-      if (stage.status === 'Pending') return earlierDone ? null : waiting;
-      return `A ${stage.status.toLowerCase()} stage cannot be blocked`;
+      if (status === 'In progress') return null;
+      if (status === 'Pending') return earlierDone ? null : waiting;
+      return problem('tasks.cannot_block', `A ${status.toLowerCase()} stage cannot be blocked`, {
+        status,
+      });
     case 'resume':
-      if (stage.status !== 'Blocked') return 'Only a blocked stage can be resumed';
+      if (status !== 'Blocked') {
+        return problem('tasks.resume_needs_blocked', 'Only a blocked stage can be resumed');
+      }
       return earlierDone ? null : waiting;
     case 'reassign':
-      return stage.status === 'Completed'
-        ? 'A completed stage cannot be reassigned; reopen it first'
+      return status === 'Completed'
+        ? problem('tasks.reassign_completed', 'A completed stage cannot be reassigned; reopen it first')
         : null;
     case 'reopen':
-      return stage.status === 'Completed' ? null : 'Only a completed stage can be reopened';
+      return status === 'Completed'
+        ? null
+        : problem('tasks.reopen_needs_completed', 'Only a completed stage can be reopened');
   }
 }
 

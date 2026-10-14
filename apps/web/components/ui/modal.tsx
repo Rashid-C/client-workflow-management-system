@@ -59,10 +59,10 @@ export default function Modal({
 }
 
 export const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
+  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
 
 export const primaryButton =
-  "rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50";
+  "rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50";
 
 export const secondaryButton =
   "rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium hover:bg-slate-100 disabled:opacity-50";

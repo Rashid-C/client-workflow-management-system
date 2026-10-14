@@ -10,7 +10,7 @@ import { api, ApiError } from "@/lib/api";
 import { MAX_STAGES, type TaskType } from "@/lib/task-types";
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 disabled:bg-slate-50";
+  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 disabled:bg-slate-50";
 
 type DraftStage = { key: number; name: string };
 
@@ -22,7 +22,7 @@ const draft = (names: string[]): DraftStage[] =>
 export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
   const router = useRouter();
   const { can } = useCurrentUser();
-  const { t } = useI18n();
+  const { t, errorText } = useI18n();
   const canManage = can("workflows.manage");
 
   const [loaded, setLoaded] = useState<TaskType | null>(null);
@@ -60,7 +60,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setLoadError(err instanceof Error ? err.message : t.taskTypes.unableToLoadOne);
+        setLoadError(errorText(err, t.taskTypes.unableToLoadOne));
       })
       .finally(() => {
         if (!signal.aborted) setLoading(false);
@@ -141,11 +141,9 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
       }
     } catch (err) {
       setError(
-        err instanceof ApiError && err.status === 409 && loaded
-          ? `${err.message}${t.taskTypes.staleSuffix}`
-          : err instanceof Error
-            ? err.message
-            : t.tasks.unableToSave,
+        err instanceof ApiError && err.code === "task_types.stale" && loaded
+          ? `${errorText(err, t.tasks.unableToSave)}${t.taskTypes.staleSuffix}`
+          : errorText(err, t.tasks.unableToSave),
       );
       setSaving(false);
     }
@@ -158,7 +156,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
     return (
       <div className="p-6">
         <p role="alert" className="text-sm text-red-700">{loadError}</p>
-        <Link href="/task-types" className="mt-3 inline-block text-sm text-blue-700 hover:underline">
+        <Link href="/task-types" className="mt-3 inline-block text-sm text-brand-700 hover:underline">
           {t.taskTypes.back}
         </Link>
       </div>
@@ -326,7 +324,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
             <button
               type="submit"
               disabled={saving || !dirty}
-              className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
             >
               {saving ? t.common.saving : loaded ? t.taskTypes.saveChanges : t.taskTypes.create}
             </button>
@@ -361,7 +359,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
                 setLoaded(result.taskType);
                 setIsActive(result.taskType.isActive);
               } catch (err) {
-                setError(err instanceof Error ? err.message : t.taskTypes.unableToDelete);
+                setError(errorText(err, t.taskTypes.unableToDelete));
               }
               setSaving(false);
             }}
@@ -470,7 +468,7 @@ function CopyStagesDialog({
             type="button"
             disabled={!source}
             onClick={() => source && onCopy(source.stages.map((stage) => stage.name), mode)}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
           >
             {t.taskTypes.copyStages}
           </button>

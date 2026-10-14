@@ -31,7 +31,7 @@ type Option = { id: number; name: string };
 /** Time logs with filters; `defaultFrom` (this month) is worked out per request. */
 export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
   const { user, can } = useCurrentUser();
-  const { t, day, minutes } = useI18n();
+  const { t, day, minutes, errorText } = useI18n();
   const seesEveryone = user?.permissions["time_logs.view"] === "all";
 
   const [employeeId, setEmployeeId] = useState("");
@@ -78,7 +78,7 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : t.timeLogs.unableToLoad);
+        setError(errorText(err, t.timeLogs.unableToLoad));
       });
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- query() reads these

@@ -5,6 +5,7 @@ import {
   type CanActivate,
   type ExecutionContext,
 } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
 import type { PermissionKey } from '../roles/permissions.js';
@@ -59,23 +60,23 @@ export class AuthGuard implements CanActivate {
       origin !== undefined &&
       !this.origins.has(origin)
     ) {
-      throw new ForbiddenException('Request origin is not allowed');
+      throw new ForbiddenException(problem('auth.origin_not_allowed', 'Request origin is not allowed'));
     }
 
     if (flag<boolean>(IS_PUBLIC)) return true;
 
     const token = readCookie(request.headers.cookie, SESSION_COOKIE);
     const user = token ? await this.authService.authenticate(token) : null;
-    if (!user) throw new UnauthorizedException('Sign in to continue');
+    if (!user) throw new UnauthorizedException(problem('auth.sign_in_required', 'Sign in to continue'));
     request.user = user;
 
     if (user.mustChangePassword && !flag<boolean>(ALLOW_PENDING_PASSWORD)) {
-      throw new ForbiddenException('Change your temporary password first');
+      throw new ForbiddenException(problem('auth.password_change_required', 'Change your temporary password first'));
     }
 
     const permission = flag<PermissionKey>(REQUIRED_PERMISSION);
     if (permission && !user.permissions[permission]) {
-      throw new ForbiddenException('You do not have permission to do this');
+      throw new ForbiddenException(problem('auth.forbidden', 'You do not have permission to do this'));
     }
 
     return true;

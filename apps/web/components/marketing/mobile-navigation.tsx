@@ -5,24 +5,25 @@ import { Menu, X } from "lucide-react";
 import Link from "@/components/i18n/link";
 
 type MobileNavigationProps = {
-  features: string;
-  workflow: string;
-  team: string;
+  /** In-page sections, e.g. { href: "#services", label: "Services" }. */
+  items: readonly { href: string; label: string }[];
+  signIn: string;
   languageName: string;
   languagePath: "/en" | "/ar";
   language: "en" | "ar";
 };
 
 export default function MobileNavigation({
-  features,
-  workflow,
-  team,
+  items,
+  signIn,
   languageName,
   languagePath,
   language,
 }: MobileNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const closeLabel = language === "ar" ? "إغلاق قائمة التنقل" : "Close navigation menu";
+  const close = () => setIsOpen(false);
+  const itemClass = "rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50";
 
   return (
     <div className="relative md:hidden">
@@ -41,7 +42,7 @@ export default function MobileNavigation({
           <button
             type="button"
             aria-label={closeLabel}
-            onClick={() => setIsOpen(false)}
+            onClick={close}
             className="fixed inset-0 z-40 cursor-default"
           />
           <nav
@@ -49,10 +50,21 @@ export default function MobileNavigation({
             aria-label={language === "ar" ? "التنقل الرئيسي" : "Main navigation"}
             className="absolute end-0 top-12 z-50 flex w-56 flex-col gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-xl"
           >
-            <a className="rounded-lg px-3 py-2.5 text-sm hover:bg-slate-50" href="#features" onClick={() => setIsOpen(false)}>{features}</a>
-            <a className="rounded-lg px-3 py-2.5 text-sm hover:bg-slate-50" href="#workflow" onClick={() => setIsOpen(false)}>{workflow}</a>
-            <a className="rounded-lg px-3 py-2.5 text-sm hover:bg-slate-50" href="#team" onClick={() => setIsOpen(false)}>{team}</a>
-            <Link className="rounded-lg px-3 py-2.5 text-sm hover:bg-slate-50" href={languagePath} onClick={() => setIsOpen(false)}>{languageName}</Link>
+            {items.map((item) => (
+              <a key={item.href} className={itemClass} href={item.href} onClick={close}>
+                {item.label}
+              </a>
+            ))}
+            <Link className={itemClass} href={languagePath} onClick={close}>
+              {languageName}
+            </Link>
+            <Link
+              className="mt-1 rounded-lg bg-brand-600 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-brand-700"
+              href="/login"
+              onClick={close}
+            >
+              {signIn}
+            </Link>
           </nav>
         </>
       )}

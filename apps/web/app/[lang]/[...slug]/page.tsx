@@ -9,8 +9,8 @@ export async function generateMetadata({
   return {
     title: isArabic ? "الصفحة غير موجودة" : "Page not found",
     description: isArabic
-      ? "الصفحة التي تبحث عنها غير موجودة في Tickwise."
-      : "The page you are looking for could not be found in Tickwise.",
+      ? "الصفحة التي تبحث عنها غير موجودة."
+      : "The page you are looking for could not be found.",
   };
 }
 

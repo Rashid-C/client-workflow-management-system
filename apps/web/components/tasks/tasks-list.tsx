@@ -25,7 +25,7 @@ export default function TasksList() {
   const router = useRouter();
   const initial = useSearchParams();
   const { can } = useCurrentUser();
-  const { t, day } = useI18n();
+  const { t, day, errorText } = useI18n();
 
   const [search, setSearch] = useState(initial.get("search") ?? "");
   const [status, setStatus] = useState(initial.get("status") ?? "");
@@ -65,7 +65,7 @@ export default function TasksList() {
         })
         .catch((err: unknown) => {
           if (err instanceof Error && err.name === "AbortError") return;
-          setError(err instanceof Error ? err.message : t.tasks.unableToLoad);
+          setError(errorText(err, t.tasks.unableToLoad));
         })
         .finally(() => {
           if (!controller.signal.aborted) setLoading(false);
@@ -107,7 +107,7 @@ export default function TasksList() {
           <button
             type="button"
             onClick={() => setShowNew(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
           >
             <Plus size={16} aria-hidden="true" />
             {t.tasks.newTask}
@@ -272,7 +272,7 @@ function Progress({ task }: { task: TaskListItem }) {
   return (
     <div className="flex items-center gap-2">
       <div className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-        <div className="h-full rounded-full bg-blue-600" style={{ width: `${percent}%` }} />
+        <div className="h-full rounded-full bg-brand-600" style={{ width: `${percent}%` }} />
       </div>
       <span className="text-xs text-slate-500" dir="ltr">{task.stagesCompleted}/{task.stagesTotal}</span>
     </div>

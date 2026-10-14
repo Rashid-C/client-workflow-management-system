@@ -27,7 +27,7 @@ export default function StageActionDialog({
   onClose: () => void;
   onDone: (task: TaskDetail) => void;
 }) {
-  const { t } = useI18n();
+  const { t, errorText } = useI18n();
   const nextStage = task.stages.find((s) => s.position === stage.position + 1);
   const titles: Record<StageDialogKind, string> = {
     complete: t.tasks.completeStage,
@@ -85,7 +85,7 @@ export default function StageActionDialog({
       });
       onDone(updated);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.tasks.unableToSave);
+      setError(errorText(err, t.tasks.unableToSave));
       setSaving(false);
     }
   }

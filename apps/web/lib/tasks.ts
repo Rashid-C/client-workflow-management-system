@@ -66,7 +66,7 @@ export type Assignable = PersonRef & { designation: string };
 /** Badge colours per status; the label comes from useI18n().status(). */
 export const STATUS_STYLES: Record<WorkStatus, string> = {
   Pending: "border-slate-200 bg-slate-100 text-slate-700",
-  "In progress": "border-blue-200 bg-blue-50 text-blue-700",
+  "In progress": "border-navy-200 bg-navy-50 text-navy-700",
   Completed: "border-emerald-200 bg-emerald-50 text-emerald-700",
   Blocked: "border-red-200 bg-red-50 text-red-700",
 };

@@ -11,12 +11,12 @@ import {
 } from "@/lib/audit";
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
+  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
 
 const PAGE_SIZE = 50;
 
 export default function ActivityPage() {
-  const { t, action: actionLabel } = useI18n();
+  const { t, action: actionLabel, errorText } = useI18n();
   const [action, setAction] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -40,7 +40,7 @@ export default function ActivityPage() {
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : t.activity.unableToLoad);
+        setError(errorText(err, t.activity.unableToLoad));
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
@@ -57,7 +57,7 @@ export default function ActivityPage() {
       setEntries((current) => [...current, ...page.items]);
       setNextBefore(page.nextBefore);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.activity.unableToLoad);
+      setError(errorText(err, t.activity.unableToLoad));
     } finally {
       setLoadingMore(false);
     }

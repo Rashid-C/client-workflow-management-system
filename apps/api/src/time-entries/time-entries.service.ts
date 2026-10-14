@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import type { Pool } from 'pg';
 import type { AuthUser } from '../auth/session.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
@@ -98,7 +99,7 @@ export class TimeEntriesService {
     } catch (error) {
       const code = (error as { code?: string }).code;
       if (code === '22007' || code === '22008') {
-        throw new BadRequestException('from, to and before must be real dates');
+        throw new BadRequestException(problem('invalid_date', 'from, to and before must be real dates'));
       }
       throw error;
     }

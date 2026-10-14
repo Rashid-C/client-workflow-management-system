@@ -8,10 +8,10 @@ import { withLocale } from "@/lib/i18n/config";
 const MIN_LENGTH = 12;
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
+  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
 
 export default function ChangePasswordForm() {
-  const { t, locale } = useI18n();
+  const { t, locale, errorText } = useI18n();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -41,7 +41,7 @@ export default function ChangePasswordForm() {
         withLocale(locale, safeNextPath(new URLSearchParams(window.location.search).get("next"))),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.auth.unableToChange);
+      setError(errorText(err, t.auth.unableToChange));
       setSubmitting(false);
     }
   }
@@ -106,7 +106,7 @@ export default function ChangePasswordForm() {
       <button
         type="submit"
         disabled={submitting || !currentPassword || !newPassword}
-        className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        className="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
       >
         {submitting ? t.common.saving : t.auth.changePassword}
       </button>

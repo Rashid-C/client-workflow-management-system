@@ -7,7 +7,7 @@ import { api } from "@/lib/api";
 import type { Dashboard } from "@/lib/dashboard";
 
 export default function MyWorkPage() {
-  const { t, minutes } = useI18n();
+  const { t, minutes, errorText } = useI18n();
   const [data, setData] = useState<Dashboard | null>(null);
   const [error, setError] = useState("");
 
@@ -17,7 +17,7 @@ export default function MyWorkPage() {
       .then(setData)
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : t.myWork.unableToLoad);
+        setError(errorText(err, t.myWork.unableToLoad));
       });
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- load once

@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react';
 import { useCurrentUser } from '@/components/auth/current-user';
+import BrandLogo from '@/components/brand/brand-logo';
 import { useI18n } from '@/components/i18n/i18n-provider';
 import LanguageSwitch from '@/components/i18n/language-switch';
 import Link from '@/components/i18n/link';
@@ -161,11 +162,7 @@ export default function AppSidebar({
     );
   }
 
-  const logo = (
-    <span dir="ltr">
-      tickwise<span className="text-teal-700">.</span>
-    </span>
-  );
+  const logo = <BrandLogo />;
 
   return (
     <>
@@ -204,7 +201,7 @@ export default function AppSidebar({
             aria-label={t.nav.overview}
             className="text-xl font-semibold tracking-tight text-slate-950"
           >
-            {collapsed ? <span dir="ltr">t.</span> : logo}
+            {collapsed ? <BrandLogo variant="mark" /> : logo}
           </Link>
 
           {!collapsed && (
@@ -222,7 +219,7 @@ export default function AppSidebar({
           {user && !collapsed && (
             <div className="mb-2 px-3 py-1">
               <p className="truncate text-sm font-medium text-slate-900">{user.name}</p>
-              <a href={`mailto:${user.email}`} className="block truncate text-xs text-slate-500 hover:text-blue-700" dir="ltr">{user.email}</a>
+              <a href={`mailto:${user.email}`} className="block truncate text-xs text-slate-500 hover:text-brand-700" dir="ltr">{user.email}</a>
             </div>
           )}
 
@@ -311,7 +308,7 @@ export default function AppSidebar({
               {user && (
                 <div className="mb-2 px-3 py-1">
                   <p className="truncate text-sm font-medium text-slate-900">{user.name}</p>
-                  <a href={`mailto:${user.email}`} className="block truncate text-xs text-slate-500 hover:text-blue-700" dir="ltr">{user.email}</a>
+                  <a href={`mailto:${user.email}`} className="block truncate text-xs text-slate-500 hover:text-brand-700" dir="ltr">{user.email}</a>
                 </div>
               )}
               {can('settings.manage') && (

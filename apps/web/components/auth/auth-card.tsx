@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import BrandLogo from "@/components/brand/brand-logo";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import LanguageSwitch from "@/components/i18n/language-switch";
 import Link from "@/components/i18n/link";
@@ -21,8 +22,8 @@ export default function AuthCard({
     <main className="flex min-h-screen items-center justify-center bg-white px-4 py-8 text-slate-950 sm:px-8">
       <div className="w-full max-w-5xl">
         <header className="mb-5 flex items-center justify-between px-1 sm:mb-7">
-          <Link href="/" className="text-2xl font-semibold tracking-tight text-slate-950" dir="ltr">
-            tickwise<span className="text-blue-600">.</span>
+          <Link href="/" aria-label={t.auth.homeLink}>
+            <BrandLogo variant="full" priority />
           </Link>
           <LanguageSwitch className="px-2 py-1" />
         </header>
@@ -34,7 +35,7 @@ export default function AuthCard({
               {children}
             </div>
           </div>
-          <aside className="relative hidden flex-col justify-center overflow-hidden bg-[#111318] px-10 py-12 text-white md:flex lg:px-14">
+          <aside className="relative hidden flex-col justify-center overflow-hidden bg-navy-950 px-10 py-12 text-white md:flex lg:px-14">
             <div className="absolute inset-0 opacity-[0.12] marketing-grid" aria-hidden="true" />
             <div className="relative">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">

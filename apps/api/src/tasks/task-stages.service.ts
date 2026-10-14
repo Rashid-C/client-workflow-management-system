@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import type { Pool, PoolClient } from 'pg';
 import { AuditService, type AuditContext } from '../audit/audit.service.js';
 import type { AuthUser } from '../auth/session.js';
@@ -93,7 +94,7 @@ export class TaskStagesService {
   ) {
     // Also enforced by the DTO; kept here so the rule holds for any caller.
     if (!Number.isInteger(data.minutes) || data.minutes < 1) {
-      throw new BadRequestException('Enter the time spent');
+      throw new BadRequestException(problem('tasks.time_required', 'Enter the time spent'));
     }
     return this.act('complete', user, taskId, position, context, async (s) => {
       this.requireOnStage(s, 'tasks.complete');
@@ -102,9 +103,9 @@ export class TaskStagesService {
       let handover: string | undefined;
       if (data.nextAssigneeId !== undefined) {
         if (!user.permissions['tasks.assign']) {
-          throw new ForbiddenException('You do not have permission to hand over stages');
+          throw new ForbiddenException(problem('tasks.handover_forbidden', 'You do not have permission to hand over stages'));
         }
-        if (!next) throw new BadRequestException('This is the last stage; there is no next stage');
+        if (!next) throw new BadRequestException(problem('tasks.last_stage', 'This is the last stage; there is no next stage'));
         handover = await this.activeEmployeeName(s.db, data.nextAssigneeId);
       }
 
@@ -145,7 +146,7 @@ export class TaskStagesService {
     return this.act('block', user, taskId, position, context, async (s) => {
       this.requireOnStage(s, 'tasks.complete');
       const reason = data.reason.trim();
-      if (!reason) throw new BadRequestException('Say why the stage is blocked');
+      if (!reason) throw new BadRequestException(problem('tasks.block_reason_required', 'Say why the stage is blocked'));
 
       const date =
         data.minutes !== undefined
@@ -190,11 +191,11 @@ export class TaskStagesService {
       // "own": you can hand over a stage that is yours.
       this.requireOnStage(s, 'tasks.assign');
       if (data.assigneeId === s.stage.assigneeId) {
-        throw new BadRequestException('The stage is already assigned to that person');
+        throw new BadRequestException(problem('tasks.already_assigned', 'The stage is already assigned to that person'));
       }
       const comment = data.comment?.trim();
       if (s.stage.assigneeId !== null && !comment) {
-        throw new BadRequestException('Add a comment when moving a stage from one person to another');
+        throw new BadRequestException(problem('tasks.reassign_comment_required', 'Add a comment when moving a stage from one person to another'));
       }
 
       const toName =
@@ -234,7 +235,7 @@ export class TaskStagesService {
     return this.act('reopen', user, taskId, position, context, async (s) => {
       this.requireOnStage(s, 'tasks.reopen');
       const comment = data.comment.trim();
-      if (!comment) throw new BadRequestException('Say why the stage is reopened');
+      if (!comment) throw new BadRequestException(problem('tasks.reopen_reason_required', 'Say why the stage is reopened'));
 
       const reset = stagesResetByReopen(s.stages, position);
       await s.db.query(
@@ -294,8 +295,8 @@ export class TaskStagesService {
         params,
       );
       const task = found.rows[0];
-      if (!task) throw new NotFoundException('Task not found');
-      if (task.archivedAt) throw new BadRequestException('Archived tasks cannot change');
+      if (!task) throw new NotFoundException(problem('tasks.not_found', 'Task not found'));
+      if (task.archivedAt) throw new BadRequestException(problem('tasks.archived', 'Archived tasks cannot change'));
 
       const stages = (
         await connection.query<StageRow>(
@@ -306,9 +307,9 @@ export class TaskStagesService {
         )
       ).rows;
 
-      const problem = transitionError(action, stages, position);
-      if (problem === 'Stage not found') throw new NotFoundException(problem);
-      if (problem) throw new BadRequestException(problem);
+      const refusal = transitionError(action, stages, position);
+      if (refusal?.code === 'tasks.stage_not_found') throw new NotFoundException(refusal);
+      if (refusal) throw new BadRequestException(refusal);
       const stage = stages.find((s) => s.position === position)!;
 
       const entry = await run({ db: connection, task, stages, stage, user, context });
@@ -349,7 +350,7 @@ export class TaskStagesService {
       await connection.query('ROLLBACK');
       const code = (error as { code?: string }).code;
       if (code === '22007' || code === '22008') {
-        throw new BadRequestException('workDate is not a valid date');
+        throw new BadRequestException(problem('invalid_date', 'workDate is not a valid date'));
       }
       throw error;
     } finally {
@@ -360,9 +361,9 @@ export class TaskStagesService {
   /** Require `permission`; at "own" scope the stage must be yours. */
   private requireOnStage({ user, stage }: ActionScope, permission: PermissionKey) {
     const scope = user.permissions[permission];
-    if (!scope) throw new ForbiddenException('You do not have permission to do this');
+    if (!scope) throw new ForbiddenException(problem('auth.forbidden', 'You do not have permission to do this'));
     if (scope === 'own' && stage.assigneeId !== user.employeeId) {
-      throw new ForbiddenException('This stage is not assigned to you');
+      throw new ForbiddenException(problem('tasks.stage_not_yours', 'This stage is not assigned to you'));
     }
   }
 
@@ -372,7 +373,7 @@ export class TaskStagesService {
       [employeeId],
     );
     if (!found.rows[0]) {
-      throw new BadRequestException('Stages can only be assigned to active employees');
+      throw new BadRequestException(problem('tasks.inactive_assignee', 'Stages can only be assigned to active employees'));
     }
     return found.rows[0].name;
   }
@@ -400,10 +401,14 @@ export class TaskStagesService {
     );
     const { day, future, used } = check.rows[0];
 
-    if (future) throw new BadRequestException('Time cannot be logged for a future date');
+    if (future) throw new BadRequestException(problem('tasks.future_time', 'Time cannot be logged for a future date'));
     if (used + minutes > MAX_MINUTES_PER_DAY) {
       throw new BadRequestException(
-        `You already have ${formatMinutes(used)} logged on ${day}; a day holds at most 24 hours`,
+        problem(
+          'tasks.day_full',
+          `You already have ${formatMinutes(used)} logged on ${day}; a day holds at most 24 hours`,
+          { usedMinutes: used, day },
+        ),
       );
     }
 

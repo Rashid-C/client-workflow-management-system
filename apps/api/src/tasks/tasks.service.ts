@@ -6,6 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import type { Pool, PoolClient } from 'pg';
 import { AuditService, type AuditContext } from '../audit/audit.service.js';
 import type { AuthUser } from '../auth/session.js';
@@ -137,10 +138,10 @@ export class TasksService {
   ): Promise<TaskDetail> {
     const assignees = data.assignees ?? [];
     if (assignees.length && !viewer.permissions['tasks.assign']) {
-      throw new ForbiddenException('You do not have permission to assign stages');
+      throw new ForbiddenException(problem('tasks.assign_forbidden', 'You do not have permission to assign stages'));
     }
     if (new Set(assignees.map((a) => a.position)).size !== assignees.length) {
-      throw new BadRequestException('Each stage can have only one assignee');
+      throw new BadRequestException(problem('tasks.duplicate_assignee', 'Each stage can have only one assignee'));
     }
 
     return this.transaction(async (db) => {
@@ -157,24 +158,42 @@ export class TasksService {
         [data.taskTypeId],
       );
       const taskType = type.rows[0];
-      if (!taskType) throw new BadRequestException('Task type not found');
+      if (!taskType) throw new BadRequestException(problem('tasks.type_not_found', 'Task type not found'));
       if (!taskType.isActive) {
-        throw new BadRequestException(`${taskType.name} is inactive and cannot be used for new tasks`);
+        throw new BadRequestException(
+          problem(
+            'tasks.type_inactive',
+            `${taskType.name} is inactive and cannot be used for new tasks`,
+            { name: taskType.name },
+          ),
+        );
       }
       if (!taskType.stages.length) {
-        throw new BadRequestException(`${taskType.name} has no stages`);
+        throw new BadRequestException(
+          problem('tasks.type_no_stages', `${taskType.name} has no stages`, { name: taskType.name }),
+        );
       }
       if (assignees.some((a) => a.position > taskType.stages.length)) {
-        throw new BadRequestException(`${taskType.name} has only ${taskType.stages.length} stages`);
+        throw new BadRequestException(
+          problem(
+            'tasks.type_too_few_stages',
+            `${taskType.name} has only ${taskType.stages.length} stages`,
+            { name: taskType.name, count: taskType.stages.length },
+          ),
+        );
       }
 
       const client = await db.query<{ name: string; isActive: boolean }>(
         `SELECT "name", "isActive" FROM "Client" WHERE "id" = $1 FOR SHARE`,
         [data.clientId],
       );
-      if (!client.rows[0]) throw new BadRequestException('Client not found');
+      if (!client.rows[0]) throw new BadRequestException(problem('tasks.client_not_found', 'Client not found'));
       if (!client.rows[0].isActive) {
-        throw new BadRequestException(`${client.rows[0].name} is archived`);
+        throw new BadRequestException(
+          problem('tasks.client_archived', `${client.rows[0].name} is archived`, {
+            name: client.rows[0].name,
+          }),
+        );
       }
 
       const people = await this.activeEmployees(db, assignees.map((a) => a.employeeId));
@@ -240,10 +259,10 @@ export class TasksService {
   ): Promise<TaskDetail> {
     return this.transaction(async (db) => {
       const current = await this.lockVisible(db, viewer, taskId, 'tasks.edit');
-      if (current.archivedAt) throw new BadRequestException('Archived tasks cannot be edited');
+      if (current.archivedAt) throw new BadRequestException(problem('tasks.archived', 'Archived tasks cannot be edited'));
       if (current.version !== data.version) {
         throw new ConflictException(
-          'Someone else changed this task. Reload it and make your changes again.',
+          problem('tasks.stale', 'Someone else changed this task. Reload it and make your changes again.'),
         );
       }
 
@@ -318,7 +337,7 @@ export class TasksService {
       [ids],
     );
     if (result.rows.length !== new Set(ids).size) {
-      throw new BadRequestException('Stages can only be assigned to active employees');
+      throw new BadRequestException(problem('tasks.inactive_assignee', 'Stages can only be assigned to active employees'));
     }
     return new Map(result.rows.map((row) => [row.id, row.name]));
   }
@@ -339,7 +358,7 @@ export class TasksService {
       params,
     );
     // Someone else's task looks the same as a missing one.
-    if (!found.rowCount) throw new NotFoundException('Task not found');
+    if (!found.rowCount) throw new NotFoundException(problem('tasks.not_found', 'Task not found'));
   }
 
   private async lockVisible(
@@ -374,7 +393,7 @@ export class TasksService {
       await connection.query('ROLLBACK');
       const code = (error as { code?: string }).code;
       if (code === '22007' || code === '22008') {
-        throw new BadRequestException('dueDate is not a valid date');
+        throw new BadRequestException(problem('invalid_date', 'dueDate is not a valid date'));
       }
       throw error;
     } finally {

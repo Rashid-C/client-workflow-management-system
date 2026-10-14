@@ -18,7 +18,7 @@ export default function NewTaskDialog({
   onCreated: (task: TaskDetail) => void;
 }) {
   const { can } = useCurrentUser();
-  const { t } = useI18n();
+  const { t, errorText } = useI18n();
   const canAssign = can("tasks.assign");
 
   const [clients, setClients] = useState<ClientOption[]>([]);
@@ -50,7 +50,7 @@ export default function NewTaskDialog({
       })
       .catch((err: unknown) => {
         if (err instanceof Error && err.name === "AbortError") return;
-        setLoadError(err instanceof Error ? err.message : t.tasks.unableToLoadForm);
+        setLoadError(errorText(err, t.tasks.unableToLoadForm));
       });
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
@@ -84,7 +84,7 @@ export default function NewTaskDialog({
       });
       onCreated(task);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.tasks.unableToCreate);
+      setError(errorText(err, t.tasks.unableToCreate));
       setSaving(false);
     }
   }

@@ -40,10 +40,10 @@ type PreferenceSettings = {
 };
 
 const initialCompany: CompanySettings = {
-  companyName: "Tickwise",
-  email: "admin@example.com",
-  phone: "",
-  address: "",
+  companyName: "Al Fath Accounts & Tax Solutions",
+  email: "info@alfathuae.com",
+  phone: "+971 58 584 8008",
+  address: "Building No. 7.M6, Al Nahyan, Abu Dhabi, UAE",
   taxNumber: "",
 };
 
@@ -93,10 +93,10 @@ const tabs: { id: SettingsTab; label: string; description: string }[] = [
 ];
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+  "mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
 
 const selectClass =
-  "mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+  "mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
 
 function SectionHeading({
   title,
@@ -138,7 +138,7 @@ function Toggle({
         aria-label={label}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition ${
-          checked ? "bg-blue-600" : "bg-slate-300"
+          checked ? "bg-brand-600" : "bg-slate-300"
         }`}
       >
         <span
@@ -198,7 +198,7 @@ export default function SettingsPage() {
       {message && (
         <div
           role="status"
-          className="flex items-start justify-between gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900"
+          className="flex items-start justify-between gap-3 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-900"
         >
           <span>{message}</span>
           <button
@@ -231,14 +231,14 @@ export default function SettingsPage() {
                 aria-current={selected ? "page" : undefined}
                 className={`mb-1 w-full rounded-lg px-3 py-3 text-left transition last:mb-0 ${
                   selected
-                    ? "bg-blue-50 text-blue-800"
+                    ? "bg-brand-50 text-brand-800"
                     : "text-slate-700 hover:bg-slate-50"
                 }`}
               >
                 <span className="block text-sm font-medium">{tab.label}</span>
                 <span
                   className={`mt-1 block text-xs leading-5 ${
-                    selected ? "text-blue-700" : "text-slate-500"
+                    selected ? "text-brand-700" : "text-slate-500"
                   }`}
                 >
                   {tab.description}
@@ -257,7 +257,7 @@ export default function SettingsPage() {
             <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
               <SectionHeading
                 title="Company profile"
-                description="Maintain the business identity used throughout Tickwise."
+                description="Maintain the business identity used throughout the workspace."
               />
 
               <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -620,7 +620,7 @@ export default function SettingsPage() {
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+              className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700"
             >
               Save settings
             </button>

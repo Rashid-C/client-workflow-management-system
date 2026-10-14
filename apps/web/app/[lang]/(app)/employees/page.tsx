@@ -48,11 +48,11 @@ type ApiEmployee = {
 };
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
+  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
 
 function roleStyle(role: RoleSummary) {
   if (role.isSystem) return "border-purple-200 bg-purple-50 text-purple-700";
-  if (role.name === "Manager") return "border-blue-200 bg-blue-50 text-blue-700";
+  if (role.name === "Manager") return "border-navy-200 bg-navy-50 text-navy-700";
   return "border-gray-200 bg-gray-50 text-gray-700";
 }
 
@@ -84,7 +84,7 @@ function todayInBrowserTimeZone() {
 
 export default function EmployeesPage() {
   const { user, can } = useCurrentUser();
-  const { t, day } = useI18n();
+  const { t, day, errorText } = useI18n();
   // Status values come from the API in English; show them in the reader's language.
   const statusText = (status: EmployeeStatus) =>
     status === "Active" ? t.employees.active : t.employees.inactive;
@@ -136,9 +136,7 @@ export default function EmployeesPage() {
       if (error instanceof Error && error.name === "AbortError") return;
 
       setLoadError(
-        error instanceof Error
-          ? error.message
-          : t.employees.unableToLoad,
+        errorText(error, t.employees.unableToLoad),
       );
     } finally {
       if (!signal?.aborted) setLoading(false);
@@ -267,9 +265,7 @@ export default function EmployeesPage() {
       setMessage(t.employees.added(created.name));
     } catch (error) {
       setFormError(
-        error instanceof Error
-          ? error.message
-          : t.employees.unableToCreate,
+        errorText(error, t.employees.unableToCreate),
       );
     } finally {
       setSaving(false);
@@ -315,9 +311,7 @@ export default function EmployeesPage() {
       setMessage(t.employees.marked(updated.name, statusText(updated.status)));
     } catch (error) {
       setMessage(
-        error instanceof Error
-          ? error.message
-          : t.employees.unableToUpdate,
+        errorText(error, t.employees.unableToUpdate),
       );
     }
   }
@@ -348,7 +342,7 @@ export default function EmployeesPage() {
               setRoleIds(defaultRoleIds);
               setShowForm(true);
             }}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700"
           >
             <span aria-hidden="true">+</span>
             {t.employees.add}
@@ -505,7 +499,7 @@ export default function EmployeesPage() {
                           <a
                             dir="ltr"
                             href={`mailto:${employee.email}`}
-                            className="hover:text-blue-700 hover:underline"
+                            className="hover:text-brand-700 hover:underline"
                           >
                             {employee.email}
                           </a>
@@ -562,7 +556,7 @@ export default function EmployeesPage() {
                       <h3 className="font-medium">{employee.name}</h3>
                       <a
                         href={`mailto:${employee.email}`}
-                        className="mt-1 block break-all text-xs text-slate-500 hover:text-blue-700"
+                        className="mt-1 block break-all text-xs text-slate-500 hover:text-brand-700"
                         dir="ltr"
                       >
                         {employee.email}
@@ -787,7 +781,7 @@ export default function EmployeesPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                  className="rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
                 >
                   {saving ? t.employees.adding : t.employees.add}
                 </button>
@@ -851,7 +845,7 @@ export default function EmployeesPage() {
                     {label === t.employees.detailEmail ? (
                       <a
                         href={`mailto:${selectedEmployee.email}`}
-                        className="hover:text-blue-700 hover:underline"
+                        className="hover:text-brand-700 hover:underline"
                         dir="ltr"
                       >
                         {value}
@@ -859,7 +853,7 @@ export default function EmployeesPage() {
                     ) : label === t.employees.detailPhone && selectedEmployee.phone ? (
                       <a
                         href={`tel:${selectedEmployee.phone.replace(/[^\d+]/g, "")}`}
-                        className="hover:text-blue-700 hover:underline"
+                        className="hover:text-brand-700 hover:underline"
                         dir="ltr"
                       >
                         {value}

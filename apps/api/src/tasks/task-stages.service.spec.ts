@@ -233,9 +233,14 @@ describe('TaskStagesService', () => {
       const db = fakeDatabase({ stages: [stage(1, 'In progress')], minutesAlreadyLogged: 23 * 60 });
       const { service } = await serviceWith(db);
 
-      await expect(service.complete(staff, 7, 1, { minutes: 90 }, context)).rejects.toThrow(
-        'a day holds at most 24 hours',
-      );
+      await expect(service.complete(staff, 7, 1, { minutes: 90 }, context)).rejects.toMatchObject({
+        message: expect.stringContaining('a day holds at most 24 hours'),
+        // Raw values, so the web app can format them in either language.
+        response: {
+          code: 'tasks.day_full',
+          params: { usedMinutes: 23 * 60, day: expect.any(String) },
+        },
+      });
       expect(db.writes.some((w) => w.sql.includes('INSERT INTO "TimeEntry"'))).toBe(false);
     });
 

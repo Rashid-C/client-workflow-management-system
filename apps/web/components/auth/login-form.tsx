@@ -6,10 +6,10 @@ import { api, safeNextPath, type CurrentUser } from "@/lib/api";
 import { LOCALE_COOKIE, withLocale } from "@/lib/i18n/config";
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500";
+  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
 
 export default function LoginForm() {
-  const { t } = useI18n();
+  const { t, errorText } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -37,7 +37,7 @@ export default function LoginForm() {
         ),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : t.auth.unableToSignIn);
+      setError(errorText(err, t.auth.unableToSignIn));
       setSubmitting(false);
     }
   }
@@ -85,7 +85,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={submitting || !email || !password}
-        className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        className="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
       >
         {submitting ? t.auth.signingIn : t.auth.signIn}
       </button>

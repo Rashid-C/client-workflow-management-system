@@ -1,4 +1,5 @@
 import { Inject, Injectable, ConflictException } from '@nestjs/common';
+import { problem } from '../common/errors.js';
 import type { Pool } from 'pg';
 import { AuditService, type AuditContext } from '../audit/audit.service.js';
 import type { AuthUser } from '../auth/session.js';
@@ -107,7 +108,7 @@ export class ClientsService {
         'code' in error &&
         error.code === '23505'
       ) {
-        throw new ConflictException('Client code already exists');
+        throw new ConflictException(problem('clients.code_taken', 'Client code already exists'));
       }
 
       throw error;

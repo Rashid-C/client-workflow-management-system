@@ -20,7 +20,7 @@ type Client = {
 
 
 export default function ClientSearch() {
-  const { t } = useI18n();
+  const { t, errorText } = useI18n();
   const [clients, setClients] = useState<Client[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,7 @@ export default function ClientSearch() {
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") return;
 
-        setError(err instanceof Error ? err.message : t.common.noJson);
+        setError(errorText(err, t.common.noJson));
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -91,7 +91,7 @@ export default function ClientSearch() {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder={t.clients.searchPlaceholder}
-          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-teal-700 focus:ring-2 focus:ring-teal-700/20"
+          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-brand-700 focus:ring-2 focus:ring-brand-700/20"
         />
       </div>
 
@@ -132,7 +132,7 @@ export default function ClientSearch() {
                     {client.email ? (
                       <a
                         href={`mailto:${client.email}`}
-                        className="hover:text-blue-700 hover:underline"
+                        className="hover:text-brand-700 hover:underline"
                       >
                         {client.email}
                       </a>
@@ -144,7 +144,7 @@ export default function ClientSearch() {
                     {client.phone ? (
                       <a
                         href={`tel:${client.phone.replace(/[^\d+]/g, "")}`}
-                        className="whitespace-nowrap hover:text-blue-700 hover:underline"
+                        className="whitespace-nowrap hover:text-brand-700 hover:underline"
                         dir="ltr"
                       >
                         {client.phone}
