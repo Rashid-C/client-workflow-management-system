@@ -61,6 +61,76 @@
     "namespaces": {
       "public": {
         "enum": {
+          "ClientEntityType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "Llc",
+                "value": "LLC"
+              },
+              {
+                "name": "SoleEstablishment",
+                "value": "Sole establishment"
+              },
+              {
+                "name": "CivilCompany",
+                "value": "Civil company"
+              },
+              {
+                "name": "Branch",
+                "value": "Branch"
+              },
+              {
+                "name": "JointStock",
+                "value": "Joint stock company"
+              },
+              {
+                "name": "Partnership",
+                "value": "Partnership"
+              },
+              {
+                "name": "Individual",
+                "value": "Individual"
+              },
+              {
+                "name": "Other",
+                "value": "Other"
+              }
+            ]
+          },
+          "Emirate": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "AbuDhabi",
+                "value": "Abu Dhabi"
+              },
+              {
+                "name": "Dubai",
+                "value": "Dubai"
+              },
+              {
+                "name": "Sharjah",
+                "value": "Sharjah"
+              },
+              {
+                "name": "Ajman",
+                "value": "Ajman"
+              },
+              {
+                "name": "UmmAlQuwain",
+                "value": "Umm Al Quwain"
+              },
+              {
+                "name": "RasAlKhaimah",
+                "value": "Ras Al Khaimah"
+              },
+              {
+                "name": "Fujairah",
+                "value": "Fujairah"
+              }
+            ]
+          },
           "EmployeeStatus": {
             "codecId": "pg/text@1",
             "members": [
@@ -71,6 +141,23 @@
               {
                 "name": "Inactive",
                 "value": "Inactive"
+              }
+            ]
+          },
+          "Jurisdiction": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "Mainland",
+                "value": "Mainland"
+              },
+              {
+                "name": "FreeZone",
+                "value": "Free zone"
+              },
+              {
+                "name": "Offshore",
+                "value": "Offshore"
               }
             ]
           },
@@ -273,7 +360,21 @@
           },
           "Client": {
             "fields": {
+              "accountManagerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "address": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "businessActivity": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
@@ -294,6 +395,41 @@
                   "kind": "scalar"
                 }
               },
+              "contactDesignation": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "contactEmail": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "contactName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "contactPhone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "corporateTaxTrn": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -302,6 +438,46 @@
                 }
               },
               "email": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "emirate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Emirate",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "entityType": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ClientEntityType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "financialYearEndMonth": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "freeZone": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
@@ -319,6 +495,33 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "jurisdiction": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "Jurisdiction",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "legalNameAr": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "licenseAuthority": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -343,19 +546,63 @@
                   "kind": "scalar"
                 }
               },
+              "tradeLicenseNumber": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "updatedAt": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
+              },
+              "vatTrn": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "version": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
               }
             },
-            "relations": {},
+            "relations": {
+              "accountManager": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "accountManagerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              }
+            },
             "storage": {
               "fields": {
+                "accountManagerId": {
+                  "column": "accountManagerId"
+                },
                 "address": {
                   "column": "address"
+                },
+                "businessActivity": {
+                  "column": "businessActivity"
                 },
                 "clientCode": {
                   "column": "clientCode"
@@ -363,17 +610,53 @@
                 "companyName": {
                   "column": "companyName"
                 },
+                "contactDesignation": {
+                  "column": "contactDesignation"
+                },
+                "contactEmail": {
+                  "column": "contactEmail"
+                },
+                "contactName": {
+                  "column": "contactName"
+                },
+                "contactPhone": {
+                  "column": "contactPhone"
+                },
+                "corporateTaxTrn": {
+                  "column": "corporateTaxTrn"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
                 "email": {
                   "column": "email"
                 },
+                "emirate": {
+                  "column": "emirate"
+                },
+                "entityType": {
+                  "column": "entityType"
+                },
+                "financialYearEndMonth": {
+                  "column": "financialYearEndMonth"
+                },
+                "freeZone": {
+                  "column": "freeZone"
+                },
                 "id": {
                   "column": "id"
                 },
                 "isActive": {
                   "column": "isActive"
+                },
+                "jurisdiction": {
+                  "column": "jurisdiction"
+                },
+                "legalNameAr": {
+                  "column": "legalNameAr"
+                },
+                "licenseAuthority": {
+                  "column": "licenseAuthority"
                 },
                 "name": {
                   "column": "name"
@@ -384,8 +667,17 @@
                 "phone": {
                   "column": "phone"
                 },
+                "tradeLicenseNumber": {
+                  "column": "tradeLicenseNumber"
+                },
                 "updatedAt": {
                   "column": "updatedAt"
+                },
+                "vatTrn": {
+                  "column": "vatTrn"
+                },
+                "version": {
+                  "column": "version"
                 }
               },
               "namespaceId": "public",
@@ -1808,8 +2100,50 @@
               "uniques": []
             },
             "Client": {
+              "checks": [
+                {
+                  "expression": "\"corporateTaxTrn\" ~ '^[0-9]{15}$'",
+                  "name": "Client_corporateTaxTrn_format_dd6b5e2a",
+                  "prefix": "Client_corporateTaxTrn_format"
+                },
+                {
+                  "expression": "\"emirate\" IN ('Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah')",
+                  "name": "Client_emirate_check_76468c4c",
+                  "prefix": "Client_emirate_check"
+                },
+                {
+                  "expression": "\"entityType\" IN ('LLC', 'Sole establishment', 'Civil company', 'Branch', 'Joint stock company', 'Partnership', 'Individual', 'Other')",
+                  "name": "Client_entityType_check_a03b0a15",
+                  "prefix": "Client_entityType_check"
+                },
+                {
+                  "expression": "\"financialYearEndMonth\" BETWEEN 1 AND 12",
+                  "name": "Client_financialYearEndMonth_range_b33452a5",
+                  "prefix": "Client_financialYearEndMonth_range"
+                },
+                {
+                  "expression": "\"jurisdiction\" IN ('Mainland', 'Free zone', 'Offshore')",
+                  "name": "Client_jurisdiction_check_bb15cdfa",
+                  "prefix": "Client_jurisdiction_check"
+                },
+                {
+                  "expression": "\"vatTrn\" ~ '^[0-9]{15}$'",
+                  "name": "Client_vatTrn_format_0235a5e8",
+                  "prefix": "Client_vatTrn_format"
+                }
+              ],
               "columns": {
+                "accountManagerId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
                 "address": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "businessActivity": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": true
@@ -1824,6 +2158,31 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "contactDesignation": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "contactEmail": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "contactName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "contactPhone": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "corporateTaxTrn": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -1834,6 +2193,38 @@
                   "nullable": false
                 },
                 "email": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "emirate": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Emirate",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "entityType": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ClientEntityType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "financialYearEndMonth": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "freeZone": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": true
@@ -1856,6 +2247,27 @@
                   },
                   "nullable": false
                 },
+                "jurisdiction": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "Jurisdiction",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "legalNameAr": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "licenseAuthority": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "name": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -1871,14 +2283,63 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "tradeLicenseNumber": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
                   "nullable": false
+                },
+                "vatTrn": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "version": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nullable": false
                 }
               },
-              "foreignKeys": [],
-              "indexes": [],
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Client_accountManagerId_idx_2dca74d4"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "accountManagerId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Client"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "accountManagerId"
+                  ],
+                  "name": "Client_accountManagerId_idx_2dca74d4",
+                  "prefix": "Client_accountManagerId_idx",
+                  "unique": false
+                }
+              ],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -1888,6 +2349,16 @@
                 {
                   "columns": [
                     "clientCode"
+                  ]
+                },
+                {
+                  "columns": [
+                    "vatTrn"
+                  ]
+                },
+                {
+                  "columns": [
+                    "corporateTaxTrn"
                   ]
                 }
               ]
@@ -3208,11 +3679,44 @@
             }
           },
           "valueSet": {
+            "ClientEntityType": {
+              "kind": "valueSet",
+              "values": [
+                "LLC",
+                "Sole establishment",
+                "Civil company",
+                "Branch",
+                "Joint stock company",
+                "Partnership",
+                "Individual",
+                "Other"
+              ]
+            },
+            "Emirate": {
+              "kind": "valueSet",
+              "values": [
+                "Abu Dhabi",
+                "Dubai",
+                "Sharjah",
+                "Ajman",
+                "Umm Al Quwain",
+                "Ras Al Khaimah",
+                "Fujairah"
+              ]
+            },
             "EmployeeStatus": {
               "kind": "valueSet",
               "values": [
                 "Active",
                 "Inactive"
+              ]
+            },
+            "Jurisdiction": {
+              "kind": "valueSet",
+              "values": [
+                "Mainland",
+                "Free zone",
+                "Offshore"
               ]
             },
             "Language": {
@@ -3244,7 +3748,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "8045fff9643ff004e4c768087ed0142d2dce8c94df6786c1a33a4c2aa4270796"
+    "storageHash": "dfebfa55f371304fa5cc9c08b9072370bae7890cfa152276bd92f0236229d907"
   },
   "execution": {
     "executionHash": "ba0cddf96f5eddaab600b11cfd37c7d5f90fb3c395ea4de55b9cfa6cba7c0cc5",

@@ -1,16 +1,85 @@
 // use prisma-8
+// The firm's clients. Values of these enums are stored as shown and
+// translated by the web app.
+enum ClientEntityType {
+  @@type("pg/text@1")
+  Llc               = "LLC"
+  SoleEstablishment = "Sole establishment"
+  CivilCompany      = "Civil company"
+  Branch            = "Branch"
+  JointStock        = "Joint stock company"
+  Partnership       = "Partnership"
+  Individual        = "Individual"
+  Other             = "Other"
+}
+
+// Mainland or free zone decides corporate tax treatment (qualifying free
+// zone persons) and which authority issues the licence.
+enum Jurisdiction {
+  @@type("pg/text@1")
+  Mainland = "Mainland"
+  FreeZone = "Free zone"
+  Offshore = "Offshore"
+}
+
+enum Emirate {
+  @@type("pg/text@1")
+  AbuDhabi     = "Abu Dhabi"
+  Dubai        = "Dubai"
+  Sharjah      = "Sharjah"
+  Ajman        = "Ajman"
+  UmmAlQuwain  = "Umm Al Quwain"
+  RasAlKhaimah = "Ras Al Khaimah"
+  Fujairah     = "Fujairah"
+}
+
 model Client {
   id          Int                        @id @default(autoincrement())
+  // CL-0001…, issued by the API from Client_code_seq.
   clientCode  String                     @unique
   name        String
+  // Legal name as on the trade licence, in English and Arabic.
+  companyName String?
+  legalNameAr String?
   email       String?
   phone       String?
-  companyName String?
   address     String?
   notes       String?
+
+  entityType         ClientEntityType?
+  jurisdiction       Jurisdiction?
+  freeZone           String?
+  emirate            Emirate?
+  tradeLicenseNumber String?
+  licenseAuthority   String?
+  businessActivity   String?
+
+  // Federal Tax Authority registration numbers (15 digits each).
+  vatTrn          String?                @unique
+  corporateTaxTrn String?                @unique
+  // Month the financial year ends (12 = December); drives audit and
+  // corporate tax return dates.
+  financialYearEndMonth Int?
+
+  contactName        String?
+  contactDesignation String?
+  contactEmail       String?
+  contactPhone       String?
+
+  // The staff member responsible for the client.
+  accountManagerId Int?
+  accountManager   Employee?             @relation(fields: [accountManagerId], references: [id], onDelete: Restrict)
+
   isActive    Boolean                    @default(true)
+  // Guards edits against lost updates.
+  version     Int                        @default(1)
   createdAt   TimestamptzString          @default(now())
   updatedAt   temporal.updatedAtString()
+
+  @@index([accountManagerId])
+  @@check(expression: "\"vatTrn\" ~ '^[0-9]{15}$'", name: "Client_vatTrn_format")
+  @@check(expression: "\"corporateTaxTrn\" ~ '^[0-9]{15}$'", name: "Client_corporateTaxTrn_format")
+  @@check(expression: "\"financialYearEndMonth\" BETWEEN 1 AND 12", name: "Client_financialYearEndMonth_range")
 }
 
 enum EmployeeStatus {

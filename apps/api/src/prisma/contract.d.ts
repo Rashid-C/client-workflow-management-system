@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'8045fff9643ff004e4c768087ed0142d2dce8c94df6786c1a33a4c2aa4270796'>;
+  StorageHashBase<'dfebfa55f371304fa5cc9c08b9072370bae7890cfa152276bd92f0236229d907'>;
 export type ExecutionHash =
   ExecutionHashBase<'ba0cddf96f5eddaab600b11cfd37c7d5f90fb3c395ea4de55b9cfa6cba7c0cc5'>;
 export type ProfileHash =
@@ -249,17 +249,51 @@ export type FieldOutputTypes = {
       readonly userAgent: CodecTypes['pg/text@1']['output'] | null;
     };
     readonly Client: {
+      readonly accountManagerId: CodecTypes['pg/int4@1']['output'] | null;
       readonly address: CodecTypes['pg/text@1']['output'] | null;
+      readonly businessActivity: CodecTypes['pg/text@1']['output'] | null;
       readonly clientCode: CodecTypes['pg/text@1']['output'];
       readonly companyName: CodecTypes['pg/text@1']['output'] | null;
+      readonly contactDesignation: CodecTypes['pg/text@1']['output'] | null;
+      readonly contactEmail: CodecTypes['pg/text@1']['output'] | null;
+      readonly contactName: CodecTypes['pg/text@1']['output'] | null;
+      readonly contactPhone: CodecTypes['pg/text@1']['output'] | null;
+      readonly corporateTaxTrn: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'] | null;
+      readonly emirate:
+        | 'Abu Dhabi'
+        | 'Dubai'
+        | 'Sharjah'
+        | 'Ajman'
+        | 'Umm Al Quwain'
+        | 'Ras Al Khaimah'
+        | 'Fujairah'
+        | null;
+      readonly entityType:
+        | 'LLC'
+        | 'Sole establishment'
+        | 'Civil company'
+        | 'Branch'
+        | 'Joint stock company'
+        | 'Partnership'
+        | 'Individual'
+        | 'Other'
+        | null;
+      readonly financialYearEndMonth: CodecTypes['pg/int4@1']['output'] | null;
+      readonly freeZone: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly jurisdiction: 'Mainland' | 'Free zone' | 'Offshore' | null;
+      readonly legalNameAr: CodecTypes['pg/text@1']['output'] | null;
+      readonly licenseAuthority: CodecTypes['pg/text@1']['output'] | null;
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly tradeLicenseNumber: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly vatTrn: CodecTypes['pg/text@1']['output'] | null;
+      readonly version: CodecTypes['pg/int4@1']['output'];
     };
     readonly Employee: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -389,17 +423,51 @@ export type FieldInputTypes = {
       readonly userAgent: CodecTypes['pg/text@1']['input'] | null;
     };
     readonly Client: {
+      readonly accountManagerId: CodecTypes['pg/int4@1']['input'] | null;
       readonly address: CodecTypes['pg/text@1']['input'] | null;
+      readonly businessActivity: CodecTypes['pg/text@1']['input'] | null;
       readonly clientCode: CodecTypes['pg/text@1']['input'];
       readonly companyName: CodecTypes['pg/text@1']['input'] | null;
+      readonly contactDesignation: CodecTypes['pg/text@1']['input'] | null;
+      readonly contactEmail: CodecTypes['pg/text@1']['input'] | null;
+      readonly contactName: CodecTypes['pg/text@1']['input'] | null;
+      readonly contactPhone: CodecTypes['pg/text@1']['input'] | null;
+      readonly corporateTaxTrn: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'] | null;
+      readonly emirate:
+        | 'Abu Dhabi'
+        | 'Dubai'
+        | 'Sharjah'
+        | 'Ajman'
+        | 'Umm Al Quwain'
+        | 'Ras Al Khaimah'
+        | 'Fujairah'
+        | null;
+      readonly entityType:
+        | 'LLC'
+        | 'Sole establishment'
+        | 'Civil company'
+        | 'Branch'
+        | 'Joint stock company'
+        | 'Partnership'
+        | 'Individual'
+        | 'Other'
+        | null;
+      readonly financialYearEndMonth: CodecTypes['pg/int4@1']['input'] | null;
+      readonly freeZone: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly jurisdiction: 'Mainland' | 'Free zone' | 'Offshore' | null;
+      readonly legalNameAr: CodecTypes['pg/text@1']['input'] | null;
+      readonly licenseAuthority: CodecTypes['pg/text@1']['input'] | null;
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly tradeLicenseNumber: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly vatTrn: CodecTypes['pg/text@1']['input'] | null;
+      readonly version: CodecTypes['pg/int4@1']['input'];
     };
     readonly Employee: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -529,17 +597,51 @@ export type StorageColumnTypes = {
       readonly userAgent: CodecTypes['pg/text@1']['output'] | null;
     };
     readonly Client: {
+      readonly accountManagerId: CodecTypes['pg/int4@1']['output'] | null;
       readonly address: CodecTypes['pg/text@1']['output'] | null;
+      readonly businessActivity: CodecTypes['pg/text@1']['output'] | null;
       readonly clientCode: CodecTypes['pg/text@1']['output'];
       readonly companyName: CodecTypes['pg/text@1']['output'] | null;
+      readonly contactDesignation: CodecTypes['pg/text@1']['output'] | null;
+      readonly contactEmail: CodecTypes['pg/text@1']['output'] | null;
+      readonly contactName: CodecTypes['pg/text@1']['output'] | null;
+      readonly contactPhone: CodecTypes['pg/text@1']['output'] | null;
+      readonly corporateTaxTrn: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'] | null;
+      readonly emirate:
+        | 'Abu Dhabi'
+        | 'Dubai'
+        | 'Sharjah'
+        | 'Ajman'
+        | 'Umm Al Quwain'
+        | 'Ras Al Khaimah'
+        | 'Fujairah'
+        | null;
+      readonly entityType:
+        | 'LLC'
+        | 'Sole establishment'
+        | 'Civil company'
+        | 'Branch'
+        | 'Joint stock company'
+        | 'Partnership'
+        | 'Individual'
+        | 'Other'
+        | null;
+      readonly financialYearEndMonth: CodecTypes['pg/int4@1']['output'] | null;
+      readonly freeZone: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly isActive: CodecTypes['pg/bool@1']['output'];
+      readonly jurisdiction: 'Mainland' | 'Free zone' | 'Offshore' | null;
+      readonly legalNameAr: CodecTypes['pg/text@1']['output'] | null;
+      readonly licenseAuthority: CodecTypes['pg/text@1']['output'] | null;
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly tradeLicenseNumber: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly vatTrn: CodecTypes['pg/text@1']['output'] | null;
+      readonly version: CodecTypes['pg/int4@1']['output'];
     };
     readonly Employee: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -669,17 +771,51 @@ export type StorageColumnInputTypes = {
       readonly userAgent: CodecTypes['pg/text@1']['input'] | null;
     };
     readonly Client: {
+      readonly accountManagerId: CodecTypes['pg/int4@1']['input'] | null;
       readonly address: CodecTypes['pg/text@1']['input'] | null;
+      readonly businessActivity: CodecTypes['pg/text@1']['input'] | null;
       readonly clientCode: CodecTypes['pg/text@1']['input'];
       readonly companyName: CodecTypes['pg/text@1']['input'] | null;
+      readonly contactDesignation: CodecTypes['pg/text@1']['input'] | null;
+      readonly contactEmail: CodecTypes['pg/text@1']['input'] | null;
+      readonly contactName: CodecTypes['pg/text@1']['input'] | null;
+      readonly contactPhone: CodecTypes['pg/text@1']['input'] | null;
+      readonly corporateTaxTrn: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'] | null;
+      readonly emirate:
+        | 'Abu Dhabi'
+        | 'Dubai'
+        | 'Sharjah'
+        | 'Ajman'
+        | 'Umm Al Quwain'
+        | 'Ras Al Khaimah'
+        | 'Fujairah'
+        | null;
+      readonly entityType:
+        | 'LLC'
+        | 'Sole establishment'
+        | 'Civil company'
+        | 'Branch'
+        | 'Joint stock company'
+        | 'Partnership'
+        | 'Individual'
+        | 'Other'
+        | null;
+      readonly financialYearEndMonth: CodecTypes['pg/int4@1']['input'] | null;
+      readonly freeZone: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly isActive: CodecTypes['pg/bool@1']['input'];
+      readonly jurisdiction: 'Mainland' | 'Free zone' | 'Offshore' | null;
+      readonly legalNameAr: CodecTypes['pg/text@1']['input'] | null;
+      readonly licenseAuthority: CodecTypes['pg/text@1']['input'] | null;
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly tradeLicenseNumber: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly vatTrn: CodecTypes['pg/text@1']['input'] | null;
+      readonly version: CodecTypes['pg/int4@1']['input'];
     };
     readonly Employee: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -811,18 +947,53 @@ export namespace Models {
     readonly [RelationKeys]?: 'actor';
   };
   export type public_Client = {
+    accountManagerId: CodecTypes['pg/int4@1']['output'] | null;
     address: CodecTypes['pg/text@1']['output'] | null;
+    businessActivity: CodecTypes['pg/text@1']['output'] | null;
     clientCode: CodecTypes['pg/text@1']['output'];
     companyName: CodecTypes['pg/text@1']['output'] | null;
+    contactDesignation: CodecTypes['pg/text@1']['output'] | null;
+    contactEmail: CodecTypes['pg/text@1']['output'] | null;
+    contactName: CodecTypes['pg/text@1']['output'] | null;
+    contactPhone: CodecTypes['pg/text@1']['output'] | null;
+    corporateTaxTrn: CodecTypes['pg/text@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     email: CodecTypes['pg/text@1']['output'] | null;
+    emirate:
+      | 'Abu Dhabi'
+      | 'Dubai'
+      | 'Sharjah'
+      | 'Ajman'
+      | 'Umm Al Quwain'
+      | 'Ras Al Khaimah'
+      | 'Fujairah'
+      | null;
+    entityType:
+      | 'LLC'
+      | 'Sole establishment'
+      | 'Civil company'
+      | 'Branch'
+      | 'Joint stock company'
+      | 'Partnership'
+      | 'Individual'
+      | 'Other'
+      | null;
+    financialYearEndMonth: CodecTypes['pg/int4@1']['output'] | null;
+    freeZone: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     isActive: CodecTypes['pg/bool@1']['output'];
+    jurisdiction: 'Mainland' | 'Free zone' | 'Offshore' | null;
+    legalNameAr: CodecTypes['pg/text@1']['output'] | null;
+    licenseAuthority: CodecTypes['pg/text@1']['output'] | null;
     name: CodecTypes['pg/text@1']['output'];
     notes: CodecTypes['pg/text@1']['output'] | null;
     phone: CodecTypes['pg/text@1']['output'] | null;
+    tradeLicenseNumber: CodecTypes['pg/text@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    readonly [RelationKeys]?: never;
+    vatTrn: CodecTypes['pg/text@1']['output'] | null;
+    version: CodecTypes['pg/int4@1']['output'];
+    accountManager: public_Employee | null;
+    readonly [RelationKeys]?: 'accountManager';
   };
   export type public_Employee = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1122,7 +1293,19 @@ type ContractBase = Omit<
             };
             readonly Client: {
               columns: {
+                readonly accountManagerId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly address: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly businessActivity: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
@@ -1140,6 +1323,36 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly contactDesignation: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly contactEmail: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly contactName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly contactPhone: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly corporateTaxTrn: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
@@ -1148,6 +1361,30 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly email: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly emirate: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly entityType: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly financialYearEndMonth: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly freeZone: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
@@ -1173,6 +1410,24 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
+                readonly jurisdiction: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly legalNameAr: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly licenseAuthority: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly name: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1191,17 +1446,63 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly tradeLicenseNumber: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly updatedAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly vatTrn: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly version: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                  readonly many: false;
+                };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['clientCode'] }];
-              indexes: readonly [];
-              foreignKeys: readonly [];
+              uniques: readonly [
+                { readonly columns: readonly ['clientCode'] },
+                { readonly columns: readonly ['vatTrn'] },
+                { readonly columns: readonly ['corporateTaxTrn'] },
+              ];
+              indexes: readonly [
+                {
+                  readonly name: 'Client_accountManagerId_idx_2dca74d4';
+                  readonly prefix: 'Client_accountManagerId_idx';
+                  readonly columns: readonly ['accountManagerId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Client';
+                    readonly columns: readonly ['accountManagerId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
             };
             readonly Employee: {
               columns: {
@@ -2235,9 +2536,38 @@ type ContractBase = Omit<
             };
           };
           readonly valueSet: {
+            readonly ClientEntityType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'LLC',
+                'Sole establishment',
+                'Civil company',
+                'Branch',
+                'Joint stock company',
+                'Partnership',
+                'Individual',
+                'Other',
+              ];
+            };
+            readonly Emirate: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'Abu Dhabi',
+                'Dubai',
+                'Sharjah',
+                'Ajman',
+                'Umm Al Quwain',
+                'Ras Al Khaimah',
+                'Fujairah',
+              ];
+            };
             readonly EmployeeStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['Active', 'Inactive'];
+            };
+            readonly Jurisdiction: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['Mainland', 'Free zone', 'Offshore'];
             };
             readonly Language: {
               readonly kind: 'valueSet';
@@ -2381,7 +2711,15 @@ type ContractBase = Omit<
           };
           readonly Client: {
             readonly fields: {
+              readonly accountManagerId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly address: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly businessActivity: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -2390,6 +2728,26 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly companyName: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly contactDesignation: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly contactEmail: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly contactName: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly contactPhone: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly corporateTaxTrn: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -2404,6 +2762,22 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly emirate: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly entityType: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly financialYearEndMonth: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly freeZone: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -2411,6 +2785,18 @@ type ContractBase = Omit<
               readonly isActive: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly jurisdiction: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly legalNameAr: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly licenseAuthority: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly name: {
                 readonly nullable: false;
@@ -2424,6 +2810,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly tradeLicenseNumber: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly updatedAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -2431,23 +2821,61 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly vatTrn: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly version: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly accountManager: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['accountManagerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'Client';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly accountManagerId: { readonly column: 'accountManagerId' };
                 readonly address: { readonly column: 'address' };
+                readonly businessActivity: { readonly column: 'businessActivity' };
                 readonly clientCode: { readonly column: 'clientCode' };
                 readonly companyName: { readonly column: 'companyName' };
+                readonly contactDesignation: { readonly column: 'contactDesignation' };
+                readonly contactEmail: { readonly column: 'contactEmail' };
+                readonly contactName: { readonly column: 'contactName' };
+                readonly contactPhone: { readonly column: 'contactPhone' };
+                readonly corporateTaxTrn: { readonly column: 'corporateTaxTrn' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly email: { readonly column: 'email' };
+                readonly emirate: { readonly column: 'emirate' };
+                readonly entityType: { readonly column: 'entityType' };
+                readonly financialYearEndMonth: { readonly column: 'financialYearEndMonth' };
+                readonly freeZone: { readonly column: 'freeZone' };
                 readonly id: { readonly column: 'id' };
                 readonly isActive: { readonly column: 'isActive' };
+                readonly jurisdiction: { readonly column: 'jurisdiction' };
+                readonly legalNameAr: { readonly column: 'legalNameAr' };
+                readonly licenseAuthority: { readonly column: 'licenseAuthority' };
                 readonly name: { readonly column: 'name' };
                 readonly notes: { readonly column: 'notes' };
                 readonly phone: { readonly column: 'phone' };
+                readonly tradeLicenseNumber: { readonly column: 'tradeLicenseNumber' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly vatTrn: { readonly column: 'vatTrn' };
+                readonly version: { readonly column: 'version' };
               };
             };
           };
@@ -3257,11 +3685,44 @@ type ContractBase = Omit<
           };
         };
         readonly enum: {
+          readonly ClientEntityType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'Llc'; readonly value: 'LLC' },
+              { readonly name: 'SoleEstablishment'; readonly value: 'Sole establishment' },
+              { readonly name: 'CivilCompany'; readonly value: 'Civil company' },
+              { readonly name: 'Branch'; readonly value: 'Branch' },
+              { readonly name: 'JointStock'; readonly value: 'Joint stock company' },
+              { readonly name: 'Partnership'; readonly value: 'Partnership' },
+              { readonly name: 'Individual'; readonly value: 'Individual' },
+              { readonly name: 'Other'; readonly value: 'Other' },
+            ];
+          };
+          readonly Emirate: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'AbuDhabi'; readonly value: 'Abu Dhabi' },
+              { readonly name: 'Dubai'; readonly value: 'Dubai' },
+              { readonly name: 'Sharjah'; readonly value: 'Sharjah' },
+              { readonly name: 'Ajman'; readonly value: 'Ajman' },
+              { readonly name: 'UmmAlQuwain'; readonly value: 'Umm Al Quwain' },
+              { readonly name: 'RasAlKhaimah'; readonly value: 'Ras Al Khaimah' },
+              { readonly name: 'Fujairah'; readonly value: 'Fujairah' },
+            ];
+          };
           readonly EmployeeStatus: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
               { readonly name: 'Active'; readonly value: 'Active' },
               { readonly name: 'Inactive'; readonly value: 'Inactive' },
+            ];
+          };
+          readonly Jurisdiction: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'Mainland'; readonly value: 'Mainland' },
+              { readonly name: 'FreeZone'; readonly value: 'Free zone' },
+              { readonly name: 'Offshore'; readonly value: 'Offshore' },
             ];
           };
           readonly Language: {
@@ -3289,9 +3750,33 @@ type ContractBase = Omit<
           };
         };
         readonly enumMemberTypes?: {
+          readonly ClientEntityType: readonly [
+            { readonly name: 'Llc'; readonly value: 'LLC' },
+            { readonly name: 'SoleEstablishment'; readonly value: 'Sole establishment' },
+            { readonly name: 'CivilCompany'; readonly value: 'Civil company' },
+            { readonly name: 'Branch'; readonly value: 'Branch' },
+            { readonly name: 'JointStock'; readonly value: 'Joint stock company' },
+            { readonly name: 'Partnership'; readonly value: 'Partnership' },
+            { readonly name: 'Individual'; readonly value: 'Individual' },
+            { readonly name: 'Other'; readonly value: 'Other' },
+          ];
+          readonly Emirate: readonly [
+            { readonly name: 'AbuDhabi'; readonly value: 'Abu Dhabi' },
+            { readonly name: 'Dubai'; readonly value: 'Dubai' },
+            { readonly name: 'Sharjah'; readonly value: 'Sharjah' },
+            { readonly name: 'Ajman'; readonly value: 'Ajman' },
+            { readonly name: 'UmmAlQuwain'; readonly value: 'Umm Al Quwain' },
+            { readonly name: 'RasAlKhaimah'; readonly value: 'Ras Al Khaimah' },
+            { readonly name: 'Fujairah'; readonly value: 'Fujairah' },
+          ];
           readonly EmployeeStatus: readonly [
             { readonly name: 'Active'; readonly value: 'Active' },
             { readonly name: 'Inactive'; readonly value: 'Inactive' },
+          ];
+          readonly Jurisdiction: readonly [
+            { readonly name: 'Mainland'; readonly value: 'Mainland' },
+            { readonly name: 'FreeZone'; readonly value: 'Free zone' },
+            { readonly name: 'Offshore'; readonly value: 'Offshore' },
           ];
           readonly Language: readonly [
             { readonly name: 'En'; readonly value: 'en' },

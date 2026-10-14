@@ -1,0 +1,1168 @@
+[
+  {
+    "id": "column.public.Client.accountManagerId",
+    "label": "Add column \"accountManagerId\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "accountManagerId",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"accountManagerId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "accountManagerId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"accountManagerId\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"accountManagerId\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"accountManagerId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "accountManagerId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.businessActivity",
+    "label": "Add column \"businessActivity\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "businessActivity",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"businessActivity\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "businessActivity"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"businessActivity\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"businessActivity\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"businessActivity\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "businessActivity"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.contactDesignation",
+    "label": "Add column \"contactDesignation\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "contactDesignation",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"contactDesignation\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "contactDesignation"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"contactDesignation\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"contactDesignation\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"contactDesignation\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "contactDesignation"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.contactEmail",
+    "label": "Add column \"contactEmail\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "contactEmail",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"contactEmail\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "contactEmail"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"contactEmail\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"contactEmail\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"contactEmail\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "contactEmail"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.contactName",
+    "label": "Add column \"contactName\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "contactName",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"contactName\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "contactName"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"contactName\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"contactName\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"contactName\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "contactName"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.contactPhone",
+    "label": "Add column \"contactPhone\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "contactPhone",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"contactPhone\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "contactPhone"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"contactPhone\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"contactPhone\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"contactPhone\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "contactPhone"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.corporateTaxTrn",
+    "label": "Add column \"corporateTaxTrn\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "corporateTaxTrn",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"corporateTaxTrn\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "corporateTaxTrn"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"corporateTaxTrn\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"corporateTaxTrn\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"corporateTaxTrn\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "corporateTaxTrn"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.emirate",
+    "label": "Add column \"emirate\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "emirate",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"emirate\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "emirate"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"emirate\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"emirate\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"emirate\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "emirate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.entityType",
+    "label": "Add column \"entityType\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "entityType",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"entityType\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "entityType"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"entityType\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"entityType\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"entityType\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "entityType"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.financialYearEndMonth",
+    "label": "Add column \"financialYearEndMonth\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "financialYearEndMonth",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"financialYearEndMonth\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "financialYearEndMonth"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"financialYearEndMonth\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"financialYearEndMonth\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"financialYearEndMonth\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "financialYearEndMonth"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.freeZone",
+    "label": "Add column \"freeZone\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "freeZone",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"freeZone\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "freeZone"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"freeZone\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"freeZone\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"freeZone\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "freeZone"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.jurisdiction",
+    "label": "Add column \"jurisdiction\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "jurisdiction",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"jurisdiction\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "jurisdiction"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"jurisdiction\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"jurisdiction\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"jurisdiction\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "jurisdiction"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.legalNameAr",
+    "label": "Add column \"legalNameAr\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "legalNameAr",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"legalNameAr\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "legalNameAr"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"legalNameAr\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"legalNameAr\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"legalNameAr\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "legalNameAr"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.licenseAuthority",
+    "label": "Add column \"licenseAuthority\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "licenseAuthority",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"licenseAuthority\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "licenseAuthority"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"licenseAuthority\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"licenseAuthority\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"licenseAuthority\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "licenseAuthority"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.tradeLicenseNumber",
+    "label": "Add column \"tradeLicenseNumber\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "tradeLicenseNumber",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"tradeLicenseNumber\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "tradeLicenseNumber"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"tradeLicenseNumber\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"tradeLicenseNumber\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"tradeLicenseNumber\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "tradeLicenseNumber"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.vatTrn",
+    "label": "Add column \"vatTrn\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "vatTrn",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"vatTrn\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "vatTrn"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"vatTrn\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"vatTrn\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"vatTrn\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "vatTrn"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Client.version",
+    "label": "Add column \"version\" to \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "version",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"version\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "version"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"version\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD COLUMN \"version\" int4 DEFAULT 1 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"version\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Client",
+          "version"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Client.Client_corporateTaxTrn_format_dd6b5e2a",
+    "label": "Add check constraint \"Client_corporateTaxTrn_format_dd6b5e2a\" on \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Client_corporateTaxTrn_format_dd6b5e2a",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Client_corporateTaxTrn_format_dd6b5e2a\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_corporateTaxTrn_format_dd6b5e2a",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Client_corporateTaxTrn_format_dd6b5e2a\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD CONSTRAINT \"Client_corporateTaxTrn_format_dd6b5e2a\" CHECK (\"corporateTaxTrn\" ~ '^[0-9]{15}$')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Client_corporateTaxTrn_format_dd6b5e2a\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_corporateTaxTrn_format_dd6b5e2a",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Client.Client_emirate_check_76468c4c",
+    "label": "Add check constraint \"Client_emirate_check_76468c4c\" on \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Client_emirate_check_76468c4c",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Client_emirate_check_76468c4c\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_emirate_check_76468c4c",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Client_emirate_check_76468c4c\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD CONSTRAINT \"Client_emirate_check_76468c4c\" CHECK (\"emirate\" IN ('Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Client_emirate_check_76468c4c\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_emirate_check_76468c4c",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Client.Client_entityType_check_a03b0a15",
+    "label": "Add check constraint \"Client_entityType_check_a03b0a15\" on \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Client_entityType_check_a03b0a15",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Client_entityType_check_a03b0a15\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_entityType_check_a03b0a15",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Client_entityType_check_a03b0a15\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD CONSTRAINT \"Client_entityType_check_a03b0a15\" CHECK (\"entityType\" IN ('LLC', 'Sole establishment', 'Civil company', 'Branch', 'Joint stock company', 'Partnership', 'Individual', 'Other'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Client_entityType_check_a03b0a15\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_entityType_check_a03b0a15",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Client.Client_financialYearEndMonth_range_b33452a5",
+    "label": "Add check constraint \"Client_financialYearEndMonth_range_b33452a5\" on \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Client_financialYearEndMonth_range_b33452a5",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Client_financialYearEndMonth_range_b33452a5\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_financialYearEndMonth_range_b33452a5",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Client_financialYearEndMonth_range_b33452a5\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD CONSTRAINT \"Client_financialYearEndMonth_range_b33452a5\" CHECK (\"financialYearEndMonth\" BETWEEN 1 AND 12)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Client_financialYearEndMonth_range_b33452a5\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_financialYearEndMonth_range_b33452a5",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Client.Client_jurisdiction_check_bb15cdfa",
+    "label": "Add check constraint \"Client_jurisdiction_check_bb15cdfa\" on \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Client_jurisdiction_check_bb15cdfa",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Client_jurisdiction_check_bb15cdfa\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_jurisdiction_check_bb15cdfa",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Client_jurisdiction_check_bb15cdfa\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD CONSTRAINT \"Client_jurisdiction_check_bb15cdfa\" CHECK (\"jurisdiction\" IN ('Mainland', 'Free zone', 'Offshore'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Client_jurisdiction_check_bb15cdfa\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_jurisdiction_check_bb15cdfa",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Client.Client_vatTrn_format_0235a5e8",
+    "label": "Add check constraint \"Client_vatTrn_format_0235a5e8\" on \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Client_vatTrn_format_0235a5e8",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Client_vatTrn_format_0235a5e8\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_vatTrn_format_0235a5e8",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Client_vatTrn_format_0235a5e8\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD CONSTRAINT \"Client_vatTrn_format_0235a5e8\" CHECK (\"vatTrn\" ~ '^[0-9]{15}$')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Client_vatTrn_format_0235a5e8\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_vatTrn_format_0235a5e8",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Client.Client_corporateTaxTrn_key",
+    "label": "Add unique constraint on \"Client\" (corporateTaxTrn)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Client_corporateTaxTrn_key",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Client_corporateTaxTrn_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_corporateTaxTrn_key",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Client_corporateTaxTrn_key\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD CONSTRAINT \"Client_corporateTaxTrn_key\" UNIQUE (\"corporateTaxTrn\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Client_corporateTaxTrn_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_corporateTaxTrn_key",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Client.Client_vatTrn_key",
+    "label": "Add unique constraint on \"Client\" (vatTrn)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Client_vatTrn_key",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Client_vatTrn_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_vatTrn_key",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Client_vatTrn_key\"",
+        "sql": "ALTER TABLE \"public\".\"Client\" ADD CONSTRAINT \"Client_vatTrn_key\" UNIQUE (\"vatTrn\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Client_vatTrn_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_vatTrn_key",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Client.Client_accountManagerId_idx_2dca74d4",
+    "label": "Create index \"Client_accountManagerId_idx_2dca74d4\" on \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Client_accountManagerId_idx_2dca74d4",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Client_accountManagerId_idx_2dca74d4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Client_accountManagerId_idx_2dca74d4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Client_accountManagerId_idx_2dca74d4\"",
+        "sql": "CREATE INDEX \"Client_accountManagerId_idx_2dca74d4\" ON \"public\".\"Client\" (\"accountManagerId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Client_accountManagerId_idx_2dca74d4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Client_accountManagerId_idx_2dca74d4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Client.Client_accountManagerId_fkey",
+    "label": "Add foreign key \"Client_accountManagerId_fkey\" on \"Client\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Client_accountManagerId_fkey",
+        "table": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Client_accountManagerId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_accountManagerId_fkey",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Client_accountManagerId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Client\"\nADD CONSTRAINT \"Client_accountManagerId_fkey\"\nFOREIGN KEY (\"accountManagerId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Client_accountManagerId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Client_accountManagerId_fkey",
+          "public",
+          "\"public\".\"Client\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sequence.Client.code",
+    "label": "Create \"Client_code_seq\" for client codes",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Client"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure the client code sequence does not exist yet",
+        "sql": "SELECT to_regclass('public.\"Client_code_seq\"') IS NULL AS \"result\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "create the client code sequence",
+        "sql": "CREATE SEQUENCE \"public\".\"Client_code_seq\" AS integer START 1"
+      },
+      {
+        "description": "continue after any CL-n code that already exists",
+        "sql": "SELECT setval('\"public\".\"Client_code_seq\"',\n  COALESCE((SELECT max(substring(\"clientCode\" from 4)::int) FROM \"public\".\"Client\"\n            WHERE \"clientCode\" ~ '^CL-[0-9]{1,9}$'), 0) + 1, false)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify the client code sequence exists",
+        "sql": "SELECT to_regclass('public.\"Client_code_seq\"') IS NOT NULL AS \"result\""
+      }
+    ]
+  }
+]

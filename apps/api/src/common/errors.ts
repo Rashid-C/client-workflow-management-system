@@ -24,6 +24,13 @@ export const ERROR_CODES = [
   'auth.password_is_email',
 
   'clients.code_taken',
+  'clients.not_found',
+  'clients.stale',
+  'clients.archived',
+  'clients.vat_trn_taken',
+  'clients.ct_trn_taken',
+  'clients.has_open_tasks',
+  'clients.inactive_manager',
 
   'employees.not_found',
   'employees.role_missing',
