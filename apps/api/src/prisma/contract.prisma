@@ -451,3 +451,21 @@ model LeadFollowUp {
 
   @@index([leadId, happenedOn])
 }
+
+// Each person's end-of-day note: one per office day, editable only that day.
+model DailyUpdate {
+  id         Int                        @id @default(autoincrement())
+  employeeId Int
+  employee   Employee                   @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  // The office day it covers (Asia/Dubai).
+  day        DateString
+  done       String
+  plan       String?
+  blockers   String?
+  version    Int                        @default(1)
+  createdAt  TimestamptzString          @default(now())
+  updatedAt  temporal.updatedAtString()
+
+  @@unique([employeeId, day])
+  @@index([day])
+}

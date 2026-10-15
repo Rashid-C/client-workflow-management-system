@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'80dd2aa266a92d9a6a16b51cd43c8d530e171b07ce5739f1eaed31d54d85e31a'>;
+  StorageHashBase<'57988ab684b65ca73cd48d351fa619ddb505aaa44fe76d911164c19b375a9f64'>;
 export type ExecutionHash =
-  ExecutionHashBase<'650d5baa750576b9625cb18cfa6a546f062991a72c5cbf9f0d043eaaa04d4fdf'>;
+  ExecutionHashBase<'c5d0bf0e2457d89034142d511afa0188be5d52cdb521a0f75b6aba0ff380a5b3'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -295,6 +295,17 @@ export type FieldOutputTypes = {
       readonly vatTrn: CodecTypes['pg/text@1']['output'] | null;
       readonly version: CodecTypes['pg/int4@1']['output'];
     };
+    readonly DailyUpdate: {
+      readonly blockers: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly day: CodecTypes['pg/date-string@1']['output'];
+      readonly done: CodecTypes['pg/text@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly plan: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly version: CodecTypes['pg/int4@1']['output'];
+    };
     readonly Document: {
       readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly clientId: CodecTypes['pg/int4@1']['output'];
@@ -528,6 +539,17 @@ export type FieldInputTypes = {
       readonly tradeLicenseNumber: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly vatTrn: CodecTypes['pg/text@1']['input'] | null;
+      readonly version: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly DailyUpdate: {
+      readonly blockers: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly day: CodecTypes['pg/date-string@1']['input'];
+      readonly done: CodecTypes['pg/text@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly plan: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly version: CodecTypes['pg/int4@1']['input'];
     };
     readonly Document: {
@@ -765,6 +787,17 @@ export type StorageColumnTypes = {
       readonly vatTrn: CodecTypes['pg/text@1']['output'] | null;
       readonly version: CodecTypes['pg/int4@1']['output'];
     };
+    readonly DailyUpdate: {
+      readonly blockers: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly day: CodecTypes['pg/date-string@1']['output'];
+      readonly done: CodecTypes['pg/text@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly plan: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly version: CodecTypes['pg/int4@1']['output'];
+    };
     readonly Document: {
       readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly clientId: CodecTypes['pg/int4@1']['output'];
@@ -998,6 +1031,17 @@ export type StorageColumnInputTypes = {
       readonly tradeLicenseNumber: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly vatTrn: CodecTypes['pg/text@1']['input'] | null;
+      readonly version: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly DailyUpdate: {
+      readonly blockers: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly day: CodecTypes['pg/date-string@1']['input'];
+      readonly done: CodecTypes['pg/text@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly plan: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly version: CodecTypes['pg/int4@1']['input'];
     };
     readonly Document: {
@@ -1239,6 +1283,19 @@ export namespace Models {
     accountManager: public_Employee | null;
     readonly [RelationKeys]?: 'accountManager';
   };
+  export type public_DailyUpdate = {
+    blockers: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    day: CodecTypes['pg/date-string@1']['output'];
+    done: CodecTypes['pg/text@1']['output'];
+    employeeId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    plan: CodecTypes['pg/text@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    version: CodecTypes['pg/int4@1']['output'];
+    employee: public_Employee;
+    readonly [RelationKeys]?: 'employee';
+  };
   export type public_Document = {
     archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     clientId: CodecTypes['pg/int4@1']['output'];
@@ -1450,6 +1507,7 @@ export declare const models: {
   public: {
     AuditLog: Models.public_AuditLog;
     Client: Models.public_Client;
+    DailyUpdate: Models.public_DailyUpdate;
     Document: Models.public_Document;
     Employee: Models.public_Employee;
     EmployeeCredential: Models.public_EmployeeCredential;
@@ -1812,6 +1870,103 @@ type ContractBase = Omit<
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Client';
                     readonly columns: readonly ['accountManagerId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly DailyUpdate: {
+              columns: {
+                readonly blockers: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly day: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly done: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly employeeId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly plan: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly version: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['employeeId', 'day'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'DailyUpdate_day_idx_930fcf9b';
+                  readonly prefix: 'DailyUpdate_day_idx';
+                  readonly columns: readonly ['day'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'DailyUpdate_employeeId_idx_087dd4a6';
+                  readonly prefix: 'DailyUpdate_employeeId_idx';
+                  readonly columns: readonly ['employeeId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'DailyUpdate';
+                    readonly columns: readonly ['employeeId'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
@@ -3412,6 +3567,10 @@ type ContractBase = Omit<
   readonly roots: {
     readonly AuditLog: { readonly namespace: 'public' & NamespaceId; readonly model: 'AuditLog' };
     readonly Client: { readonly namespace: 'public' & NamespaceId; readonly model: 'Client' };
+    readonly DailyUpdate: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'DailyUpdate';
+    };
     readonly Document: { readonly namespace: 'public' & NamespaceId; readonly model: 'Document' };
     readonly Employee: { readonly namespace: 'public' & NamespaceId; readonly model: 'Employee' };
     readonly EmployeeCredential: {
@@ -3699,6 +3858,81 @@ type ContractBase = Omit<
                 readonly tradeLicenseNumber: { readonly column: 'tradeLicenseNumber' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly vatTrn: { readonly column: 'vatTrn' };
+                readonly version: { readonly column: 'version' };
+              };
+            };
+          };
+          readonly DailyUpdate: {
+            readonly fields: {
+              readonly blockers: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly day: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
+              readonly done: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly employeeId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly plan: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly version: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly employee: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['employeeId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'DailyUpdate';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly blockers: { readonly column: 'blockers' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly day: { readonly column: 'day' };
+                readonly done: { readonly column: 'done' };
+                readonly employeeId: { readonly column: 'employeeId' };
+                readonly id: { readonly column: 'id' };
+                readonly plan: { readonly column: 'plan' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly version: { readonly column: 'version' };
               };
             };
@@ -5089,6 +5323,15 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'Client';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'DailyUpdate';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };

@@ -1,0 +1,203 @@
+[
+  {
+    "id": "table.DailyUpdate",
+    "label": "Create table \"DailyUpdate\"",
+    "summary": "Creates table \"DailyUpdate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "DailyUpdate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"DailyUpdate\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"DailyUpdate\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"DailyUpdate\"",
+        "sql": "CREATE TABLE \"public\".\"DailyUpdate\" (\n  \"blockers\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"day\" date NOT NULL,\n  \"done\" text NOT NULL,\n  \"employeeId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"plan\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"version\" int4 DEFAULT 1 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"DailyUpdate\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"DailyUpdate\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.DailyUpdate.DailyUpdate_employeeId_day_key",
+    "label": "Add unique constraint on \"DailyUpdate\" (employeeId, day)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "DailyUpdate_employeeId_day_key",
+        "table": "DailyUpdate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"DailyUpdate_employeeId_day_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "DailyUpdate_employeeId_day_key",
+          "public",
+          "\"public\".\"DailyUpdate\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"DailyUpdate_employeeId_day_key\"",
+        "sql": "ALTER TABLE \"public\".\"DailyUpdate\" ADD CONSTRAINT \"DailyUpdate_employeeId_day_key\" UNIQUE (\"employeeId\", \"day\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"DailyUpdate_employeeId_day_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "DailyUpdate_employeeId_day_key",
+          "public",
+          "\"public\".\"DailyUpdate\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.DailyUpdate.DailyUpdate_day_idx_930fcf9b",
+    "label": "Create index \"DailyUpdate_day_idx_930fcf9b\" on \"DailyUpdate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "DailyUpdate_day_idx_930fcf9b",
+        "table": "DailyUpdate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"DailyUpdate_day_idx_930fcf9b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"DailyUpdate_day_idx_930fcf9b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"DailyUpdate_day_idx_930fcf9b\"",
+        "sql": "CREATE INDEX \"DailyUpdate_day_idx_930fcf9b\" ON \"public\".\"DailyUpdate\" (\"day\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"DailyUpdate_day_idx_930fcf9b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"DailyUpdate_day_idx_930fcf9b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.DailyUpdate.DailyUpdate_employeeId_idx_087dd4a6",
+    "label": "Create index \"DailyUpdate_employeeId_idx_087dd4a6\" on \"DailyUpdate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "DailyUpdate_employeeId_idx_087dd4a6",
+        "table": "DailyUpdate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"DailyUpdate_employeeId_idx_087dd4a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"DailyUpdate_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"DailyUpdate_employeeId_idx_087dd4a6\"",
+        "sql": "CREATE INDEX \"DailyUpdate_employeeId_idx_087dd4a6\" ON \"public\".\"DailyUpdate\" (\"employeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"DailyUpdate_employeeId_idx_087dd4a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"DailyUpdate_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.DailyUpdate.DailyUpdate_employeeId_fkey",
+    "label": "Add foreign key \"DailyUpdate_employeeId_fkey\" on \"DailyUpdate\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "DailyUpdate_employeeId_fkey",
+        "table": "DailyUpdate"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"DailyUpdate_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "DailyUpdate_employeeId_fkey",
+          "public",
+          "\"public\".\"DailyUpdate\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"DailyUpdate_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"DailyUpdate\"\nADD CONSTRAINT \"DailyUpdate_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"DailyUpdate_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "DailyUpdate_employeeId_fkey",
+          "public",
+          "\"public\".\"DailyUpdate\""
+        ]
+      }
+    ]
+  }
+]

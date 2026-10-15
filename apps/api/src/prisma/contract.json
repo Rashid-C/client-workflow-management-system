@@ -12,6 +12,10 @@
       "model": "Client",
       "namespace": "public"
     },
+    "DailyUpdate": {
+      "model": "DailyUpdate",
+      "namespace": "public"
+    },
     "Document": {
       "model": "Document",
       "namespace": "public"
@@ -826,6 +830,124 @@
               },
               "namespaceId": "public",
               "table": "Client"
+            }
+          },
+          "DailyUpdate": {
+            "fields": {
+              "blockers": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "day": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/date-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "done": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "employeeId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "plan": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "version": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "employee": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "employeeId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "blockers": {
+                  "column": "blockers"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "day": {
+                  "column": "day"
+                },
+                "done": {
+                  "column": "done"
+                },
+                "employeeId": {
+                  "column": "employeeId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "plan": {
+                  "column": "plan"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "version": {
+                  "column": "version"
+                }
+              },
+              "namespaceId": "public",
+              "table": "DailyUpdate"
             }
           },
           "Document": {
@@ -3099,6 +3221,120 @@
                 }
               ]
             },
+            "DailyUpdate": {
+              "columns": {
+                "blockers": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "day": {
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "nullable": false
+                },
+                "done": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "employeeId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "plan": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "version": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "DailyUpdate_employeeId_idx_087dd4a6"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "employeeId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "DailyUpdate"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "day"
+                  ],
+                  "name": "DailyUpdate_day_idx_930fcf9b",
+                  "prefix": "DailyUpdate_day_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "employeeId"
+                  ],
+                  "name": "DailyUpdate_employeeId_idx_087dd4a6",
+                  "prefix": "DailyUpdate_employeeId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "employeeId",
+                    "day"
+                  ]
+                }
+              ]
+            },
             "Document": {
               "checks": [
                 {
@@ -5126,10 +5362,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "80dd2aa266a92d9a6a16b51cd43c8d530e171b07ce5739f1eaed31d54d85e31a"
+    "storageHash": "57988ab684b65ca73cd48d351fa619ddb505aaa44fe76d911164c19b375a9f64"
   },
   "execution": {
-    "executionHash": "650d5baa750576b9625cb18cfa6a546f062991a72c5cbf9f0d043eaaa04d4fdf",
+    "executionHash": "c5d0bf0e2457d89034142d511afa0188be5d52cdb521a0f75b6aba0ff380a5b3",
     "mutations": {
       "defaults": [
         {
@@ -5143,6 +5379,21 @@
           },
           "ref": {
             "entry": "Client",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "DailyUpdate",
             "field": "updatedAt",
             "namespace": "public"
           }

@@ -57,6 +57,9 @@ export const ERROR_CODES = [
   'leads.lost_cannot_convert',
   'leads.convert_forbidden',
 
+  'daily_updates.stale',
+  'daily_updates.team_only',
+
   'roles.not_found',
   'roles.stale',
   'roles.system_locked',
