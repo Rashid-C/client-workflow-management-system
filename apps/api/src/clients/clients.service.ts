@@ -85,7 +85,7 @@ const MANAGER = `CASE WHEN m."id" IS NULL THEN NULL
  */
 export function clientVisibleTo(
   viewer: AuthUser,
-  permission: 'clients.view' | 'clients.edit',
+  permission: 'clients.view' | 'clients.edit' | 'documents.view' | 'documents.edit',
   param: (value: unknown) => string,
   alias = 'c',
 ): string {

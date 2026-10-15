@@ -12,6 +12,10 @@
       "model": "Client",
       "namespace": "public"
     },
+    "Document": {
+      "model": "Document",
+      "namespace": "public"
+    },
     "Employee": {
       "model": "Employee",
       "namespace": "public"
@@ -91,6 +95,59 @@
               {
                 "name": "Individual",
                 "value": "Individual"
+              },
+              {
+                "name": "Other",
+                "value": "Other"
+              }
+            ]
+          },
+          "DocumentType": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "TradeLicence",
+                "value": "Trade licence"
+              },
+              {
+                "name": "VatCertificate",
+                "value": "VAT certificate"
+              },
+              {
+                "name": "CorporateTaxCert",
+                "value": "Corporate tax certificate"
+              },
+              {
+                "name": "IcvCertificate",
+                "value": "ICV certificate"
+              },
+              {
+                "name": "AdnocRegistration",
+                "value": "ADNOC vendor registration"
+              },
+              {
+                "name": "EmiratesId",
+                "value": "Emirates ID"
+              },
+              {
+                "name": "Passport",
+                "value": "Passport"
+              },
+              {
+                "name": "ResidenceVisa",
+                "value": "Residence visa"
+              },
+              {
+                "name": "TenancyContract",
+                "value": "Tenancy contract (Ejari)"
+              },
+              {
+                "name": "Memorandum",
+                "value": "Memorandum of association"
+              },
+              {
+                "name": "PowerOfAttorney",
+                "value": "Power of attorney"
               },
               {
                 "name": "Other",
@@ -682,6 +739,196 @@
               },
               "namespaceId": "public",
               "table": "Client"
+            }
+          },
+          "Document": {
+            "fields": {
+              "archivedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "clientId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdById": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "documentNumber": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiryDate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/date-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "issueDate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/date-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reminderDays": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "DocumentType",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "version": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "client": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "clientId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Client",
+                  "namespace": "public"
+                }
+              },
+              "createdBy": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "createdById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "archivedAt": {
+                  "column": "archivedAt"
+                },
+                "clientId": {
+                  "column": "clientId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdById": {
+                  "column": "createdById"
+                },
+                "documentNumber": {
+                  "column": "documentNumber"
+                },
+                "expiryDate": {
+                  "column": "expiryDate"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "issueDate": {
+                  "column": "issueDate"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "reminderDays": {
+                  "column": "reminderDays"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "type": {
+                  "column": "type"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "version": {
+                  "column": "version"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Document"
             }
           },
           "Employee": {
@@ -2383,6 +2630,193 @@
                 }
               ]
             },
+            "Document": {
+              "checks": [
+                {
+                  "expression": "\"issueDate\" IS NULL OR \"expiryDate\" IS NULL OR \"expiryDate\" >= \"issueDate\"",
+                  "name": "Document_dates_order_0740a985",
+                  "prefix": "Document_dates_order"
+                },
+                {
+                  "expression": "\"reminderDays\" BETWEEN 0 AND 365",
+                  "name": "Document_reminderDays_range_92ab7f9b",
+                  "prefix": "Document_reminderDays_range"
+                },
+                {
+                  "expression": "\"type\" IN ('Trade licence', 'VAT certificate', 'Corporate tax certificate', 'ICV certificate', 'ADNOC vendor registration', 'Emirates ID', 'Passport', 'Residence visa', 'Tenancy contract (Ejari)', 'Memorandum of association', 'Power of attorney', 'Other')",
+                  "name": "Document_type_check_efff8b40",
+                  "prefix": "Document_type_check"
+                }
+              ],
+              "columns": {
+                "archivedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "clientId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "createdById": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "documentNumber": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "expiryDate": {
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "issueDate": {
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "nullable": true
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "reminderDays": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 30
+                  },
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "DocumentType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "version": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Document_clientId_idx_153a9a49"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "clientId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Document"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Client"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "Document_createdById_idx_8bf640ed"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "createdById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Document"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "clientId"
+                  ],
+                  "name": "Document_clientId_idx_153a9a49",
+                  "prefix": "Document_clientId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "createdById"
+                  ],
+                  "name": "Document_createdById_idx_8bf640ed",
+                  "prefix": "Document_createdById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "expiryDate"
+                  ],
+                  "name": "Document_expiryDate_idx_3c770fb2",
+                  "prefix": "Document_expiryDate_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Employee": {
               "checks": [
                 {
@@ -3730,6 +4164,23 @@
                 "Other"
               ]
             },
+            "DocumentType": {
+              "kind": "valueSet",
+              "values": [
+                "Trade licence",
+                "VAT certificate",
+                "Corporate tax certificate",
+                "ICV certificate",
+                "ADNOC vendor registration",
+                "Emirates ID",
+                "Passport",
+                "Residence visa",
+                "Tenancy contract (Ejari)",
+                "Memorandum of association",
+                "Power of attorney",
+                "Other"
+              ]
+            },
             "Emirate": {
               "kind": "valueSet",
               "values": [
@@ -3786,10 +4237,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "3595b91d77763d673cbf1d4ca39591cb87ebb8105ebaa388e14969b139bb7e65"
+    "storageHash": "9b8cff20ee6f4bb8c0e2da2f475dbf618e06c3c7fcae7cf8920c5feee28c967e"
   },
   "execution": {
-    "executionHash": "ba0cddf96f5eddaab600b11cfd37c7d5f90fb3c395ea4de55b9cfa6cba7c0cc5",
+    "executionHash": "4b2cadd38e76caafd8a44e7197617799b95604d5dc83f49a2946b77c4f80f146",
     "mutations": {
       "defaults": [
         {
@@ -3803,6 +4254,21 @@
           },
           "ref": {
             "entry": "Client",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "Document",
             "field": "updatedAt",
             "namespace": "public"
           }

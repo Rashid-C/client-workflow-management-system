@@ -42,6 +42,12 @@ export const ERROR_CODES = [
   'employees.cannot_change_own_roles',
   'employees.cannot_reset_own_password',
 
+  'documents.not_found',
+  'documents.stale',
+  'documents.client_not_found',
+  'documents.client_archived',
+  'documents.invalid_dates',
+
   'roles.not_found',
   'roles.stale',
   'roles.system_locked',

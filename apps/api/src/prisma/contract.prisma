@@ -326,3 +326,49 @@ model TimeEntry {
   @@index([workDate])
   @@check(expression: "\"minutes\" BETWEEN 1 AND 720", name: "TimeEntry_minutes_range")
 }
+
+// Client documents whose expiry the office tracks (licences, certificates,
+// IDs). Files are not stored yet — only the record and its dates.
+enum DocumentType {
+  @@type("pg/text@1")
+  TradeLicence        = "Trade licence"
+  VatCertificate      = "VAT certificate"
+  CorporateTaxCert    = "Corporate tax certificate"
+  IcvCertificate      = "ICV certificate"
+  AdnocRegistration   = "ADNOC vendor registration"
+  EmiratesId          = "Emirates ID"
+  Passport            = "Passport"
+  ResidenceVisa       = "Residence visa"
+  TenancyContract     = "Tenancy contract (Ejari)"
+  Memorandum          = "Memorandum of association"
+  PowerOfAttorney     = "Power of attorney"
+  Other               = "Other"
+}
+
+model Document {
+  id             Int                        @id @default(autoincrement())
+  clientId       Int
+  client         Client                     @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  type           DocumentType
+  // e.g. "Owner — Ahmed Ali" for an Emirates ID.
+  title          String?
+  documentNumber String?
+  issueDate      DateString?
+  // Null for documents that never expire (e.g. an MOA).
+  expiryDate     DateString?
+  // How many days before expiry it counts as "expiring soon".
+  reminderDays   Int                        @default(30)
+  notes          String?
+  createdById    Int
+  createdBy      Employee                   @relation("DocumentCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  // Deleting archives the record, so its history stays readable.
+  archivedAt     TimestamptzString?
+  version        Int                        @default(1)
+  createdAt      TimestamptzString          @default(now())
+  updatedAt      temporal.updatedAtString()
+
+  @@index([clientId])
+  @@index([expiryDate])
+  @@check(expression: "\"reminderDays\" BETWEEN 0 AND 365", name: "Document_reminderDays_range")
+  @@check(expression: "\"issueDate\" IS NULL OR \"expiryDate\" IS NULL OR \"expiryDate\" >= \"issueDate\"", name: "Document_dates_order")
+}

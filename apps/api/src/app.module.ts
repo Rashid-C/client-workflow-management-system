@@ -5,6 +5,7 @@ import { AppService } from './app.service.js';
 import { AuditModule } from './audit/audit.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ClientsModule } from './clients/clients.module.js';
+import { DocumentsModule } from './documents/documents.module.js';
 import { DashboardModule } from './dashboard/dashboard.module.js';
 import { DatabaseModule } from './database/database.module.js';
 import { EmployeesModule } from './employees/employees.module.js';
@@ -19,6 +20,7 @@ import { TimeEntriesModule } from './time-entries/time-entries.module.js';
     AuditModule,
     AuthModule,
     ClientsModule,
+    DocumentsModule,
     EmployeesModule,
     RolesModule,
     TaskTypesModule,

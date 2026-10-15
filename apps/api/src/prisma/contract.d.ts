@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'3595b91d77763d673cbf1d4ca39591cb87ebb8105ebaa388e14969b139bb7e65'>;
+  StorageHashBase<'9b8cff20ee6f4bb8c0e2da2f475dbf618e06c3c7fcae7cf8920c5feee28c967e'>;
 export type ExecutionHash =
-  ExecutionHashBase<'ba0cddf96f5eddaab600b11cfd37c7d5f90fb3c395ea4de55b9cfa6cba7c0cc5'>;
+  ExecutionHashBase<'4b2cadd38e76caafd8a44e7197617799b95604d5dc83f49a2946b77c4f80f146'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -295,6 +295,34 @@ export type FieldOutputTypes = {
       readonly vatTrn: CodecTypes['pg/text@1']['output'] | null;
       readonly version: CodecTypes['pg/int4@1']['output'];
     };
+    readonly Document: {
+      readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly clientId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly documentNumber: CodecTypes['pg/text@1']['output'] | null;
+      readonly expiryDate: CodecTypes['pg/date-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly issueDate: CodecTypes['pg/date-string@1']['output'] | null;
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly reminderDays: CodecTypes['pg/int4@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'] | null;
+      readonly type:
+        | 'Trade licence'
+        | 'VAT certificate'
+        | 'Corporate tax certificate'
+        | 'ICV certificate'
+        | 'ADNOC vendor registration'
+        | 'Emirates ID'
+        | 'Passport'
+        | 'Residence visa'
+        | 'Tenancy contract (Ejari)'
+        | 'Memorandum of association'
+        | 'Power of attorney'
+        | 'Other';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly version: CodecTypes['pg/int4@1']['output'];
+    };
     readonly Employee: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly designation: CodecTypes['pg/text@1']['output'];
@@ -469,6 +497,34 @@ export type FieldInputTypes = {
       readonly tradeLicenseNumber: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly vatTrn: CodecTypes['pg/text@1']['input'] | null;
+      readonly version: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly Document: {
+      readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly clientId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly documentNumber: CodecTypes['pg/text@1']['input'] | null;
+      readonly expiryDate: CodecTypes['pg/date-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly issueDate: CodecTypes['pg/date-string@1']['input'] | null;
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly reminderDays: CodecTypes['pg/int4@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'] | null;
+      readonly type:
+        | 'Trade licence'
+        | 'VAT certificate'
+        | 'Corporate tax certificate'
+        | 'ICV certificate'
+        | 'ADNOC vendor registration'
+        | 'Emirates ID'
+        | 'Passport'
+        | 'Residence visa'
+        | 'Tenancy contract (Ejari)'
+        | 'Memorandum of association'
+        | 'Power of attorney'
+        | 'Other';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly version: CodecTypes['pg/int4@1']['input'];
     };
     readonly Employee: {
@@ -647,6 +703,34 @@ export type StorageColumnTypes = {
       readonly vatTrn: CodecTypes['pg/text@1']['output'] | null;
       readonly version: CodecTypes['pg/int4@1']['output'];
     };
+    readonly Document: {
+      readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly clientId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly documentNumber: CodecTypes['pg/text@1']['output'] | null;
+      readonly expiryDate: CodecTypes['pg/date-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly issueDate: CodecTypes['pg/date-string@1']['output'] | null;
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly reminderDays: CodecTypes['pg/int4@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'] | null;
+      readonly type:
+        | 'Trade licence'
+        | 'VAT certificate'
+        | 'Corporate tax certificate'
+        | 'ICV certificate'
+        | 'ADNOC vendor registration'
+        | 'Emirates ID'
+        | 'Passport'
+        | 'Residence visa'
+        | 'Tenancy contract (Ejari)'
+        | 'Memorandum of association'
+        | 'Power of attorney'
+        | 'Other';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly version: CodecTypes['pg/int4@1']['output'];
+    };
     readonly Employee: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly designation: CodecTypes['pg/text@1']['output'];
@@ -821,6 +905,34 @@ export type StorageColumnInputTypes = {
       readonly tradeLicenseNumber: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly vatTrn: CodecTypes['pg/text@1']['input'] | null;
+      readonly version: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly Document: {
+      readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly clientId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly documentNumber: CodecTypes['pg/text@1']['input'] | null;
+      readonly expiryDate: CodecTypes['pg/date-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly issueDate: CodecTypes['pg/date-string@1']['input'] | null;
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly reminderDays: CodecTypes['pg/int4@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'] | null;
+      readonly type:
+        | 'Trade licence'
+        | 'VAT certificate'
+        | 'Corporate tax certificate'
+        | 'ICV certificate'
+        | 'ADNOC vendor registration'
+        | 'Emirates ID'
+        | 'Passport'
+        | 'Residence visa'
+        | 'Tenancy contract (Ejari)'
+        | 'Memorandum of association'
+        | 'Power of attorney'
+        | 'Other';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly version: CodecTypes['pg/int4@1']['input'];
     };
     readonly Employee: {
@@ -1003,6 +1115,37 @@ export namespace Models {
     accountManager: public_Employee | null;
     readonly [RelationKeys]?: 'accountManager';
   };
+  export type public_Document = {
+    archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    clientId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    createdById: CodecTypes['pg/int4@1']['output'];
+    documentNumber: CodecTypes['pg/text@1']['output'] | null;
+    expiryDate: CodecTypes['pg/date-string@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    issueDate: CodecTypes['pg/date-string@1']['output'] | null;
+    notes: CodecTypes['pg/text@1']['output'] | null;
+    reminderDays: CodecTypes['pg/int4@1']['output'];
+    title: CodecTypes['pg/text@1']['output'] | null;
+    type:
+      | 'Trade licence'
+      | 'VAT certificate'
+      | 'Corporate tax certificate'
+      | 'ICV certificate'
+      | 'ADNOC vendor registration'
+      | 'Emirates ID'
+      | 'Passport'
+      | 'Residence visa'
+      | 'Tenancy contract (Ejari)'
+      | 'Memorandum of association'
+      | 'Power of attorney'
+      | 'Other';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    version: CodecTypes['pg/int4@1']['output'];
+    client: public_Client;
+    createdBy: public_Employee;
+    readonly [RelationKeys]?: 'client' | 'createdBy';
+  };
   export type public_Employee = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     designation: CodecTypes['pg/text@1']['output'];
@@ -1146,6 +1289,7 @@ export declare const models: {
   public: {
     AuditLog: Models.public_AuditLog;
     Client: Models.public_Client;
+    Document: Models.public_Document;
     Employee: Models.public_Employee;
     EmployeeCredential: Models.public_EmployeeCredential;
     EmployeeRole: Models.public_EmployeeRole;
@@ -1505,6 +1649,155 @@ type ContractBase = Omit<
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Client';
                     readonly columns: readonly ['accountManagerId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly Document: {
+              columns: {
+                readonly archivedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly clientId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly createdById: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly documentNumber: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly expiryDate: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly issueDate: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly notes: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly reminderDays: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 30>;
+                  };
+                  readonly many: false;
+                };
+                readonly title: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly type: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly version: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'Document_clientId_idx_153a9a49';
+                  readonly prefix: 'Document_clientId_idx';
+                  readonly columns: readonly ['clientId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Document_createdById_idx_8bf640ed';
+                  readonly prefix: 'Document_createdById_idx';
+                  readonly columns: readonly ['createdById'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Document_expiryDate_idx_3c770fb2';
+                  readonly prefix: 'Document_expiryDate_idx';
+                  readonly columns: readonly ['expiryDate'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Document';
+                    readonly columns: readonly ['clientId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Client';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Document';
+                    readonly columns: readonly ['createdById'];
                   };
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
@@ -2579,6 +2872,23 @@ type ContractBase = Omit<
                 'Other',
               ];
             };
+            readonly DocumentType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'Trade licence',
+                'VAT certificate',
+                'Corporate tax certificate',
+                'ICV certificate',
+                'ADNOC vendor registration',
+                'Emirates ID',
+                'Passport',
+                'Residence visa',
+                'Tenancy contract (Ejari)',
+                'Memorandum of association',
+                'Power of attorney',
+                'Other',
+              ];
+            };
             readonly Emirate: {
               readonly kind: 'valueSet';
               readonly values: readonly [
@@ -2624,6 +2934,7 @@ type ContractBase = Omit<
   readonly roots: {
     readonly AuditLog: { readonly namespace: 'public' & NamespaceId; readonly model: 'AuditLog' };
     readonly Client: { readonly namespace: 'public' & NamespaceId; readonly model: 'Client' };
+    readonly Document: { readonly namespace: 'public' & NamespaceId; readonly model: 'Document' };
     readonly Employee: { readonly namespace: 'public' & NamespaceId; readonly model: 'Employee' };
     readonly EmployeeCredential: {
       readonly namespace: 'public' & NamespaceId;
@@ -2905,6 +3216,121 @@ type ContractBase = Omit<
                 readonly tradeLicenseNumber: { readonly column: 'tradeLicenseNumber' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly vatTrn: { readonly column: 'vatTrn' };
+                readonly version: { readonly column: 'version' };
+              };
+            };
+          };
+          readonly Document: {
+            readonly fields: {
+              readonly archivedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly clientId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdById: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly documentNumber: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly expiryDate: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly issueDate: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly reminderDays: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly title: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly version: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly client: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Client';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['clientId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly createdBy: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['createdById'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Document';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly archivedAt: { readonly column: 'archivedAt' };
+                readonly clientId: { readonly column: 'clientId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly createdById: { readonly column: 'createdById' };
+                readonly documentNumber: { readonly column: 'documentNumber' };
+                readonly expiryDate: { readonly column: 'expiryDate' };
+                readonly id: { readonly column: 'id' };
+                readonly issueDate: { readonly column: 'issueDate' };
+                readonly notes: { readonly column: 'notes' };
+                readonly reminderDays: { readonly column: 'reminderDays' };
+                readonly title: { readonly column: 'title' };
+                readonly type: { readonly column: 'type' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly version: { readonly column: 'version' };
               };
             };
@@ -3738,6 +4164,23 @@ type ContractBase = Omit<
               { readonly name: 'Other'; readonly value: 'Other' },
             ];
           };
+          readonly DocumentType: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'TradeLicence'; readonly value: 'Trade licence' },
+              { readonly name: 'VatCertificate'; readonly value: 'VAT certificate' },
+              { readonly name: 'CorporateTaxCert'; readonly value: 'Corporate tax certificate' },
+              { readonly name: 'IcvCertificate'; readonly value: 'ICV certificate' },
+              { readonly name: 'AdnocRegistration'; readonly value: 'ADNOC vendor registration' },
+              { readonly name: 'EmiratesId'; readonly value: 'Emirates ID' },
+              { readonly name: 'Passport'; readonly value: 'Passport' },
+              { readonly name: 'ResidenceVisa'; readonly value: 'Residence visa' },
+              { readonly name: 'TenancyContract'; readonly value: 'Tenancy contract (Ejari)' },
+              { readonly name: 'Memorandum'; readonly value: 'Memorandum of association' },
+              { readonly name: 'PowerOfAttorney'; readonly value: 'Power of attorney' },
+              { readonly name: 'Other'; readonly value: 'Other' },
+            ];
+          };
           readonly Emirate: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -3798,6 +4241,20 @@ type ContractBase = Omit<
             { readonly name: 'JointStock'; readonly value: 'Joint stock company' },
             { readonly name: 'Partnership'; readonly value: 'Partnership' },
             { readonly name: 'Individual'; readonly value: 'Individual' },
+            { readonly name: 'Other'; readonly value: 'Other' },
+          ];
+          readonly DocumentType: readonly [
+            { readonly name: 'TradeLicence'; readonly value: 'Trade licence' },
+            { readonly name: 'VatCertificate'; readonly value: 'VAT certificate' },
+            { readonly name: 'CorporateTaxCert'; readonly value: 'Corporate tax certificate' },
+            { readonly name: 'IcvCertificate'; readonly value: 'ICV certificate' },
+            { readonly name: 'AdnocRegistration'; readonly value: 'ADNOC vendor registration' },
+            { readonly name: 'EmiratesId'; readonly value: 'Emirates ID' },
+            { readonly name: 'Passport'; readonly value: 'Passport' },
+            { readonly name: 'ResidenceVisa'; readonly value: 'Residence visa' },
+            { readonly name: 'TenancyContract'; readonly value: 'Tenancy contract (Ejari)' },
+            { readonly name: 'Memorandum'; readonly value: 'Memorandum of association' },
+            { readonly name: 'PowerOfAttorney'; readonly value: 'Power of attorney' },
             { readonly name: 'Other'; readonly value: 'Other' },
           ];
           readonly Emirate: readonly [
@@ -3873,6 +4330,15 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'Client';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Document';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };

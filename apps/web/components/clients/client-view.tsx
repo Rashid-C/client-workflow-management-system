@@ -5,6 +5,7 @@ import { Archive, ArchiveRestore, ArrowLeft, Pencil } from "lucide-react";
 import EntityHistory from "@/components/audit/entity-history";
 import { useCurrentUser } from "@/components/auth/current-user";
 import ClientFormDialog from "@/components/clients/client-form-dialog";
+import DocumentList from "@/components/documents/document-list";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import Link from "@/components/i18n/link";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
@@ -192,6 +193,13 @@ export default function ClientView({ clientId }: { clientId: number }) {
           </Card>
         )}
       </div>
+
+      {can("documents.view") && (
+        <section className="rounded-xl border border-slate-200 bg-white p-4">
+          <h2 className="mb-3 text-sm font-semibold">{t.documents.title}</h2>
+          <DocumentList clientId={client.id} />
+        </section>
+      )}
 
       {can("history.view") && (
         <section className="rounded-xl border border-slate-200 bg-white p-4">
