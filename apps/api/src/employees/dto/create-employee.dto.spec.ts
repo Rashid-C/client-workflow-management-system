@@ -3,7 +3,6 @@ import { validate } from 'class-validator';
 import { CreateEmployeeDto } from './create-employee.dto.js';
 
 const valid = {
-  employeeCode: 'EMP-001',
   name: 'Aisha Rahman',
   email: 'aisha@firm.ae',
   designation: 'Senior Auditor',

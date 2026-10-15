@@ -37,6 +37,18 @@ export const ERROR_CODES = [
   'employees.cannot_deactivate_self',
   'employees.last_super_admin',
   'employees.code_or_email_taken',
+  'employees.stale',
+  'employees.super_admin_only',
+  'employees.cannot_change_own_roles',
+  'employees.cannot_reset_own_password',
+
+  'roles.not_found',
+  'roles.stale',
+  'roles.system_locked',
+  'roles.in_use',
+  'roles.name_taken',
+  'roles.duplicate_permission',
+  'roles.scope_not_allowed',
 
   'task_types.not_found',
   'task_types.stale',

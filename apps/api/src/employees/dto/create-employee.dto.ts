@@ -22,12 +22,8 @@ import {
 export const EMPLOYEE_STATUSES = ['Active', 'Inactive'] as const;
 export type EmployeeStatus = (typeof EMPLOYEE_STATUSES)[number];
 
-export class CreateEmployeeDto {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(50)
-  employeeCode!: string;
-
+/** The details staff edit; the code (EMP-001, …) is issued by the API. */
+export class EmployeeDetailsDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(150)
@@ -55,21 +51,38 @@ export class CreateEmployeeDto {
   @IsPositive({ each: true })
   roleIds!: number[];
 
-  @IsOptional()
-  @IsIn(EMPLOYEE_STATUSES)
-  status?: EmployeeStatus;
-
   // Shape only; the database rejects impossible dates such as 2026-02-31.
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'joinedDate must use YYYY-MM-DD format',
   })
   joinedDate!: string;
+}
+
+const TEMPORARY_PASSWORD_RULE = {
+  message: `temporaryPassword must be ${PASSWORD_MIN_LENGTH} to ${PASSWORD_MAX_LENGTH} characters`,
+};
+
+export class CreateEmployeeDto extends EmployeeDetailsDto {
+  @IsOptional()
+  @IsIn(EMPLOYEE_STATUSES)
+  status?: EmployeeStatus;
 
   // Issued by the admin; the employee must replace it at first sign-in.
   @IsString()
-  @Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH, {
-    message: `temporaryPassword must be ${PASSWORD_MIN_LENGTH} to ${PASSWORD_MAX_LENGTH} characters`,
-  })
+  @Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH, TEMPORARY_PASSWORD_RULE)
+  temporaryPassword!: string;
+}
+
+/** An edit sends every detail plus the version it was based on. */
+export class UpdateEmployeeDto extends EmployeeDetailsDto {
+  @IsInt()
+  @IsPositive()
+  version!: number;
+}
+
+export class ResetPasswordDto {
+  @IsString()
+  @Length(PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH, TEMPORARY_PASSWORD_RULE)
   temporaryPassword!: string;
 }
 

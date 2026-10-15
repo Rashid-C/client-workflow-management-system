@@ -99,6 +99,8 @@ model Employee {
   joinedDate   DateString
   // UI language; follows the person to any computer they sign in on.
   preferredLanguage Language              @default(En)
+  // Guards edits against lost updates.
+  version      Int                        @default(1)
   createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()
 }
@@ -123,6 +125,8 @@ model Role {
   description String?
   // System roles (Super Admin) cannot be edited or deleted.
   isSystem    Boolean                    @default(false)
+  // Guards edits against lost updates.
+  version     Int                        @default(1)
   createdAt   TimestamptzString          @default(now())
   updatedAt   temporal.updatedAtString()
 
