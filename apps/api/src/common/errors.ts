@@ -48,6 +48,15 @@ export const ERROR_CODES = [
   'documents.client_archived',
   'documents.invalid_dates',
 
+  'leads.not_found',
+  'leads.stale',
+  'leads.inactive_owner',
+  'leads.lost_reason_required',
+  'leads.converted_locked',
+  'leads.already_converted',
+  'leads.lost_cannot_convert',
+  'leads.convert_forbidden',
+
   'roles.not_found',
   'roles.stale',
   'roles.system_locked',

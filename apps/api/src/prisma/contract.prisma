@@ -372,3 +372,82 @@ model Document {
   @@check(expression: "\"reminderDays\" BETWEEN 0 AND 365", name: "Document_reminderDays_range")
   @@check(expression: "\"issueDate\" IS NULL OR \"expiryDate\" IS NULL OR \"expiryDate\" >= \"issueDate\"", name: "Document_dates_order")
 }
+
+// Prospective clients and the follow-ups that move them along.
+enum LeadStatus {
+  @@type("pg/text@1")
+  New          = "New"
+  Contacted    = "Contacted"
+  ProposalSent = "Proposal sent"
+  Won          = "Won"
+  Lost         = "Lost"
+}
+
+enum LeadSource {
+  @@type("pg/text@1")
+  Referral    = "Referral"
+  Website     = "Website"
+  WalkIn      = "Walk-in"
+  Phone       = "Phone"
+  SocialMedia = "Social media"
+  Other       = "Other"
+}
+
+enum FollowUpKind {
+  @@type("pg/text@1")
+  Call     = "Call"
+  Meeting  = "Meeting"
+  Email    = "Email"
+  WhatsApp = "WhatsApp"
+  Other    = "Other"
+}
+
+model Lead {
+  id               Int                        @id @default(autoincrement())
+  // The prospect: usually a company, sometimes a person.
+  name             String
+  contactName      String?
+  email            String?
+  phone            String?
+  source           LeadSource?
+  // Service keys the prospect is interested in, e.g. ["vat", "audit"].
+  services         Jsonb?
+  // Whole dirhams.
+  estimatedValue   Int?
+  status           LeadStatus                 @default(New)
+  ownerId          Int?
+  owner            Employee?                  @relation("LeadOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  nextFollowUpDate DateString?
+  lostReason       String?
+  notes            String?
+  // Set when the lead is converted into a client.
+  clientId         Int?                       @unique
+  client           Client?                    @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  createdById      Int
+  createdBy        Employee                   @relation("LeadCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  archivedAt       TimestamptzString?
+  version          Int                        @default(1)
+  createdAt        TimestamptzString          @default(now())
+  updatedAt        temporal.updatedAtString()
+
+  @@index([status])
+  @@index([ownerId])
+  @@index([nextFollowUpDate])
+  @@check(expression: "\"estimatedValue\" IS NULL OR \"estimatedValue\" >= 0", name: "Lead_estimatedValue_positive")
+}
+
+// Each contact with a lead; append-only, like the audit log.
+model LeadFollowUp {
+  id          Int                        @id @default(autoincrement())
+  leadId      Int
+  lead        Lead                       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  kind        FollowUpKind
+  note        String
+  // The day it happened (office time).
+  happenedOn  DateString
+  createdById Int
+  createdBy   Employee                   @relation("LeadFollowUpBy", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt   TimestamptzString          @default(now())
+
+  @@index([leadId, happenedOn])
+}

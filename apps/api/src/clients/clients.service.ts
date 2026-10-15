@@ -151,37 +151,40 @@ export class ClientsService {
   }
 
   async create(data: CreateClientDto, context: AuditContext): Promise<ClientDetail> {
-    return this.transaction(async (db) => {
-      const values = normalize(data);
-      const manager = await this.activeManager(db, values.accountManagerId);
+    return this.transaction((db) => this.createIn(db, data, context));
+  }
 
-      const params = CLIENT_FIELDS.map((field) => values[field]);
-      const inserted = await db.query<{ id: number }>(
-        `INSERT INTO "Client" ("clientCode", ${CLIENT_FIELDS.map((f) => `"${f}"`).join(', ')}, "updatedAt")
-         SELECT 'CL-' || lpad(s.n::text, greatest(4, length(s.n::text)), '0'),
-                ${CLIENT_FIELDS.map((_, i) => `$${i + 1}`).join(', ')}, NOW()
-         FROM (SELECT nextval('"Client_code_seq"') AS n) s
-         RETURNING "id"`,
-        params,
-      );
-      const client = (await this.load(db, inserted.rows[0].id))!;
+  /** Add a client inside the caller's transaction (e.g. converting a lead). */
+  async createIn(db: PoolClient, data: CreateClientDto, context: AuditContext): Promise<ClientDetail> {
+    const values = normalize(data);
+    const manager = await this.activeManager(db, values.accountManagerId);
 
-      // The history shows the manager's name, not an id.
-      const shown: Record<string, unknown> = {
-        clientCode: client.clientCode,
-        ...values,
-        accountManager: manager,
-      };
-      delete shown['accountManagerId'];
-      await this.audit.record(db, context, {
-        action: 'client.created',
-        entityType: 'Client',
-        entityId: client.id,
-        summary: `Added client ${ref(client)}`,
-        changes: Object.fromEntries(Object.entries(shown).filter(([, value]) => value !== null)),
-      });
-      return client;
+    const params = CLIENT_FIELDS.map((field) => values[field]);
+    const inserted = await db.query<{ id: number }>(
+      `INSERT INTO "Client" ("clientCode", ${CLIENT_FIELDS.map((f) => `"${f}"`).join(', ')}, "updatedAt")
+       SELECT 'CL-' || lpad(s.n::text, greatest(4, length(s.n::text)), '0'),
+              ${CLIENT_FIELDS.map((_, i) => `$${i + 1}`).join(', ')}, NOW()
+       FROM (SELECT nextval('"Client_code_seq"') AS n) s
+       RETURNING "id"`,
+      params,
+    );
+    const client = (await this.load(db, inserted.rows[0].id))!;
+
+    // The history shows the manager's name, not an id.
+    const shown: Record<string, unknown> = {
+      clientCode: client.clientCode,
+      ...values,
+      accountManager: manager,
+    };
+    delete shown['accountManagerId'];
+    await this.audit.record(db, context, {
+      action: 'client.created',
+      entityType: 'Client',
+      entityId: client.id,
+      summary: `Added client ${ref(client)}`,
+      changes: Object.fromEntries(Object.entries(shown).filter(([, value]) => value !== null)),
     });
+    return client;
   }
 
   async update(

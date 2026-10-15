@@ -1,0 +1,605 @@
+[
+  {
+    "id": "table.Lead",
+    "label": "Create table \"Lead\"",
+    "summary": "Creates table \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Lead\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Lead\"",
+        "sql": "CREATE TABLE \"public\".\"Lead\" (\n  \"archivedAt\" timestamptz,\n  \"clientId\" int4,\n  \"contactName\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" int4 NOT NULL,\n  \"email\" text,\n  \"estimatedValue\" int4,\n  \"id\" SERIAL NOT NULL,\n  \"lostReason\" text,\n  \"name\" text NOT NULL,\n  \"nextFollowUpDate\" date,\n  \"notes\" text,\n  \"ownerId\" int4,\n  \"phone\" text,\n  \"services\" jsonb,\n  \"source\" text,\n  \"status\" text DEFAULT 'New' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"version\" int4 DEFAULT 1 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Lead_estimatedValue_positive_43df6c00\" CHECK (\"estimatedValue\" IS NULL OR \"estimatedValue\" >= 0),\n  CONSTRAINT \"Lead_source_check_8427dcce\" CHECK (\"source\" IN ('Referral', 'Website', 'Walk-in', 'Phone', 'Social media', 'Other')),\n  CONSTRAINT \"Lead_status_check_5a2d3934\" CHECK (\"status\" IN ('New', 'Contacted', 'Proposal sent', 'Won', 'Lost'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Lead\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.LeadFollowUp",
+    "label": "Create table \"LeadFollowUp\"",
+    "summary": "Creates table \"LeadFollowUp\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "LeadFollowUp"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"LeadFollowUp\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadFollowUp\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"LeadFollowUp\"",
+        "sql": "CREATE TABLE \"public\".\"LeadFollowUp\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" int4 NOT NULL,\n  \"happenedOn\" date NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"kind\" text NOT NULL,\n  \"leadId\" int4 NOT NULL,\n  \"note\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"LeadFollowUp_kind_check_3dd42a5e\" CHECK (\"kind\" IN ('Call', 'Meeting', 'Email', 'WhatsApp', 'Other'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"LeadFollowUp\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadFollowUp\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Lead.Lead_clientId_key",
+    "label": "Add unique constraint on \"Lead\" (clientId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Lead_clientId_key",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Lead_clientId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Lead_clientId_key",
+          "public",
+          "\"public\".\"Lead\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Lead_clientId_key\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\" ADD CONSTRAINT \"Lead_clientId_key\" UNIQUE (\"clientId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Lead_clientId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Lead_clientId_key",
+          "public",
+          "\"public\".\"Lead\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Lead.Lead_createdById_idx_8bf640ed",
+    "label": "Create index \"Lead_createdById_idx_8bf640ed\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Lead_createdById_idx_8bf640ed",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Lead_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Lead_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"Lead_createdById_idx_8bf640ed\" ON \"public\".\"Lead\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Lead_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Lead.Lead_nextFollowUpDate_idx_dc0d38d3",
+    "label": "Create index \"Lead_nextFollowUpDate_idx_dc0d38d3\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Lead_nextFollowUpDate_idx_dc0d38d3",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Lead_nextFollowUpDate_idx_dc0d38d3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_nextFollowUpDate_idx_dc0d38d3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Lead_nextFollowUpDate_idx_dc0d38d3\"",
+        "sql": "CREATE INDEX \"Lead_nextFollowUpDate_idx_dc0d38d3\" ON \"public\".\"Lead\" (\"nextFollowUpDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Lead_nextFollowUpDate_idx_dc0d38d3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_nextFollowUpDate_idx_dc0d38d3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Lead.Lead_ownerId_idx_e2d0c1ef",
+    "label": "Create index \"Lead_ownerId_idx_e2d0c1ef\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Lead_ownerId_idx_e2d0c1ef",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Lead_ownerId_idx_e2d0c1ef\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_ownerId_idx_e2d0c1ef\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Lead_ownerId_idx_e2d0c1ef\"",
+        "sql": "CREATE INDEX \"Lead_ownerId_idx_e2d0c1ef\" ON \"public\".\"Lead\" (\"ownerId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Lead_ownerId_idx_e2d0c1ef\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_ownerId_idx_e2d0c1ef\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Lead.Lead_status_idx_e98638ab",
+    "label": "Create index \"Lead_status_idx_e98638ab\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Lead_status_idx_e98638ab",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Lead_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Lead_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"Lead_status_idx_e98638ab\" ON \"public\".\"Lead\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Lead_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Lead_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.LeadFollowUp.LeadFollowUp_createdById_idx_8bf640ed",
+    "label": "Create index \"LeadFollowUp_createdById_idx_8bf640ed\" on \"LeadFollowUp\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "LeadFollowUp_createdById_idx_8bf640ed",
+        "table": "LeadFollowUp"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"LeadFollowUp_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadFollowUp_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"LeadFollowUp_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"LeadFollowUp_createdById_idx_8bf640ed\" ON \"public\".\"LeadFollowUp\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"LeadFollowUp_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadFollowUp_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.LeadFollowUp.LeadFollowUp_leadId_happenedOn_idx_afc432a4",
+    "label": "Create index \"LeadFollowUp_leadId_happenedOn_idx_afc432a4\" on \"LeadFollowUp\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "LeadFollowUp_leadId_happenedOn_idx_afc432a4",
+        "table": "LeadFollowUp"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"LeadFollowUp_leadId_happenedOn_idx_afc432a4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadFollowUp_leadId_happenedOn_idx_afc432a4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"LeadFollowUp_leadId_happenedOn_idx_afc432a4\"",
+        "sql": "CREATE INDEX \"LeadFollowUp_leadId_happenedOn_idx_afc432a4\" ON \"public\".\"LeadFollowUp\" (\"leadId\", \"happenedOn\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"LeadFollowUp_leadId_happenedOn_idx_afc432a4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadFollowUp_leadId_happenedOn_idx_afc432a4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.LeadFollowUp.LeadFollowUp_leadId_idx_9113844c",
+    "label": "Create index \"LeadFollowUp_leadId_idx_9113844c\" on \"LeadFollowUp\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "LeadFollowUp_leadId_idx_9113844c",
+        "table": "LeadFollowUp"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"LeadFollowUp_leadId_idx_9113844c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadFollowUp_leadId_idx_9113844c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"LeadFollowUp_leadId_idx_9113844c\"",
+        "sql": "CREATE INDEX \"LeadFollowUp_leadId_idx_9113844c\" ON \"public\".\"LeadFollowUp\" (\"leadId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"LeadFollowUp_leadId_idx_9113844c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"LeadFollowUp_leadId_idx_9113844c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Lead.Lead_ownerId_fkey",
+    "label": "Add foreign key \"Lead_ownerId_fkey\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Lead_ownerId_fkey",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Lead_ownerId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Lead_ownerId_fkey",
+          "public",
+          "\"public\".\"Lead\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Lead_ownerId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\"\nADD CONSTRAINT \"Lead_ownerId_fkey\"\nFOREIGN KEY (\"ownerId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Lead_ownerId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Lead_ownerId_fkey",
+          "public",
+          "\"public\".\"Lead\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Lead.Lead_clientId_fkey",
+    "label": "Add foreign key \"Lead_clientId_fkey\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Lead_clientId_fkey",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Lead_clientId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Lead_clientId_fkey",
+          "public",
+          "\"public\".\"Lead\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Lead_clientId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\"\nADD CONSTRAINT \"Lead_clientId_fkey\"\nFOREIGN KEY (\"clientId\")\nREFERENCES \"public\".\"Client\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Lead_clientId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Lead_clientId_fkey",
+          "public",
+          "\"public\".\"Lead\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Lead.Lead_createdById_fkey",
+    "label": "Add foreign key \"Lead_createdById_fkey\" on \"Lead\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Lead_createdById_fkey",
+        "table": "Lead"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Lead_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Lead_createdById_fkey",
+          "public",
+          "\"public\".\"Lead\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Lead_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Lead\"\nADD CONSTRAINT \"Lead_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Lead_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Lead_createdById_fkey",
+          "public",
+          "\"public\".\"Lead\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.LeadFollowUp.LeadFollowUp_leadId_fkey",
+    "label": "Add foreign key \"LeadFollowUp_leadId_fkey\" on \"LeadFollowUp\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "LeadFollowUp_leadId_fkey",
+        "table": "LeadFollowUp"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"LeadFollowUp_leadId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "LeadFollowUp_leadId_fkey",
+          "public",
+          "\"public\".\"LeadFollowUp\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"LeadFollowUp_leadId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"LeadFollowUp\"\nADD CONSTRAINT \"LeadFollowUp_leadId_fkey\"\nFOREIGN KEY (\"leadId\")\nREFERENCES \"public\".\"Lead\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"LeadFollowUp_leadId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "LeadFollowUp_leadId_fkey",
+          "public",
+          "\"public\".\"LeadFollowUp\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.LeadFollowUp.LeadFollowUp_createdById_fkey",
+    "label": "Add foreign key \"LeadFollowUp_createdById_fkey\" on \"LeadFollowUp\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "LeadFollowUp_createdById_fkey",
+        "table": "LeadFollowUp"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"LeadFollowUp_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "LeadFollowUp_createdById_fkey",
+          "public",
+          "\"public\".\"LeadFollowUp\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"LeadFollowUp_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"LeadFollowUp\"\nADD CONSTRAINT \"LeadFollowUp_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"LeadFollowUp_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "LeadFollowUp_createdById_fkey",
+          "public",
+          "\"public\".\"LeadFollowUp\""
+        ]
+      }
+    ]
+  }
+]

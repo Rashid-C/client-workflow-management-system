@@ -28,6 +28,14 @@
       "model": "EmployeeRole",
       "namespace": "public"
     },
+    "Lead": {
+      "model": "Lead",
+      "namespace": "public"
+    },
+    "LeadFollowUp": {
+      "model": "LeadFollowUp",
+      "namespace": "public"
+    },
     "Role": {
       "model": "Role",
       "namespace": "public"
@@ -201,6 +209,31 @@
               }
             ]
           },
+          "FollowUpKind": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "Call",
+                "value": "Call"
+              },
+              {
+                "name": "Meeting",
+                "value": "Meeting"
+              },
+              {
+                "name": "Email",
+                "value": "Email"
+              },
+              {
+                "name": "WhatsApp",
+                "value": "WhatsApp"
+              },
+              {
+                "name": "Other",
+                "value": "Other"
+              }
+            ]
+          },
           "Jurisdiction": {
             "codecId": "pg/text@1",
             "members": [
@@ -228,6 +261,60 @@
               {
                 "name": "Ar",
                 "value": "ar"
+              }
+            ]
+          },
+          "LeadSource": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "Referral",
+                "value": "Referral"
+              },
+              {
+                "name": "Website",
+                "value": "Website"
+              },
+              {
+                "name": "WalkIn",
+                "value": "Walk-in"
+              },
+              {
+                "name": "Phone",
+                "value": "Phone"
+              },
+              {
+                "name": "SocialMedia",
+                "value": "Social media"
+              },
+              {
+                "name": "Other",
+                "value": "Other"
+              }
+            ]
+          },
+          "LeadStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "New",
+                "value": "New"
+              },
+              {
+                "name": "Contacted",
+                "value": "Contacted"
+              },
+              {
+                "name": "ProposalSent",
+                "value": "Proposal sent"
+              },
+              {
+                "name": "Won",
+                "value": "Won"
+              },
+              {
+                "name": "Lost",
+                "value": "Lost"
               }
             ]
           },
@@ -1274,6 +1361,388 @@
               },
               "namespaceId": "public",
               "table": "EmployeeRole"
+            }
+          },
+          "Lead": {
+            "fields": {
+              "archivedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "clientId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "contactName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdById": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "estimatedValue": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "lostReason": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "nextFollowUpDate": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/date-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ownerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "phone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "services": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              },
+              "source": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "LeadSource",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "LeadStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "version": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "client": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "clientId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Client",
+                  "namespace": "public"
+                }
+              },
+              "createdBy": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "createdById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              },
+              "owner": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "ownerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "archivedAt": {
+                  "column": "archivedAt"
+                },
+                "clientId": {
+                  "column": "clientId"
+                },
+                "contactName": {
+                  "column": "contactName"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdById": {
+                  "column": "createdById"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "estimatedValue": {
+                  "column": "estimatedValue"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "lostReason": {
+                  "column": "lostReason"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "nextFollowUpDate": {
+                  "column": "nextFollowUpDate"
+                },
+                "notes": {
+                  "column": "notes"
+                },
+                "ownerId": {
+                  "column": "ownerId"
+                },
+                "phone": {
+                  "column": "phone"
+                },
+                "services": {
+                  "column": "services"
+                },
+                "source": {
+                  "column": "source"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "version": {
+                  "column": "version"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Lead"
+            }
+          },
+          "LeadFollowUp": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdById": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "happenedOn": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/date-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "kind": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "FollowUpKind",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "leadId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "note": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "createdBy": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "createdById"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              },
+              "lead": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "leadId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Lead",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdById": {
+                  "column": "createdById"
+                },
+                "happenedOn": {
+                  "column": "happenedOn"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "kind": {
+                  "column": "kind"
+                },
+                "leadId": {
+                  "column": "leadId"
+                },
+                "note": {
+                  "column": "note"
+                }
+              },
+              "namespaceId": "public",
+              "table": "LeadFollowUp"
             }
           },
           "Role": {
@@ -3155,6 +3624,395 @@
                 }
               ]
             },
+            "Lead": {
+              "checks": [
+                {
+                  "expression": "\"estimatedValue\" IS NULL OR \"estimatedValue\" >= 0",
+                  "name": "Lead_estimatedValue_positive_43df6c00",
+                  "prefix": "Lead_estimatedValue_positive"
+                },
+                {
+                  "expression": "\"source\" IN ('Referral', 'Website', 'Walk-in', 'Phone', 'Social media', 'Other')",
+                  "name": "Lead_source_check_8427dcce",
+                  "prefix": "Lead_source_check"
+                },
+                {
+                  "expression": "\"status\" IN ('New', 'Contacted', 'Proposal sent', 'Won', 'Lost')",
+                  "name": "Lead_status_check_5a2d3934",
+                  "prefix": "Lead_status_check"
+                }
+              ],
+              "columns": {
+                "archivedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "clientId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "contactName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "createdById": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "estimatedValue": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "lostReason": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "nextFollowUpDate": {
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "nullable": true
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "ownerId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "phone": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "services": {
+                  "codecId": "pg/jsonb@1",
+                  "dataType": "pg/jsonb",
+                  "nullable": true
+                },
+                "source": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "LeadSource",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "New"
+                  },
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "LeadStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "version": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Lead_ownerId_idx_e2d0c1ef"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "ownerId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Lead"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                },
+                {
+                  "index": {
+                    "unique": [
+                      "clientId"
+                    ]
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "clientId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Lead"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Client"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "Lead_createdById_idx_8bf640ed"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "createdById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Lead"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdById"
+                  ],
+                  "name": "Lead_createdById_idx_8bf640ed",
+                  "prefix": "Lead_createdById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "nextFollowUpDate"
+                  ],
+                  "name": "Lead_nextFollowUpDate_idx_dc0d38d3",
+                  "prefix": "Lead_nextFollowUpDate_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "ownerId"
+                  ],
+                  "name": "Lead_ownerId_idx_e2d0c1ef",
+                  "prefix": "Lead_ownerId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status"
+                  ],
+                  "name": "Lead_status_idx_e98638ab",
+                  "prefix": "Lead_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "clientId"
+                  ]
+                }
+              ]
+            },
+            "LeadFollowUp": {
+              "checks": [
+                {
+                  "expression": "\"kind\" IN ('Call', 'Meeting', 'Email', 'WhatsApp', 'Other')",
+                  "name": "LeadFollowUp_kind_check_3dd42a5e",
+                  "prefix": "LeadFollowUp_kind_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "createdById": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "happenedOn": {
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "kind": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "FollowUpKind",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "leadId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "note": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "LeadFollowUp_leadId_idx_9113844c"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "leadId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "LeadFollowUp"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Lead"
+                  }
+                },
+                {
+                  "index": {
+                    "name": "LeadFollowUp_createdById_idx_8bf640ed"
+                  },
+                  "onDelete": "restrict",
+                  "source": {
+                    "columns": [
+                      "createdById"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "LeadFollowUp"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdById"
+                  ],
+                  "name": "LeadFollowUp_createdById_idx_8bf640ed",
+                  "prefix": "LeadFollowUp_createdById_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "leadId",
+                    "happenedOn"
+                  ],
+                  "name": "LeadFollowUp_leadId_happenedOn_idx_afc432a4",
+                  "prefix": "LeadFollowUp_leadId_happenedOn_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "leadId"
+                  ],
+                  "name": "LeadFollowUp_leadId_idx_9113844c",
+                  "prefix": "LeadFollowUp_leadId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Role": {
               "columns": {
                 "createdAt": {
@@ -4200,6 +5058,16 @@
                 "Inactive"
               ]
             },
+            "FollowUpKind": {
+              "kind": "valueSet",
+              "values": [
+                "Call",
+                "Meeting",
+                "Email",
+                "WhatsApp",
+                "Other"
+              ]
+            },
             "Jurisdiction": {
               "kind": "valueSet",
               "values": [
@@ -4213,6 +5081,27 @@
               "values": [
                 "en",
                 "ar"
+              ]
+            },
+            "LeadSource": {
+              "kind": "valueSet",
+              "values": [
+                "Referral",
+                "Website",
+                "Walk-in",
+                "Phone",
+                "Social media",
+                "Other"
+              ]
+            },
+            "LeadStatus": {
+              "kind": "valueSet",
+              "values": [
+                "New",
+                "Contacted",
+                "Proposal sent",
+                "Won",
+                "Lost"
               ]
             },
             "PermissionScope": {
@@ -4237,10 +5126,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "9b8cff20ee6f4bb8c0e2da2f475dbf618e06c3c7fcae7cf8920c5feee28c967e"
+    "storageHash": "80dd2aa266a92d9a6a16b51cd43c8d530e171b07ce5739f1eaed31d54d85e31a"
   },
   "execution": {
-    "executionHash": "4b2cadd38e76caafd8a44e7197617799b95604d5dc83f49a2946b77c4f80f146",
+    "executionHash": "650d5baa750576b9625cb18cfa6a546f062991a72c5cbf9f0d043eaaa04d4fdf",
     "mutations": {
       "defaults": [
         {
@@ -4299,6 +5188,21 @@
           },
           "ref": {
             "entry": "EmployeeCredential",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "Lead",
             "field": "updatedAt",
             "namespace": "public"
           }

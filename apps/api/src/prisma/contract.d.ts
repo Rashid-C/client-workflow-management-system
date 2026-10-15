@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'9b8cff20ee6f4bb8c0e2da2f475dbf618e06c3c7fcae7cf8920c5feee28c967e'>;
+  StorageHashBase<'80dd2aa266a92d9a6a16b51cd43c8d530e171b07ce5739f1eaed31d54d85e31a'>;
 export type ExecutionHash =
-  ExecutionHashBase<'4b2cadd38e76caafd8a44e7197617799b95604d5dc83f49a2946b77c4f80f146'>;
+  ExecutionHashBase<'650d5baa750576b9625cb18cfa6a546f062991a72c5cbf9f0d043eaaa04d4fdf'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -354,6 +354,37 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly roleId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly Lead: {
+      readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly clientId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly contactName: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'] | null;
+      readonly estimatedValue: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly lostReason: CodecTypes['pg/text@1']['output'] | null;
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly nextFollowUpDate: CodecTypes['pg/date-string@1']['output'] | null;
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly ownerId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly services: CodecTypes['pg/jsonb@1']['output'] | null;
+      readonly source:
+        'Referral' | 'Website' | 'Walk-in' | 'Phone' | 'Social media' | 'Other' | null;
+      readonly status: 'New' | 'Contacted' | 'Proposal sent' | 'Won' | 'Lost';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly version: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly LeadFollowUp: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly happenedOn: CodecTypes['pg/date-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly kind: 'Call' | 'Meeting' | 'Email' | 'WhatsApp' | 'Other';
+      readonly leadId: CodecTypes['pg/int4@1']['output'];
+      readonly note: CodecTypes['pg/text@1']['output'];
+    };
     readonly Role: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
@@ -557,6 +588,37 @@ export type FieldInputTypes = {
       readonly employeeId: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly roleId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly Lead: {
+      readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly clientId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly contactName: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'] | null;
+      readonly estimatedValue: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly lostReason: CodecTypes['pg/text@1']['input'] | null;
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly nextFollowUpDate: CodecTypes['pg/date-string@1']['input'] | null;
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly ownerId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly services: CodecTypes['pg/jsonb@1']['input'] | null;
+      readonly source:
+        'Referral' | 'Website' | 'Walk-in' | 'Phone' | 'Social media' | 'Other' | null;
+      readonly status: 'New' | 'Contacted' | 'Proposal sent' | 'Won' | 'Lost';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly version: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly LeadFollowUp: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly happenedOn: CodecTypes['pg/date-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly kind: 'Call' | 'Meeting' | 'Email' | 'WhatsApp' | 'Other';
+      readonly leadId: CodecTypes['pg/int4@1']['input'];
+      readonly note: CodecTypes['pg/text@1']['input'];
     };
     readonly Role: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -762,6 +824,37 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly roleId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly Lead: {
+      readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly clientId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly contactName: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'] | null;
+      readonly estimatedValue: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly lostReason: CodecTypes['pg/text@1']['output'] | null;
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly nextFollowUpDate: CodecTypes['pg/date-string@1']['output'] | null;
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
+      readonly ownerId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly services: CodecTypes['pg/jsonb@1']['output'] | null;
+      readonly source:
+        'Referral' | 'Website' | 'Walk-in' | 'Phone' | 'Social media' | 'Other' | null;
+      readonly status: 'New' | 'Contacted' | 'Proposal sent' | 'Won' | 'Lost';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly version: CodecTypes['pg/int4@1']['output'];
+    };
+    readonly LeadFollowUp: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly happenedOn: CodecTypes['pg/date-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly kind: 'Call' | 'Meeting' | 'Email' | 'WhatsApp' | 'Other';
+      readonly leadId: CodecTypes['pg/int4@1']['output'];
+      readonly note: CodecTypes['pg/text@1']['output'];
+    };
     readonly Role: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
@@ -965,6 +1058,37 @@ export type StorageColumnInputTypes = {
       readonly employeeId: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly roleId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly Lead: {
+      readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly clientId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly contactName: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'] | null;
+      readonly estimatedValue: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly lostReason: CodecTypes['pg/text@1']['input'] | null;
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly nextFollowUpDate: CodecTypes['pg/date-string@1']['input'] | null;
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
+      readonly ownerId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly services: CodecTypes['pg/jsonb@1']['input'] | null;
+      readonly source:
+        'Referral' | 'Website' | 'Walk-in' | 'Phone' | 'Social media' | 'Other' | null;
+      readonly status: 'New' | 'Contacted' | 'Proposal sent' | 'Won' | 'Lost';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly version: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly LeadFollowUp: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly happenedOn: CodecTypes['pg/date-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly kind: 'Call' | 'Meeting' | 'Email' | 'WhatsApp' | 'Other';
+      readonly leadId: CodecTypes['pg/int4@1']['input'];
+      readonly note: CodecTypes['pg/text@1']['input'];
     };
     readonly Role: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -1183,6 +1307,43 @@ export namespace Models {
     role: public_Role;
     readonly [RelationKeys]?: 'employee' | 'role';
   };
+  export type public_Lead = {
+    archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    clientId: CodecTypes['pg/int4@1']['output'] | null;
+    contactName: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    createdById: CodecTypes['pg/int4@1']['output'];
+    email: CodecTypes['pg/text@1']['output'] | null;
+    estimatedValue: CodecTypes['pg/int4@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    lostReason: CodecTypes['pg/text@1']['output'] | null;
+    name: CodecTypes['pg/text@1']['output'];
+    nextFollowUpDate: CodecTypes['pg/date-string@1']['output'] | null;
+    notes: CodecTypes['pg/text@1']['output'] | null;
+    ownerId: CodecTypes['pg/int4@1']['output'] | null;
+    phone: CodecTypes['pg/text@1']['output'] | null;
+    services: CodecTypes['pg/jsonb@1']['output'] | null;
+    source: 'Referral' | 'Website' | 'Walk-in' | 'Phone' | 'Social media' | 'Other' | null;
+    status: 'New' | 'Contacted' | 'Proposal sent' | 'Won' | 'Lost';
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    version: CodecTypes['pg/int4@1']['output'];
+    client: public_Client | null;
+    createdBy: public_Employee;
+    owner: public_Employee | null;
+    readonly [RelationKeys]?: 'client' | 'createdBy' | 'owner';
+  };
+  export type public_LeadFollowUp = {
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    createdById: CodecTypes['pg/int4@1']['output'];
+    happenedOn: CodecTypes['pg/date-string@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    kind: 'Call' | 'Meeting' | 'Email' | 'WhatsApp' | 'Other';
+    leadId: CodecTypes['pg/int4@1']['output'];
+    note: CodecTypes['pg/text@1']['output'];
+    createdBy: public_Employee;
+    lead: public_Lead;
+    readonly [RelationKeys]?: 'createdBy' | 'lead';
+  };
   export type public_Role = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     description: CodecTypes['pg/text@1']['output'] | null;
@@ -1293,6 +1454,8 @@ export declare const models: {
     Employee: Models.public_Employee;
     EmployeeCredential: Models.public_EmployeeCredential;
     EmployeeRole: Models.public_EmployeeRole;
+    Lead: Models.public_Lead;
+    LeadFollowUp: Models.public_LeadFollowUp;
     Role: Models.public_Role;
     RolePermission: Models.public_RolePermission;
     Session: Models.public_Session;
@@ -2066,6 +2229,302 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Role';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly Lead: {
+              columns: {
+                readonly archivedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly clientId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly contactName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly createdById: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly email: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly estimatedValue: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly lostReason: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly name: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly nextFollowUpDate: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly notes: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly ownerId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly phone: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly services: {
+                  readonly dataType: 'pg/jsonb';
+                  readonly codecId: 'pg/jsonb@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly source: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'New'>;
+                  };
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly version: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['clientId'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'Lead_createdById_idx_8bf640ed';
+                  readonly prefix: 'Lead_createdById_idx';
+                  readonly columns: readonly ['createdById'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_nextFollowUpDate_idx_dc0d38d3';
+                  readonly prefix: 'Lead_nextFollowUpDate_idx';
+                  readonly columns: readonly ['nextFollowUpDate'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_ownerId_idx_e2d0c1ef';
+                  readonly prefix: 'Lead_ownerId_idx';
+                  readonly columns: readonly ['ownerId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Lead_status_idx_e98638ab';
+                  readonly prefix: 'Lead_status_idx';
+                  readonly columns: readonly ['status'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Lead';
+                    readonly columns: readonly ['ownerId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Lead';
+                    readonly columns: readonly ['clientId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Client';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Lead';
+                    readonly columns: readonly ['createdById'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly LeadFollowUp: {
+              columns: {
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly createdById: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly happenedOn: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly kind: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly leadId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly note: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'LeadFollowUp_createdById_idx_8bf640ed';
+                  readonly prefix: 'LeadFollowUp_createdById_idx';
+                  readonly columns: readonly ['createdById'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'LeadFollowUp_leadId_happenedOn_idx_afc432a4';
+                  readonly prefix: 'LeadFollowUp_leadId_happenedOn_idx';
+                  readonly columns: readonly ['leadId', 'happenedOn'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'LeadFollowUp_leadId_idx_9113844c';
+                  readonly prefix: 'LeadFollowUp_leadId_idx';
+                  readonly columns: readonly ['leadId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'LeadFollowUp';
+                    readonly columns: readonly ['leadId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Lead';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'LeadFollowUp';
+                    readonly columns: readonly ['createdById'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -2905,6 +3364,10 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['Active', 'Inactive'];
             };
+            readonly FollowUpKind: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['Call', 'Meeting', 'Email', 'WhatsApp', 'Other'];
+            };
             readonly Jurisdiction: {
               readonly kind: 'valueSet';
               readonly values: readonly ['Mainland', 'Free zone', 'Offshore'];
@@ -2912,6 +3375,21 @@ type ContractBase = Omit<
             readonly Language: {
               readonly kind: 'valueSet';
               readonly values: readonly ['en', 'ar'];
+            };
+            readonly LeadSource: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'Referral',
+                'Website',
+                'Walk-in',
+                'Phone',
+                'Social media',
+                'Other',
+              ];
+            };
+            readonly LeadStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['New', 'Contacted', 'Proposal sent', 'Won', 'Lost'];
             };
             readonly PermissionScope: {
               readonly kind: 'valueSet';
@@ -2943,6 +3421,11 @@ type ContractBase = Omit<
     readonly EmployeeRole: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'EmployeeRole';
+    };
+    readonly Lead: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
+    readonly LeadFollowUp: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'LeadFollowUp';
     };
     readonly Role: { readonly namespace: 'public' & NamespaceId; readonly model: 'Role' };
     readonly RolePermission: {
@@ -3546,6 +4029,229 @@ type ContractBase = Omit<
                 readonly employeeId: { readonly column: 'employeeId' };
                 readonly id: { readonly column: 'id' };
                 readonly roleId: { readonly column: 'roleId' };
+              };
+            };
+          };
+          readonly Lead: {
+            readonly fields: {
+              readonly archivedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly clientId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly contactName: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdById: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly email: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly estimatedValue: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly lostReason: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly nextFollowUpDate: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly ownerId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly phone: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly services: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/jsonb@1' };
+              };
+              readonly source: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly version: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly client: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Client';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['clientId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly createdBy: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['createdById'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly owner: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['ownerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Lead';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly archivedAt: { readonly column: 'archivedAt' };
+                readonly clientId: { readonly column: 'clientId' };
+                readonly contactName: { readonly column: 'contactName' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly createdById: { readonly column: 'createdById' };
+                readonly email: { readonly column: 'email' };
+                readonly estimatedValue: { readonly column: 'estimatedValue' };
+                readonly id: { readonly column: 'id' };
+                readonly lostReason: { readonly column: 'lostReason' };
+                readonly name: { readonly column: 'name' };
+                readonly nextFollowUpDate: { readonly column: 'nextFollowUpDate' };
+                readonly notes: { readonly column: 'notes' };
+                readonly ownerId: { readonly column: 'ownerId' };
+                readonly phone: { readonly column: 'phone' };
+                readonly services: { readonly column: 'services' };
+                readonly source: { readonly column: 'source' };
+                readonly status: { readonly column: 'status' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly version: { readonly column: 'version' };
+              };
+            };
+          };
+          readonly LeadFollowUp: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdById: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly happenedOn: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly kind: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly leadId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly note: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly createdBy: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['createdById'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly lead: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Lead' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['leadId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'LeadFollowUp';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly createdById: { readonly column: 'createdById' };
+                readonly happenedOn: { readonly column: 'happenedOn' };
+                readonly id: { readonly column: 'id' };
+                readonly kind: { readonly column: 'kind' };
+                readonly leadId: { readonly column: 'leadId' };
+                readonly note: { readonly column: 'note' };
               };
             };
           };
@@ -4200,6 +4906,16 @@ type ContractBase = Omit<
               { readonly name: 'Inactive'; readonly value: 'Inactive' },
             ];
           };
+          readonly FollowUpKind: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'Call'; readonly value: 'Call' },
+              { readonly name: 'Meeting'; readonly value: 'Meeting' },
+              { readonly name: 'Email'; readonly value: 'Email' },
+              { readonly name: 'WhatsApp'; readonly value: 'WhatsApp' },
+              { readonly name: 'Other'; readonly value: 'Other' },
+            ];
+          };
           readonly Jurisdiction: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -4213,6 +4929,27 @@ type ContractBase = Omit<
             readonly members: readonly [
               { readonly name: 'En'; readonly value: 'en' },
               { readonly name: 'Ar'; readonly value: 'ar' },
+            ];
+          };
+          readonly LeadSource: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'Referral'; readonly value: 'Referral' },
+              { readonly name: 'Website'; readonly value: 'Website' },
+              { readonly name: 'WalkIn'; readonly value: 'Walk-in' },
+              { readonly name: 'Phone'; readonly value: 'Phone' },
+              { readonly name: 'SocialMedia'; readonly value: 'Social media' },
+              { readonly name: 'Other'; readonly value: 'Other' },
+            ];
+          };
+          readonly LeadStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'New'; readonly value: 'New' },
+              { readonly name: 'Contacted'; readonly value: 'Contacted' },
+              { readonly name: 'ProposalSent'; readonly value: 'Proposal sent' },
+              { readonly name: 'Won'; readonly value: 'Won' },
+              { readonly name: 'Lost'; readonly value: 'Lost' },
             ];
           };
           readonly PermissionScope: {
@@ -4270,6 +5007,13 @@ type ContractBase = Omit<
             { readonly name: 'Active'; readonly value: 'Active' },
             { readonly name: 'Inactive'; readonly value: 'Inactive' },
           ];
+          readonly FollowUpKind: readonly [
+            { readonly name: 'Call'; readonly value: 'Call' },
+            { readonly name: 'Meeting'; readonly value: 'Meeting' },
+            { readonly name: 'Email'; readonly value: 'Email' },
+            { readonly name: 'WhatsApp'; readonly value: 'WhatsApp' },
+            { readonly name: 'Other'; readonly value: 'Other' },
+          ];
           readonly Jurisdiction: readonly [
             { readonly name: 'Mainland'; readonly value: 'Mainland' },
             { readonly name: 'FreeZone'; readonly value: 'Free zone' },
@@ -4278,6 +5022,21 @@ type ContractBase = Omit<
           readonly Language: readonly [
             { readonly name: 'En'; readonly value: 'en' },
             { readonly name: 'Ar'; readonly value: 'ar' },
+          ];
+          readonly LeadSource: readonly [
+            { readonly name: 'Referral'; readonly value: 'Referral' },
+            { readonly name: 'Website'; readonly value: 'Website' },
+            { readonly name: 'WalkIn'; readonly value: 'Walk-in' },
+            { readonly name: 'Phone'; readonly value: 'Phone' },
+            { readonly name: 'SocialMedia'; readonly value: 'Social media' },
+            { readonly name: 'Other'; readonly value: 'Other' },
+          ];
+          readonly LeadStatus: readonly [
+            { readonly name: 'New'; readonly value: 'New' },
+            { readonly name: 'Contacted'; readonly value: 'Contacted' },
+            { readonly name: 'ProposalSent'; readonly value: 'Proposal sent' },
+            { readonly name: 'Won'; readonly value: 'Won' },
+            { readonly name: 'Lost'; readonly value: 'Lost' },
           ];
           readonly PermissionScope: readonly [
             { readonly name: 'Own'; readonly value: 'own' },
@@ -4357,6 +5116,15 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'EmployeeCredential';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Lead';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };
