@@ -128,7 +128,7 @@ export class TaskStagesService {
           stageId: next.id,
           stageName: next.name,
           position: next.position,
-        }, this.audit, s.context);
+        });
       }
 
       return {
@@ -224,7 +224,7 @@ export class TaskStagesService {
         stageId: s.stage.id,
         stageName: s.stage.name,
         position: s.stage.position,
-      }, this.audit, s.context);
+      });
 
       const from = s.stage.assigneeName;
       return {

@@ -240,7 +240,7 @@ export class TasksService {
           stageId: stage.id,
           stageName: stage.name,
           position: stage.position,
-        }, this.audit, context);
+        });
       }
       await this.audit.record(db, context, {
         action: 'task.created',

@@ -1,10 +1,11 @@
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { Pool } from 'pg';
-import { AuditService, type AuditContext } from '../audit/audit.service.js';
 import { problem } from '../common/errors.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
 import type { Mailer } from './mailer.js';
 import { notificationCopy } from './notification-copy.js';
+
+const REMINDER_INTERVAL_MS = 15 * 60_000;
 
 export const NOTIFICATION_KINDS = [
   'document_expiring', 'document_expired', 'lead_follow_up_due', 'task_overdue', 'stage_assigned',
@@ -35,7 +36,7 @@ export const DOCUMENT_REMINDERS_SQL = `
         AND (r."isSystem" OR (rp."permissionKey" = 'documents.view' AND rp."scope" = 'all'))
     )
   )
-  SELECT "employeeId", "preferredLanguage", "id", "kind", "title", "type", "clientName", "day"
+  SELECT "employeeId", "preferredLanguage", "id", "kind", "title", "type", "clientName", "expiryDate"::text AS "expiryDate"
   FROM recipients`;
 
 export const LEAD_REMINDERS_SQL = `
@@ -45,7 +46,7 @@ export const LEAD_REMINDERS_SQL = `
     AND l."nextFollowUpDate" <= (now() AT TIME ZONE 'Asia/Dubai')::date`;
 
 export const TASK_REMINDERS_SQL = `
-  SELECT DISTINCT t."id", t."title", s."assigneeId" AS "employeeId", e."preferredLanguage"
+  SELECT DISTINCT t."id", t."title", t."dueDate"::text AS "dueDate", s."assigneeId" AS "employeeId", e."preferredLanguage"
   FROM "Task" t JOIN "TaskStage" s ON s."taskId" = t."id"
   JOIN "Employee" e ON e."id" = s."assigneeId" AND e."status" = 'Active'
   WHERE t."archivedAt" IS NULL AND t."dueDate" < (now() AT TIME ZONE 'Asia/Dubai')::date
@@ -62,7 +63,8 @@ type Reminder = {
   nextFollowUpDate?: string | null;
   kind?: NotificationKind;
   status?: string;
-  day?: string;
+  expiryDate?: string;
+  dueDate?: string;
 };
 export type NotificationRecord = {
   id: number;
@@ -77,11 +79,10 @@ export type NotificationRecord = {
 @Injectable()
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
-  private remindersCreatedOn: string | null = null;
+  private remindersRunAt = 0;
   constructor(
     @Inject(POSTGRES_POOL) private readonly pool: Pool,
     @Inject('MAILER') private readonly mailer: Mailer,
-    private readonly audit: AuditService,
   ) {}
 
   async list(employeeId: number, cursor?: string, limit = 50) {
@@ -111,7 +112,8 @@ export class NotificationsService {
     return result.rows[0].count;
   }
 
-  async markRead(employeeId: number, id: number, context: AuditContext) {
+  // Notifications are not audited: they are derived from records that are.
+  async markRead(employeeId: number, id: number) {
     const db = await this.pool.connect();
     try {
       await db.query('BEGIN');
@@ -127,11 +129,6 @@ export class NotificationsService {
           `UPDATE "Notification" SET "readAt" = NOW() WHERE "id" = $1 AND "employeeId" = $2
            RETURNING "id", "kind", "title", "body", "link", "readAt", "createdAt"`, [id, employeeId],
         )).rows[0];
-        await this.audit.record(db, context, {
-          action: 'notifications.read', entityType: 'Notification', entityId: id,
-          summary: 'Read a notification',
-          changes: { readAt: { from: null, to: updated.readAt } },
-        });
         await db.query('COMMIT');
         return updated;
       }
@@ -143,7 +140,7 @@ export class NotificationsService {
     } finally { db.release(); }
   }
 
-  async markAllRead(employeeId: number, context: AuditContext) {
+  async markAllRead(employeeId: number) {
     const db = await this.pool.connect();
     try {
       await db.query('BEGIN');
@@ -151,11 +148,6 @@ export class NotificationsService {
         `UPDATE "Notification" SET "readAt" = NOW()
          WHERE "employeeId" = $1 AND "readAt" IS NULL RETURNING "id"`, [employeeId],
       );
-      if (result.rowCount) await this.audit.record(db, context, {
-        action: 'notifications.read', entityType: 'Employee', entityId: employeeId,
-        summary: `Read ${result.rowCount} notifications`,
-        changes: { unreadNotifications: { from: result.rowCount, to: 0 } },
-      });
       await db.query('COMMIT');
       return { updated: result.rowCount ?? 0 };
     } catch (error) {
@@ -164,36 +156,43 @@ export class NotificationsService {
     } finally { db.release(); }
   }
 
-  /** Called once a minute; SQL unique keys make selection and email claims safe across instances. */
+  /**
+   * Called once a minute. In-app reminders are refreshed every 15 minutes at
+   * any hour (their dedupe keys make repeats harmless), so something that falls
+   * due mid-day shows up the same day; the email digest goes once a day after
+   * the configured time. SQL unique keys keep both safe across instances.
+   */
   async runScheduledWork() {
+    if (Date.now() - this.remindersRunAt >= REMINDER_INTERVAL_MS) {
+      await this.createDailyReminders();
+      this.remindersRunAt = Date.now();
+    }
     const setting = await this.pool.query<{ notificationDigestTime: string }>(
       `SELECT "notificationDigestTime" FROM "Setting" WHERE "id" = 1`,
     );
     const digestTime = setting.rows[0]?.notificationDigestTime;
-    if (!digestTime || officeTime() < digestTime) return;
-    const today = await this.officeDay();
-    if (this.remindersCreatedOn !== today) {
-      await this.createDailyReminders();
-      this.remindersCreatedOn = today;
-    }
-    await this.sendDigests();
+    if (digestTime && officeTime() >= digestTime) await this.sendDigests();
   }
 
+  /**
+   * Each reminder fires once: a document when it becomes expiring and again
+   * when it expires (per expiry date, so a renewal starts afresh), a lead per
+   * planned follow-up date, a task per due date.
+   */
   async createDailyReminders() {
-    const today = await this.officeDay();
     const documents = await this.pool.query<Reminder>(DOCUMENT_REMINDERS_SQL);
     for (const row of documents.rows) {
       const kind = row.kind!;
       const label = `${row.type}${row.title ? ` (${row.title})` : ''}`;
       await this.insertReminder(row, kind,
-        { label, detail: row.clientName, targetId: row.id }, `document:${row.id}:${kind}:${row.day}`);
+        { label, detail: row.clientName, targetId: row.id }, `document:${row.id}:${kind}:${row.expiryDate}`);
     }
     const leads = await this.pool.query<Reminder>(LEAD_REMINDERS_SQL);
     for (const row of leads.rows) await this.insertReminder(row, 'lead_follow_up_due',
-      { label: row.name!, targetId: row.id }, `lead:${row.id}:${today}`);
+      { label: row.name!, targetId: row.id }, `lead:${row.id}:${row.nextFollowUpDate}`);
     const tasks = await this.pool.query<Reminder>(TASK_REMINDERS_SQL);
     for (const row of tasks.rows) await this.insertReminder(row, 'task_overdue',
-      { label: row.title!, targetId: row.id }, `task:${row.id}:${today}`);
+      { label: row.title!, targetId: row.id }, `task:${row.id}:${row.dueDate}`);
   }
 
   private async insertReminder(
@@ -211,11 +210,7 @@ export class NotificationsService {
          VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT ("employeeId", "dedupeKey") DO NOTHING RETURNING "id"`,
         [row.employeeId, kind, copy.title, copy.body, copy.link, dedupeKey],
       );
-      if (inserted.rows[0]) await this.audit.record(db, { actor: null }, {
-        action: 'notifications.created', entityType: 'Notification', entityId: inserted.rows[0].id,
-        summary: copy.title,
-        changes: { kind, title: copy.title, body: copy.body, link: copy.link },
-      });
+      if (inserted.rows[0]) this.logger.debug(`Created ${kind} notification ${inserted.rows[0].id}`);
       await db.query('COMMIT');
     } catch (error) {
       await db.query('ROLLBACK');
@@ -257,11 +252,6 @@ export class NotificationsService {
         this.logger.warn('A notification digest could not be sent.');
       }
     }
-  }
-
-  private async officeDay() {
-    const result = await this.pool.query<{ day: string }>(`SELECT (now() AT TIME ZONE 'Asia/Dubai')::date::text AS day`);
-    return result.rows[0].day;
   }
 }
 

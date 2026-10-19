@@ -157,7 +157,7 @@ export default function DocumentList({ clientId, documentId, initialStatus = "" 
           {compact ? d.noneForClient : d.none}
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200">
+        <div className="relative overflow-x-auto rounded-lg border border-slate-200">
           <table className={`w-full border-collapse text-sm ${compact ? "" : "min-w-[760px]"}`}>
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>

@@ -1,4 +1,3 @@
-import type { AuditContext } from '../audit/audit.service.js';
 import { SmtpMailer } from './mailer.js';
 import {
   DOCUMENT_REMINDERS_SQL,
@@ -6,8 +5,6 @@ import {
   NotificationsService,
   TASK_REMINDERS_SQL,
 } from './notifications.service.js';
-
-const context: AuditContext = { actor: { employeeId: 4, name: 'Aisha' } };
 
 describe('NotificationsService', () => {
   it('selects office-day expiring/expired documents, due open leads, and overdue open task stages', () => {
@@ -21,15 +18,19 @@ describe('NotificationsService', () => {
     expect(TASK_REMINDERS_SQL).toContain('s."assigneeId" AS "employeeId"');
   });
 
-  it('does not create the same daily reminder twice', async () => {
+  it.each([
+    ['twice on the same day', '2026-10-19', '2026-10-19'],
+    ['again on the next day', '2026-10-19', '2026-10-20'],
+  ])('does not repeat a reminder %s', async (_, firstDay, secondDay) => {
+    let day = firstDay;
     const created = new Set<string>();
     const attempts: unknown[][] = [];
     const pool = {
       query: vi.fn(async (sql: string, _params: unknown[] = []) => {
-        if (sql.includes('::date::text AS day')) return { rows: [{ day: '2026-10-19' }] };
-        if (sql === DOCUMENT_REMINDERS_SQL) return { rows: [{ id: 1, employeeId: 4, preferredLanguage: 'en', kind: 'document_expiring', type: 'Tax certificate', title: null, clientName: 'Al Noor', day: '2026-10-19' }] };
+        if (sql.includes('::date::text AS day')) return { rows: [{ day }] };
+        if (sql === DOCUMENT_REMINDERS_SQL) return { rows: [{ id: 1, employeeId: 4, preferredLanguage: 'en', kind: 'document_expiring', type: 'Tax certificate', title: null, clientName: 'Al Noor', expiryDate: '2026-11-01' }] };
         if (sql === LEAD_REMINDERS_SQL) return { rows: [{ id: 2, employeeId: 4, preferredLanguage: 'en', name: 'Prospect', nextFollowUpDate: '2026-10-19' }] };
-        if (sql === TASK_REMINDERS_SQL) return { rows: [{ id: 3, employeeId: 4, preferredLanguage: 'en', title: 'Audit file' }] };
+        if (sql === TASK_REMINDERS_SQL) return { rows: [{ id: 3, employeeId: 4, preferredLanguage: 'en', title: 'Audit file', dueDate: '2026-10-10' }] };
         throw new Error(`unexpected SQL: ${sql}`);
       }),
       connect: vi.fn(async () => ({
@@ -44,15 +45,34 @@ describe('NotificationsService', () => {
         release: vi.fn(),
       })),
     };
-    const audit = { record: vi.fn().mockResolvedValue(undefined) };
-    const service = new NotificationsService(pool as never, { enabled: false, sendDigest: vi.fn() }, audit as never);
+    const service = new NotificationsService(pool as never, { enabled: false, sendDigest: vi.fn() });
 
     await service.createDailyReminders();
+    day = secondDay;
     await service.createDailyReminders();
 
     expect(created.size).toBe(3);
     expect(attempts).toHaveLength(6);
-    expect(audit.record).toHaveBeenCalledTimes(3);
+  });
+
+  it('creates in-app reminders at any hour but emails only after the digest time', async () => {
+    const pool = {
+      query: vi.fn(async (sql: string) => {
+        if (sql.includes('"notificationDigestTime"')) return { rows: [{ notificationDigestTime: '23:59' }] };
+        if (sql === DOCUMENT_REMINDERS_SQL || sql === LEAD_REMINDERS_SQL || sql === TASK_REMINDERS_SQL) return { rows: [] };
+        throw new Error(`unexpected SQL: ${sql}`);
+      }),
+      connect: vi.fn(),
+    };
+    const sendDigest = vi.fn();
+    const service = new NotificationsService(pool as never, { enabled: true, sendDigest });
+
+    await service.runScheduledWork();
+    await service.runScheduledWork(); // within 15 minutes: no second scan
+
+    const scans = pool.query.mock.calls.filter(([sql]) => sql === DOCUMENT_REMINDERS_SQL);
+    expect(scans).toHaveLength(1);
+    expect(sendDigest).not.toHaveBeenCalled();
   });
 
   it('scopes notification reads and lists to the current employee', async () => {
@@ -64,14 +84,13 @@ describe('NotificationsService', () => {
       if (sql.includes('FROM "Notification"')) return { rows: [] };
       throw new Error(`unexpected SQL: ${sql}`);
     }), connect: vi.fn().mockResolvedValue(db) };
-    const audit = { record: vi.fn().mockResolvedValue(undefined) };
-    const service = new NotificationsService(pool as never, { enabled: false, sendDigest: vi.fn() }, audit as never);
+    const service = new NotificationsService(pool as never, { enabled: false, sendDigest: vi.fn() });
 
     await service.list(4);
     expect(pool.query.mock.calls[0][0]).toContain('WHERE "employeeId" = $1');
     expect(pool.query.mock.calls[0]?.[1]?.[0]).toBe(4);
 
-    await expect(service.markRead(4, 8, context)).rejects.toMatchObject({ response: { code: 'notifications.not_found' } });
+    await expect(service.markRead(4, 8)).rejects.toMatchObject({ response: { code: 'notifications.not_found' } });
     expect(db.query.mock.calls[1][0]).toContain('WHERE "id" = $1 AND "employeeId" = $2');
     expect(db.query.mock.calls[1][1]).toEqual([8, 4]);
   });

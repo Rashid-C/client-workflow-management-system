@@ -1,6 +1,4 @@
 import { Controller, Get, Param, ParseIntPipe, Post, Query, Version } from '@nestjs/common';
-import { Audit } from '../audit/audit-context.decorator.js';
-import type { AuditContext } from '../audit/audit.service.js';
 import { CurrentUser } from '../auth/decorators.js';
 import type { AuthUser } from '../auth/session.js';
 import { NotificationQueryDto } from './dto.js';
@@ -24,8 +22,8 @@ export class NotificationsController {
 
   @Version('1')
   @Post('read-all')
-  markAllRead(@CurrentUser() user: AuthUser, @Audit() audit: AuditContext) {
-    return this.notifications.markAllRead(user.employeeId, audit);
+  markAllRead(@CurrentUser() user: AuthUser) {
+    return this.notifications.markAllRead(user.employeeId);
   }
 
   @Version('1')
@@ -33,8 +31,7 @@ export class NotificationsController {
   markRead(
     @CurrentUser() user: AuthUser,
     @Param('id', ParseIntPipe) id: number,
-    @Audit() audit: AuditContext,
   ) {
-    return this.notifications.markRead(user.employeeId, id, audit);
+    return this.notifications.markRead(user.employeeId, id);
   }
 }
