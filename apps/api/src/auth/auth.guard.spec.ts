@@ -22,6 +22,7 @@ const staff: AuthUser = {
   isSuperAdmin: false,
   mustChangePassword: false,
   preferredLanguage: 'en',
+  emailNotificationsEnabled: true,
   permissions: { 'tasks.view': 'own' },
 };
 

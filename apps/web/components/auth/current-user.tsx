@@ -9,6 +9,7 @@ type CurrentUserState = {
   /** True when the signed-in user holds `permission` at any scope. */
   can: (permission: string) => boolean;
   signOut: () => Promise<void>;
+  updateUser: (changes: Partial<CurrentUser>) => void;
 };
 
 const CurrentUserContext = createContext<CurrentUserState | null>(null);
@@ -38,8 +39,10 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
 
   const can = (permission: string) => Boolean(user?.permissions[permission]);
 
+  const updateUser = (changes: Partial<CurrentUser>) => setUser((current) => current ? { ...current, ...changes } : current);
+
   return (
-    <CurrentUserContext.Provider value={{ user, can, signOut }}>
+    <CurrentUserContext.Provider value={{ user, can, signOut, updateUser }}>
       {children}
     </CurrentUserContext.Provider>
   );

@@ -16,6 +16,7 @@ export interface Settings {
   workdayStart: string;
   workdayEnd: string;
   documentReminderDays: number;
+  notificationDigestTime: string;
   version: number;
   updatedAt: Date;
 }
@@ -31,6 +32,7 @@ const FIELDS = [
   'workdayStart',
   'workdayEnd',
   'documentReminderDays',
+  'notificationDigestTime',
 ] as const;
 
 const SELECT = `SELECT ${FIELDS.map((f) => `"${f}"`).join(', ')}, "version", "updatedAt" FROM "Setting" WHERE "id" = 1`;
@@ -61,6 +63,7 @@ export class SettingsService {
       workdayStart: data.workdayStart,
       workdayEnd: data.workdayEnd,
       documentReminderDays: data.documentReminderDays,
+      notificationDigestTime: data.notificationDigestTime,
     };
 
     const connection = await this.pool.connect();

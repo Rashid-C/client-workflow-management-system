@@ -14,6 +14,7 @@ const viewer = (scope: 'own' | 'all', employeeId = 3): AuthUser => ({
   isSuperAdmin: false,
   mustChangePassword: false,
   preferredLanguage: 'en',
+  emailNotificationsEnabled: true,
   permissions: { 'time_logs.view': scope, 'tasks.view': scope },
 });
 

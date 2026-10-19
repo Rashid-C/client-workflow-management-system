@@ -16,6 +16,7 @@ const viewer = (extra: AuthUser['permissions'] = {}): AuthUser => ({
   isSuperAdmin: false,
   mustChangePassword: false,
   preferredLanguage: 'en',
+  emailNotificationsEnabled: true,
   permissions: { 'leads.view': 'all', 'leads.edit': 'all', ...extra },
 });
 

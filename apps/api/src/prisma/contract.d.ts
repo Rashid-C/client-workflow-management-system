@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'0341170e5148caf97ea3ae32ca5002518143cfae6d064903d37c34d5253390a0'>;
+  StorageHashBase<'00a0b3b4464e776dbcf79a66f6eb5ffd8d5a7b95c0bad4826512181ad0b675ea'>;
 export type ExecutionHash =
   ExecutionHashBase<'106cc71e5d38ffbc0b53c9a78a6e1005bf970429d0add8458f2b13f4b7adb2a2'>;
 export type ProfileHash =
@@ -338,6 +338,7 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly designation: CodecTypes['pg/text@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
+      readonly emailNotificationsEnabled: CodecTypes['pg/bool@1']['output'];
       readonly employeeCode: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly joinedDate: CodecTypes['pg/date-string@1']['output'];
@@ -396,6 +397,27 @@ export type FieldOutputTypes = {
       readonly leadId: CodecTypes['pg/int4@1']['output'];
       readonly note: CodecTypes['pg/text@1']['output'];
     };
+    readonly Notification: {
+      readonly body: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly dedupeKey: CodecTypes['pg/text@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly kind:
+        | 'document_expiring'
+        | 'document_expired'
+        | 'lead_follow_up_due'
+        | 'task_overdue'
+        | 'stage_assigned';
+      readonly link: CodecTypes['pg/text@1']['output'];
+      readonly readAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly title: CodecTypes['pg/text@1']['output'];
+    };
+    readonly NotificationDigest: {
+      readonly day: CodecTypes['pg/date-string@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    };
     readonly Role: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
@@ -430,6 +452,7 @@ export type FieldOutputTypes = {
       readonly documentReminderDays: CodecTypes['pg/int4@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly notificationDigestTime: CodecTypes['pg/text@1']['output'];
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly version: CodecTypes['pg/int4@1']['output'];
@@ -599,6 +622,7 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly designation: CodecTypes['pg/text@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
+      readonly emailNotificationsEnabled: CodecTypes['pg/bool@1']['input'];
       readonly employeeCode: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly joinedDate: CodecTypes['pg/date-string@1']['input'];
@@ -657,6 +681,27 @@ export type FieldInputTypes = {
       readonly leadId: CodecTypes['pg/int4@1']['input'];
       readonly note: CodecTypes['pg/text@1']['input'];
     };
+    readonly Notification: {
+      readonly body: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly dedupeKey: CodecTypes['pg/text@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly kind:
+        | 'document_expiring'
+        | 'document_expired'
+        | 'lead_follow_up_due'
+        | 'task_overdue'
+        | 'stage_assigned';
+      readonly link: CodecTypes['pg/text@1']['input'];
+      readonly readAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly title: CodecTypes['pg/text@1']['input'];
+    };
+    readonly NotificationDigest: {
+      readonly day: CodecTypes['pg/date-string@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly sentAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+    };
     readonly Role: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
@@ -691,6 +736,7 @@ export type FieldInputTypes = {
       readonly documentReminderDays: CodecTypes['pg/int4@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly notificationDigestTime: CodecTypes['pg/text@1']['input'];
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly version: CodecTypes['pg/int4@1']['input'];
@@ -860,6 +906,7 @@ export type StorageColumnTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly designation: CodecTypes['pg/text@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'];
+      readonly emailNotificationsEnabled: CodecTypes['pg/bool@1']['output'];
       readonly employeeCode: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly joinedDate: CodecTypes['pg/date-string@1']['output'];
@@ -918,6 +965,27 @@ export type StorageColumnTypes = {
       readonly leadId: CodecTypes['pg/int4@1']['output'];
       readonly note: CodecTypes['pg/text@1']['output'];
     };
+    readonly Notification: {
+      readonly body: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly dedupeKey: CodecTypes['pg/text@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly kind:
+        | 'document_expiring'
+        | 'document_expired'
+        | 'lead_follow_up_due'
+        | 'task_overdue'
+        | 'stage_assigned';
+      readonly link: CodecTypes['pg/text@1']['output'];
+      readonly readAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly title: CodecTypes['pg/text@1']['output'];
+    };
+    readonly NotificationDigest: {
+      readonly day: CodecTypes['pg/date-string@1']['output'];
+      readonly employeeId: CodecTypes['pg/int4@1']['output'];
+      readonly sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    };
     readonly Role: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
@@ -952,6 +1020,7 @@ export type StorageColumnTypes = {
       readonly documentReminderDays: CodecTypes['pg/int4@1']['output'];
       readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly notificationDigestTime: CodecTypes['pg/text@1']['output'];
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly version: CodecTypes['pg/int4@1']['output'];
@@ -1121,6 +1190,7 @@ export type StorageColumnInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly designation: CodecTypes['pg/text@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'];
+      readonly emailNotificationsEnabled: CodecTypes['pg/bool@1']['input'];
       readonly employeeCode: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly joinedDate: CodecTypes['pg/date-string@1']['input'];
@@ -1179,6 +1249,27 @@ export type StorageColumnInputTypes = {
       readonly leadId: CodecTypes['pg/int4@1']['input'];
       readonly note: CodecTypes['pg/text@1']['input'];
     };
+    readonly Notification: {
+      readonly body: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly dedupeKey: CodecTypes['pg/text@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly kind:
+        | 'document_expiring'
+        | 'document_expired'
+        | 'lead_follow_up_due'
+        | 'task_overdue'
+        | 'stage_assigned';
+      readonly link: CodecTypes['pg/text@1']['input'];
+      readonly readAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly title: CodecTypes['pg/text@1']['input'];
+    };
+    readonly NotificationDigest: {
+      readonly day: CodecTypes['pg/date-string@1']['input'];
+      readonly employeeId: CodecTypes['pg/int4@1']['input'];
+      readonly sentAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+    };
     readonly Role: {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
@@ -1213,6 +1304,7 @@ export type StorageColumnInputTypes = {
       readonly documentReminderDays: CodecTypes['pg/int4@1']['input'];
       readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly notificationDigestTime: CodecTypes['pg/text@1']['input'];
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly version: CodecTypes['pg/int4@1']['input'];
@@ -1391,6 +1483,7 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     designation: CodecTypes['pg/text@1']['output'];
     email: CodecTypes['pg/text@1']['output'];
+    emailNotificationsEnabled: CodecTypes['pg/bool@1']['output'];
     employeeCode: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
     joinedDate: CodecTypes['pg/date-string@1']['output'];
@@ -1400,7 +1493,9 @@ export namespace Models {
     status: 'Active' | 'Inactive';
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     version: CodecTypes['pg/int4@1']['output'];
-    readonly [RelationKeys]?: never;
+    notificationDigests: public_NotificationDigest[];
+    notifications: public_Notification[];
+    readonly [RelationKeys]?: 'notificationDigests' | 'notifications';
   };
   export type public_EmployeeCredential = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -1461,6 +1556,31 @@ export namespace Models {
     lead: public_Lead;
     readonly [RelationKeys]?: 'createdBy' | 'lead';
   };
+  export type public_Notification = {
+    body: CodecTypes['pg/text@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    dedupeKey: CodecTypes['pg/text@1']['output'];
+    employeeId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    kind:
+      | 'document_expiring'
+      | 'document_expired'
+      | 'lead_follow_up_due'
+      | 'task_overdue'
+      | 'stage_assigned';
+    link: CodecTypes['pg/text@1']['output'];
+    readAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    title: CodecTypes['pg/text@1']['output'];
+    employee: public_Employee;
+    readonly [RelationKeys]?: 'employee';
+  };
+  export type public_NotificationDigest = {
+    day: CodecTypes['pg/date-string@1']['output'];
+    employeeId: CodecTypes['pg/int4@1']['output'];
+    sentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    employee: public_Employee;
+    readonly [RelationKeys]?: 'employee';
+  };
   export type public_Role = {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     description: CodecTypes['pg/text@1']['output'] | null;
@@ -1500,6 +1620,7 @@ export namespace Models {
     documentReminderDays: CodecTypes['pg/int4@1']['output'];
     email: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
+    notificationDigestTime: CodecTypes['pg/text@1']['output'];
     phone: CodecTypes['pg/text@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     version: CodecTypes['pg/int4@1']['output'];
@@ -1590,6 +1711,8 @@ export declare const models: {
     EmployeeRole: Models.public_EmployeeRole;
     Lead: Models.public_Lead;
     LeadFollowUp: Models.public_LeadFollowUp;
+    Notification: Models.public_Notification;
+    NotificationDigest: Models.public_NotificationDigest;
     Role: Models.public_Role;
     RolePermission: Models.public_RolePermission;
     Session: Models.public_Session;
@@ -2223,6 +2346,16 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly emailNotificationsEnabled: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                  readonly many: false;
+                };
                 readonly employeeCode: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -2762,6 +2895,145 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly Notification: {
+              columns: {
+                readonly body: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly many: false;
+                };
+                readonly dedupeKey: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly employeeId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                  readonly many: false;
+                };
+                readonly kind: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly link: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly readAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly title: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['employeeId', 'dedupeKey'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'Notification_employeeId_createdAt_idx_dc1a855e';
+                  readonly prefix: 'Notification_employeeId_createdAt_idx';
+                  readonly columns: readonly ['employeeId', 'createdAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'Notification_employeeId_idx_087dd4a6';
+                  readonly prefix: 'Notification_employeeId_idx';
+                  readonly columns: readonly ['employeeId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Notification';
+                    readonly columns: readonly ['employeeId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly NotificationDigest: {
+              columns: {
+                readonly day: {
+                  readonly dataType: 'pg/date';
+                  readonly codecId: 'pg/date-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly employeeId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly sentAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['employeeId', 'day'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'NotificationDigest_employeeId_idx_087dd4a6';
+                  readonly prefix: 'NotificationDigest_employeeId_idx';
+                  readonly columns: readonly ['employeeId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'NotificationDigest';
+                    readonly columns: readonly ['employeeId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Employee';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly Role: {
               columns: {
                 readonly createdAt: {
@@ -3027,6 +3299,16 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly notificationDigestTime: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', '08:00'>;
+                  };
                   readonly many: false;
                 };
                 readonly phone: {
@@ -3717,6 +3999,16 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['New', 'Contacted', 'Proposal sent', 'Won', 'Lost'];
             };
+            readonly NotificationKind: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'document_expiring',
+                'document_expired',
+                'lead_follow_up_due',
+                'task_overdue',
+                'stage_assigned',
+              ];
+            };
             readonly PermissionScope: {
               readonly kind: 'valueSet';
               readonly values: readonly ['own', 'all'];
@@ -3756,6 +4048,14 @@ type ContractBase = Omit<
     readonly LeadFollowUp: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'LeadFollowUp';
+    };
+    readonly Notification: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'Notification';
+    };
+    readonly NotificationDigest: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'NotificationDigest';
     };
     readonly Role: { readonly namespace: 'public' & NamespaceId; readonly model: 'Role' };
     readonly RolePermission: {
@@ -4241,6 +4541,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly emailNotificationsEnabled: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly employeeCode: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -4281,7 +4585,30 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly notificationDigests: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'NotificationDigest';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['employeeId'];
+                };
+              };
+              readonly notifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Notification';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['employeeId'];
+                };
+              };
+            };
             readonly storage: {
               readonly table: 'Employee';
               readonly namespaceId: 'public';
@@ -4289,6 +4616,9 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly designation: { readonly column: 'designation' };
                 readonly email: { readonly column: 'email' };
+                readonly emailNotificationsEnabled: {
+                  readonly column: 'emailNotificationsEnabled';
+                };
                 readonly employeeCode: { readonly column: 'employeeCode' };
                 readonly id: { readonly column: 'id' };
                 readonly joinedDate: { readonly column: 'joinedDate' };
@@ -4661,6 +4991,123 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly Notification: {
+            readonly fields: {
+              readonly body: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly dedupeKey: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly employeeId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly kind: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly link: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly readAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly employee: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['employeeId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'Notification';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly body: { readonly column: 'body' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly dedupeKey: { readonly column: 'dedupeKey' };
+                readonly employeeId: { readonly column: 'employeeId' };
+                readonly id: { readonly column: 'id' };
+                readonly kind: { readonly column: 'kind' };
+                readonly link: { readonly column: 'link' };
+                readonly readAt: { readonly column: 'readAt' };
+                readonly title: { readonly column: 'title' };
+              };
+            };
+          };
+          readonly NotificationDigest: {
+            readonly fields: {
+              readonly day: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/date-string@1' };
+              };
+              readonly employeeId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly sentAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly employee: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Employee';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['employeeId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'NotificationDigest';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly day: { readonly column: 'day' };
+                readonly employeeId: { readonly column: 'employeeId' };
+                readonly sentAt: { readonly column: 'sentAt' };
+              };
+            };
+          };
           readonly Role: {
             readonly fields: {
               readonly createdAt: {
@@ -4865,6 +5312,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly notificationDigestTime: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly phone: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -4905,6 +5356,7 @@ type ContractBase = Omit<
                 readonly documentReminderDays: { readonly column: 'documentReminderDays' };
                 readonly email: { readonly column: 'email' };
                 readonly id: { readonly column: 'id' };
+                readonly notificationDigestTime: { readonly column: 'notificationDigestTime' };
                 readonly phone: { readonly column: 'phone' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly version: { readonly column: 'version' };
@@ -5437,6 +5889,16 @@ type ContractBase = Omit<
               { readonly name: 'Lost'; readonly value: 'Lost' },
             ];
           };
+          readonly NotificationKind: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'DocumentExpiring'; readonly value: 'document_expiring' },
+              { readonly name: 'DocumentExpired'; readonly value: 'document_expired' },
+              { readonly name: 'LeadFollowUpDue'; readonly value: 'lead_follow_up_due' },
+              { readonly name: 'TaskOverdue'; readonly value: 'task_overdue' },
+              { readonly name: 'StageAssigned'; readonly value: 'stage_assigned' },
+            ];
+          };
           readonly PermissionScope: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -5522,6 +5984,13 @@ type ContractBase = Omit<
             { readonly name: 'ProposalSent'; readonly value: 'Proposal sent' },
             { readonly name: 'Won'; readonly value: 'Won' },
             { readonly name: 'Lost'; readonly value: 'Lost' },
+          ];
+          readonly NotificationKind: readonly [
+            { readonly name: 'DocumentExpiring'; readonly value: 'document_expiring' },
+            { readonly name: 'DocumentExpired'; readonly value: 'document_expired' },
+            { readonly name: 'LeadFollowUpDue'; readonly value: 'lead_follow_up_due' },
+            { readonly name: 'TaskOverdue'; readonly value: 'task_overdue' },
+            { readonly name: 'StageAssigned'; readonly value: 'stage_assigned' },
           ];
           readonly PermissionScope: readonly [
             { readonly name: 'Own'; readonly value: 'own' },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useCurrentUser } from "@/components/auth/current-user";
 import DocumentFormDialog from "@/components/documents/document-form-dialog";
@@ -22,7 +22,7 @@ const iconButton = "rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:tex
  * The documents table. With `clientId` it is the compact list on a client's
  * page (no tiles or client column); without, the full page with filters.
  */
-export default function DocumentList({ clientId }: { clientId?: number }) {
+export default function DocumentList({ clientId, documentId }: { clientId?: number; documentId?: number }) {
   const { can } = useCurrentUser();
   const { t, day, errorText } = useI18n();
   const d = t.documents;
@@ -36,6 +36,7 @@ export default function DocumentList({ clientId }: { clientId?: number }) {
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<DocumentRecord | "new" | null>(null);
   const [reload, setReload] = useState(0);
+  const openedNotificationTarget = useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -52,6 +53,13 @@ export default function DocumentList({ clientId }: { clientId?: number }) {
         .then(([list, counts]) => {
           setDocuments(list);
           setSummary(counts);
+          if (!openedNotificationTarget.current && documentId) {
+            const target = list.find((document) => document.id === documentId);
+            if (target) {
+              setEditing(target);
+              openedNotificationTarget.current = true;
+            }
+          }
           setError("");
         })
         .catch((err: unknown) => {
@@ -67,7 +75,7 @@ export default function DocumentList({ clientId }: { clientId?: number }) {
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- t is stable per language
-  }, [clientId, status, type, search, reload]);
+  }, [clientId, status, type, search, reload, documentId]);
 
   async function remove(doc: DocumentRecord) {
     if (!window.confirm(d.confirmDelete(d.types[doc.type]))) return;

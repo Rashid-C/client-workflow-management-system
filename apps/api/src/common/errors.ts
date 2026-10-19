@@ -63,6 +63,9 @@ export const ERROR_CODES = [
   'settings.stale',
   'settings.invalid_hours',
 
+  'notifications.not_found',
+  'notifications.invalid_cursor',
+
   'roles.not_found',
   'roles.stale',
   'roles.system_locked',

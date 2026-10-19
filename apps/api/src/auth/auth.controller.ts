@@ -17,7 +17,7 @@ import {
   CurrentUser,
   Public,
 } from './decorators.js';
-import { ChangePasswordDto, LoginDto, SetLanguageDto } from './dto.js';
+import { ChangePasswordDto, LoginDto, SetLanguageDto, SetNotificationPreferencesDto } from './dto.js';
 import { SESSION_COOKIE, type AuthUser } from './session.js';
 
 const cookieOptions = {
@@ -76,6 +76,18 @@ export class AuthController {
   @HttpCode(204)
   async setLanguage(@CurrentUser() user: AuthUser, @Body() data: SetLanguageDto) {
     await this.authService.setLanguage(user, data.language);
+  }
+
+  @Version('1')
+  @AllowPendingPassword()
+  @Put('me/notifications')
+  @HttpCode(204)
+  async setNotificationPreferences(
+    @CurrentUser() user: AuthUser,
+    @Body() data: SetNotificationPreferencesDto,
+    @Audit() audit: AuditContext,
+  ) {
+    await this.authService.setEmailNotifications(user, data.emailNotificationsEnabled, audit);
   }
 
   @Version('1')

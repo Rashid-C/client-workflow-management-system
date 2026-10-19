@@ -24,6 +24,7 @@ const viewer = (scope: 'own' | 'all', edit: 'own' | 'all' | undefined = scope): 
   isSuperAdmin: false,
   mustChangePassword: false,
   preferredLanguage: 'en',
+  emailNotificationsEnabled: true,
   permissions: { 'clients.view': scope, ...(edit ? { 'clients.edit': edit } : {}) },
   sessionId: 1,
 });

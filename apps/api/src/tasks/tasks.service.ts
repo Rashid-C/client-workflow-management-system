@@ -21,6 +21,7 @@ import {
   type TaskDetail,
 } from './task-queries.js';
 import type { WorkStatus } from './work-status.js';
+import { notifyStageAssignee } from '../notifications/notification-writer.js';
 
 export interface TaskListItem {
   id: number;
@@ -231,6 +232,16 @@ export class TasksService {
       );
 
       const task = (await loadTaskDetail(db, taskId))!;
+      for (const stage of task.stages) {
+        if (stage.assignee) await notifyStageAssignee(db, {
+          employeeId: stage.assignee.id,
+          taskId,
+          taskTitle: task.title,
+          stageId: stage.id,
+          stageName: stage.name,
+          position: stage.position,
+        }, this.audit, context);
+      }
       await this.audit.record(db, context, {
         action: 'task.created',
         entityType: 'Task',

@@ -1,0 +1,449 @@
+[
+  {
+    "id": "table.Notification",
+    "label": "Create table \"Notification\"",
+    "summary": "Creates table \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Notification\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Notification\"",
+        "sql": "CREATE TABLE \"public\".\"Notification\" (\n  \"body\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"dedupeKey\" text NOT NULL,\n  \"employeeId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"kind\" text NOT NULL,\n  \"link\" text NOT NULL,\n  \"readAt\" timestamptz,\n  \"title\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Notification_kind_check_65e8c768\" CHECK (\"kind\" IN ('document_expiring', 'document_expired', 'lead_follow_up_due', 'task_overdue', 'stage_assigned'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Notification\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.NotificationDigest",
+    "label": "Create table \"NotificationDigest\"",
+    "summary": "Creates table \"NotificationDigest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "NotificationDigest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"NotificationDigest\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationDigest\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"NotificationDigest\"",
+        "sql": "CREATE TABLE \"public\".\"NotificationDigest\" (\n  \"day\" date NOT NULL,\n  \"employeeId\" int4 NOT NULL,\n  \"sentAt\" timestamptz,\n  PRIMARY KEY (\"employeeId\", \"day\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"NotificationDigest\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationDigest\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Employee.emailNotificationsEnabled",
+    "label": "Add column \"emailNotificationsEnabled\" to \"Employee\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "emailNotificationsEnabled",
+        "table": "Employee"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"emailNotificationsEnabled\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "emailNotificationsEnabled"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"emailNotificationsEnabled\"",
+        "sql": "ALTER TABLE \"public\".\"Employee\" ADD COLUMN \"emailNotificationsEnabled\" bool DEFAULT true NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"emailNotificationsEnabled\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Employee",
+          "emailNotificationsEnabled"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Setting.notificationDigestTime",
+    "label": "Add column \"notificationDigestTime\" to \"Setting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "notificationDigestTime",
+        "table": "Setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"notificationDigestTime\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Setting",
+          "notificationDigestTime"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"notificationDigestTime\"",
+        "sql": "ALTER TABLE \"public\".\"Setting\" ADD COLUMN \"notificationDigestTime\" text DEFAULT '08:00' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"notificationDigestTime\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Setting",
+          "notificationDigestTime"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Notification.Notification_employeeId_dedupeKey_key",
+    "label": "Add unique constraint on \"Notification\" (employeeId, dedupeKey)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Notification_employeeId_dedupeKey_key",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Notification_employeeId_dedupeKey_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_employeeId_dedupeKey_key",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Notification_employeeId_dedupeKey_key\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\" ADD CONSTRAINT \"Notification_employeeId_dedupeKey_key\" UNIQUE (\"employeeId\", \"dedupeKey\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Notification_employeeId_dedupeKey_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_employeeId_dedupeKey_key",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Setting.Setting_notificationDigestTime_format_d03b82a8",
+    "label": "Add check constraint \"Setting_notificationDigestTime_format_d03b82a8\" on \"Setting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Setting_notificationDigestTime_format_d03b82a8",
+        "table": "Setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Setting_notificationDigestTime_format_d03b82a8\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Setting_notificationDigestTime_format_d03b82a8",
+          "public",
+          "\"public\".\"Setting\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Setting_notificationDigestTime_format_d03b82a8\"",
+        "sql": "ALTER TABLE \"public\".\"Setting\" ADD CONSTRAINT \"Setting_notificationDigestTime_format_d03b82a8\" CHECK (\"notificationDigestTime\" ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"Setting_notificationDigestTime_format_d03b82a8\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Setting_notificationDigestTime_format_d03b82a8",
+          "public",
+          "\"public\".\"Setting\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Notification.Notification_employeeId_createdAt_idx_dc1a855e",
+    "label": "Create index \"Notification_employeeId_createdAt_idx_dc1a855e\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Notification_employeeId_createdAt_idx_dc1a855e",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Notification_employeeId_createdAt_idx_dc1a855e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_employeeId_createdAt_idx_dc1a855e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Notification_employeeId_createdAt_idx_dc1a855e\"",
+        "sql": "CREATE INDEX \"Notification_employeeId_createdAt_idx_dc1a855e\" ON \"public\".\"Notification\" (\"employeeId\", \"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Notification_employeeId_createdAt_idx_dc1a855e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_employeeId_createdAt_idx_dc1a855e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Notification.Notification_employeeId_idx_087dd4a6",
+    "label": "Create index \"Notification_employeeId_idx_087dd4a6\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Notification_employeeId_idx_087dd4a6",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Notification_employeeId_idx_087dd4a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Notification_employeeId_idx_087dd4a6\"",
+        "sql": "CREATE INDEX \"Notification_employeeId_idx_087dd4a6\" ON \"public\".\"Notification\" (\"employeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Notification_employeeId_idx_087dd4a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Notification_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.NotificationDigest.NotificationDigest_employeeId_idx_087dd4a6",
+    "label": "Create index \"NotificationDigest_employeeId_idx_087dd4a6\" on \"NotificationDigest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "NotificationDigest_employeeId_idx_087dd4a6",
+        "table": "NotificationDigest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"NotificationDigest_employeeId_idx_087dd4a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationDigest_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"NotificationDigest_employeeId_idx_087dd4a6\"",
+        "sql": "CREATE INDEX \"NotificationDigest_employeeId_idx_087dd4a6\" ON \"public\".\"NotificationDigest\" (\"employeeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"NotificationDigest_employeeId_idx_087dd4a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"NotificationDigest_employeeId_idx_087dd4a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Notification.Notification_employeeId_fkey",
+    "label": "Add foreign key \"Notification_employeeId_fkey\" on \"Notification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Notification_employeeId_fkey",
+        "table": "Notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Notification_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_employeeId_fkey",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Notification_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Notification\"\nADD CONSTRAINT \"Notification_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Notification_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Notification_employeeId_fkey",
+          "public",
+          "\"public\".\"Notification\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.NotificationDigest.NotificationDigest_employeeId_fkey",
+    "label": "Add foreign key \"NotificationDigest_employeeId_fkey\" on \"NotificationDigest\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "NotificationDigest_employeeId_fkey",
+        "table": "NotificationDigest"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"NotificationDigest_employeeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "NotificationDigest_employeeId_fkey",
+          "public",
+          "\"public\".\"NotificationDigest\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"NotificationDigest_employeeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"NotificationDigest\"\nADD CONSTRAINT \"NotificationDigest_employeeId_fkey\"\nFOREIGN KEY (\"employeeId\")\nREFERENCES \"public\".\"Employee\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"NotificationDigest_employeeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "NotificationDigest_employeeId_fkey",
+          "public",
+          "\"public\".\"NotificationDigest\""
+        ]
+      }
+    ]
+  }
+]

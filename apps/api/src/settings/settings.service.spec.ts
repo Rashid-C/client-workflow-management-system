@@ -17,6 +17,7 @@ const stored = {
   workdayStart: '08:30',
   workdayEnd: '17:30',
   documentReminderDays: 30,
+  notificationDigestTime: '08:00',
   version: 2,
   updatedAt: new Date(),
 };

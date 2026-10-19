@@ -33,6 +33,7 @@ import {
   type StageAction,
   type WorkStatus,
 } from './work-status.js';
+import { notifyStageAssignee } from '../notifications/notification-writer.js';
 
 const AUDIT_ACTIONS: Record<StageAction, string> = {
   start: 'task.stage_started',
@@ -120,6 +121,14 @@ export class TaskStagesService {
           `UPDATE "TaskStage" SET "assigneeId" = $2, "updatedAt" = NOW() WHERE "id" = $1`,
           [next.id, data.nextAssigneeId],
         );
+        await notifyStageAssignee(s.db, {
+          employeeId: data.nextAssigneeId,
+          taskId: s.task.id,
+          taskTitle: s.task.title,
+          stageId: next.id,
+          stageName: next.name,
+          position: next.position,
+        }, this.audit, s.context);
       }
 
       return {
@@ -208,6 +217,14 @@ export class TaskStagesService {
         `UPDATE "TaskStage" SET "assigneeId" = $2, "updatedAt" = NOW() WHERE "id" = $1`,
         [s.stage.id, data.assigneeId],
       );
+      if (data.assigneeId !== null) await notifyStageAssignee(s.db, {
+        employeeId: data.assigneeId,
+        taskId: s.task.id,
+        taskTitle: s.task.title,
+        stageId: s.stage.id,
+        stageName: s.stage.name,
+        position: s.stage.position,
+      }, this.audit, s.context);
 
       const from = s.stage.assigneeName;
       return {

@@ -15,6 +15,7 @@ const viewer = (scope: 'own' | 'all' = 'own'): AuthUser => ({
   isSuperAdmin: false,
   mustChangePassword: false,
   preferredLanguage: 'en',
+  emailNotificationsEnabled: true,
   permissions: { 'daily_updates.view': scope, 'daily_updates.create': 'all' },
 });
 

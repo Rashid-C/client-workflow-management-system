@@ -63,6 +63,9 @@ export class UpdateSettingsDto {
   @IsInt() @Min(0) @Max(365)
   documentReminderDays!: number;
 
+  @Matches(TIME, { message: 'notificationDigestTime must look like 08:00' })
+  notificationDigestTime!: string;
+
   @IsInt() @IsPositive()
   version!: number;
 }

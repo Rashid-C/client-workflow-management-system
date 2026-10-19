@@ -1,5 +1,6 @@
 
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AuditModule } from './audit/audit.module.js';
@@ -16,9 +17,11 @@ import { SettingsModule } from './settings/settings.module.js';
 import { TaskTypesModule } from './task-types/task-types.module.js';
 import { TasksModule } from './tasks/tasks.module.js';
 import { TimeEntriesModule } from './time-entries/time-entries.module.js';
+import { NotificationsModule } from './notifications/notifications.module.js';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     DatabaseModule,
     AuditModule,
     AuthModule,
@@ -33,6 +36,7 @@ import { TimeEntriesModule } from './time-entries/time-entries.module.js';
     TimeEntriesModule,
     DailyUpdatesModule,
     DashboardModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

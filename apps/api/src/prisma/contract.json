@@ -40,6 +40,14 @@
       "model": "LeadFollowUp",
       "namespace": "public"
     },
+    "Notification": {
+      "model": "Notification",
+      "namespace": "public"
+    },
+    "NotificationDigest": {
+      "model": "NotificationDigest",
+      "namespace": "public"
+    },
     "Role": {
       "model": "Role",
       "namespace": "public"
@@ -323,6 +331,31 @@
               {
                 "name": "Lost",
                 "value": "Lost"
+              }
+            ]
+          },
+          "NotificationKind": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "DocumentExpiring",
+                "value": "document_expiring"
+              },
+              {
+                "name": "DocumentExpired",
+                "value": "document_expired"
+              },
+              {
+                "name": "LeadFollowUpDue",
+                "value": "lead_follow_up_due"
+              },
+              {
+                "name": "TaskOverdue",
+                "value": "task_overdue"
+              },
+              {
+                "name": "StageAssigned",
+                "value": "stage_assigned"
               }
             ]
           },
@@ -1167,6 +1200,13 @@
                   "kind": "scalar"
                 }
               },
+              "emailNotificationsEnabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "employeeCode": {
                 "nullable": false,
                 "type": {
@@ -1243,7 +1283,38 @@
                 }
               }
             },
-            "relations": {},
+            "relations": {
+              "notificationDigests": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "employeeId"
+                  ]
+                },
+                "to": {
+                  "model": "NotificationDigest",
+                  "namespace": "public"
+                }
+              },
+              "notifications": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "employeeId"
+                  ]
+                },
+                "to": {
+                  "model": "Notification",
+                  "namespace": "public"
+                }
+              }
+            },
             "storage": {
               "fields": {
                 "createdAt": {
@@ -1254,6 +1325,9 @@
                 },
                 "email": {
                   "column": "email"
+                },
+                "emailNotificationsEnabled": {
+                  "column": "emailNotificationsEnabled"
                 },
                 "employeeCode": {
                   "column": "employeeCode"
@@ -1871,6 +1945,188 @@
               "table": "LeadFollowUp"
             }
           },
+          "Notification": {
+            "fields": {
+              "body": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "dedupeKey": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "employeeId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "kind": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "NotificationKind",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "link": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "readAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "employee": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "employeeId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "body": {
+                  "column": "body"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "dedupeKey": {
+                  "column": "dedupeKey"
+                },
+                "employeeId": {
+                  "column": "employeeId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "kind": {
+                  "column": "kind"
+                },
+                "link": {
+                  "column": "link"
+                },
+                "readAt": {
+                  "column": "readAt"
+                },
+                "title": {
+                  "column": "title"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Notification"
+            }
+          },
+          "NotificationDigest": {
+            "fields": {
+              "day": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/date-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "employeeId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "sentAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "employee": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "employeeId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Employee",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "day": {
+                  "column": "day"
+                },
+                "employeeId": {
+                  "column": "employeeId"
+                },
+                "sentAt": {
+                  "column": "sentAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "NotificationDigest"
+            }
+          },
           "Role": {
             "fields": {
               "createdAt": {
@@ -2195,6 +2451,13 @@
                   "kind": "scalar"
                 }
               },
+              "notificationDigestTime": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "phone": {
                 "nullable": true,
                 "type": {
@@ -2261,6 +2524,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "notificationDigestTime": {
+                  "column": "notificationDigestTime"
                 },
                 "phone": {
                   "column": "phone"
@@ -3700,6 +3966,15 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "emailNotificationsEnabled": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nullable": false
+                },
                 "employeeCode": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -4394,6 +4669,188 @@
               },
               "uniques": []
             },
+            "Notification": {
+              "checks": [
+                {
+                  "expression": "\"kind\" IN ('document_expiring', 'document_expired', 'lead_follow_up_due', 'task_overdue', 'stage_assigned')",
+                  "name": "Notification_kind_check_65e8c768",
+                  "prefix": "Notification_kind_check"
+                }
+              ],
+              "columns": {
+                "body": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "dedupeKey": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "employeeId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nullable": false
+                },
+                "kind": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "NotificationKind",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "link": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "readAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "Notification_employeeId_idx_087dd4a6"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "employeeId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Notification"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "employeeId",
+                    "createdAt"
+                  ],
+                  "name": "Notification_employeeId_createdAt_idx_dc1a855e",
+                  "prefix": "Notification_employeeId_createdAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "employeeId"
+                  ],
+                  "name": "Notification_employeeId_idx_087dd4a6",
+                  "prefix": "Notification_employeeId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "employeeId",
+                    "dedupeKey"
+                  ]
+                }
+              ]
+            },
+            "NotificationDigest": {
+              "columns": {
+                "day": {
+                  "codecId": "pg/date-string@1",
+                  "dataType": "pg/date",
+                  "nullable": false
+                },
+                "employeeId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "sentAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "NotificationDigest_employeeId_idx_087dd4a6"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "employeeId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "NotificationDigest"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Employee"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "employeeId"
+                  ],
+                  "name": "NotificationDigest_employeeId_idx_087dd4a6",
+                  "prefix": "NotificationDigest_employeeId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "employeeId",
+                  "day"
+                ]
+              },
+              "uniques": []
+            },
             "Role": {
               "columns": {
                 "createdAt": {
@@ -4671,6 +5128,11 @@
                   "prefix": "Setting_documentReminderDays_range"
                 },
                 {
+                  "expression": "\"notificationDigestTime\" ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'",
+                  "name": "Setting_notificationDigestTime_format_d03b82a8",
+                  "prefix": "Setting_notificationDigestTime_format"
+                },
+                {
                   "expression": "\"id\" = 1",
                   "name": "Setting_single_row_99dee7f0",
                   "prefix": "Setting_single_row"
@@ -4719,6 +5181,15 @@
                 "id": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "notificationDigestTime": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "08:00"
+                  },
                   "nullable": false
                 },
                 "phone": {
@@ -5587,6 +6058,16 @@
                 "Lost"
               ]
             },
+            "NotificationKind": {
+              "kind": "valueSet",
+              "values": [
+                "document_expiring",
+                "document_expired",
+                "lead_follow_up_due",
+                "task_overdue",
+                "stage_assigned"
+              ]
+            },
             "PermissionScope": {
               "kind": "valueSet",
               "values": [
@@ -5609,7 +6090,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "0341170e5148caf97ea3ae32ca5002518143cfae6d064903d37c34d5253390a0"
+    "storageHash": "00a0b3b4464e776dbcf79a66f6eb5ffd8d5a7b95c0bad4826512181ad0b675ea"
   },
   "execution": {
     "executionHash": "106cc71e5d38ffbc0b53c9a78a6e1005bf970429d0add8458f2b13f4b7adb2a2",

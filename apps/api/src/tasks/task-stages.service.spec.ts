@@ -85,6 +85,7 @@ const staff: AuthUser = {
   isSuperAdmin: false,
   mustChangePassword: false,
   preferredLanguage: 'en',
+  emailNotificationsEnabled: true,
   permissions: { 'tasks.view': 'own', 'tasks.complete': 'own', 'tasks.assign': 'own' },
 };
 const manager: AuthUser = {

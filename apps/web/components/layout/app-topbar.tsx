@@ -4,6 +4,7 @@ import { LogOut, Menu } from 'lucide-react';
 import { useCurrentUser } from '@/components/auth/current-user';
 import BrandLogo from '@/components/brand/brand-logo';
 import LanguageSwitch from '@/components/i18n/language-switch';
+import NotificationsBell from '@/components/notifications/notifications-bell';
 import Link from '@/components/i18n/link';
 import { useI18n } from '@/components/i18n/i18n-provider';
 
@@ -30,6 +31,7 @@ export default function AppTopbar({
       </Link>
 
       <div className="ms-auto flex min-w-0 items-center gap-1.5 sm:gap-3">
+        <NotificationsBell />
         {user && (
           <div className="min-w-0 max-w-[34vw] text-end sm:max-w-52">
             <p className="truncate text-xs font-medium text-slate-900 sm:text-sm">

@@ -15,6 +15,7 @@ const viewer = (view: 'own' | 'all', edit?: 'own' | 'all'): AuthUser => ({
   isSuperAdmin: false,
   mustChangePassword: false,
   preferredLanguage: 'en',
+  emailNotificationsEnabled: true,
   permissions: { 'documents.view': view, ...(edit ? { 'documents.edit': edit } : {}) },
 });
 

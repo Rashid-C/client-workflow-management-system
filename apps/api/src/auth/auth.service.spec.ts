@@ -41,6 +41,7 @@ describe('AuthService', () => {
     isSuperAdmin: false,
     mustChangePassword: false,
     preferredLanguage: 'en',
+    emailNotificationsEnabled: true,
     permissions: { 'tasks.view': 'own' },
     lastSeenAt: new Date(),
     ...overrides,

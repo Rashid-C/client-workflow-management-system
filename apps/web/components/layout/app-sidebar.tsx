@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import {
   Activity,
+  Bell,
   BriefcaseBusiness,
   CalendarDays,
   ChevronLeft,
@@ -43,6 +44,7 @@ const navigation: { label: keyof Dictionary['nav']['groups']; items: NavItem[] }
     label: 'workspace',
     items: [
       { label: 'overview', href: '/overview', icon: LayoutDashboard },
+      { label: 'notifications', href: '/notifications', icon: Bell },
       { label: 'myWork', href: '/my-work', icon: ClipboardList },
       { label: 'dailyUpdates', href: '/daily-updates', icon: CalendarDays, permission: 'daily_updates.view' },
     ],

@@ -17,6 +17,7 @@ export type Settings = {
   workdayStart: string;
   workdayEnd: string;
   documentReminderDays: number;
+  notificationDigestTime: string;
   version: number;
   updatedAt: string;
 };
@@ -48,6 +49,7 @@ export default function SettingsForm() {
       workdayStart: settings.workdayStart,
       workdayEnd: settings.workdayEnd,
       documentReminderDays: String(settings.documentReminderDays),
+      notificationDigestTime: settings.notificationDigestTime,
     });
   }
 
@@ -161,6 +163,10 @@ export default function SettingsForm() {
           />
           <p className="mt-1 text-xs text-slate-500">{s.reminderHint}</p>
         </div>
+      </Section>
+
+      <Section title={s.emailDigest} hint={s.emailDigestHint}>
+        {input("notificationDigestTime", s.notificationDigestTime, { type: "time", ltr: true, wide: true })}
       </Section>
 
       {editable && (

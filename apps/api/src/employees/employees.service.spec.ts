@@ -25,6 +25,7 @@ const viewer = (overrides: Partial<AuthUser> = {}): AuthUser => ({
   isSuperAdmin: true,
   mustChangePassword: false,
   preferredLanguage: 'en',
+  emailNotificationsEnabled: true,
   permissions: { 'employees.view': 'all' },
   ...overrides,
 });

@@ -31,6 +31,7 @@ export interface AuthUser {
   isSuperAdmin: boolean;
   mustChangePassword: boolean;
   preferredLanguage: 'en' | 'ar';
+  emailNotificationsEnabled: boolean;
   permissions: Partial<Record<PermissionKey, PermissionScope>>;
 }
 

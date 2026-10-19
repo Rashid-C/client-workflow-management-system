@@ -17,6 +17,7 @@ describe('AuditService', () => {
     isSuperAdmin: false,
     mustChangePassword: false,
     preferredLanguage: 'en',
+    emailNotificationsEnabled: true,
     permissions: { 'history.view': scope },
   });
 

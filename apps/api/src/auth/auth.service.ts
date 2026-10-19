@@ -180,6 +180,7 @@ export class AuthService {
       `SELECT s."id" AS "sessionId", s."lastSeenAt",
               e."id" AS "employeeId", e."employeeCode", e."name", e."email",
               e."preferredLanguage",
+              e."emailNotificationsEnabled",
               COALESCE(c."mustChangePassword", false) AS "mustChangePassword",
               EXISTS (
                 SELECT 1 FROM "EmployeeRole" er
@@ -232,6 +233,26 @@ export class AuthService {
       `UPDATE "Employee" SET "preferredLanguage" = $2, "updatedAt" = NOW() WHERE "id" = $1`,
       [user.employeeId, language],
     );
+  }
+
+  async setEmailNotifications(user: AuthUser, enabled: boolean, context: AuditContext): Promise<void> {
+    await this.transaction(async (db) => {
+      const current = await db.query<{ emailNotificationsEnabled: boolean }>(
+        `SELECT "emailNotificationsEnabled" FROM "Employee" WHERE "id" = $1 FOR UPDATE`,
+        [user.employeeId],
+      );
+      const previous = current.rows[0]?.emailNotificationsEnabled;
+      if (previous === undefined || previous === enabled) return;
+      await db.query(
+        `UPDATE "Employee" SET "emailNotificationsEnabled" = $2, "updatedAt" = NOW() WHERE "id" = $1`,
+        [user.employeeId, enabled],
+      );
+      await this.audit.record(db, context, {
+        action: 'auth.notifications_updated', entityType: 'Employee', entityId: user.employeeId,
+        summary: 'Changed email notification preference',
+        changes: { emailNotificationsEnabled: { from: previous, to: enabled } },
+      });
+    });
   }
 
   async logout(user: AuthUser, context: AuditContext): Promise<void> {

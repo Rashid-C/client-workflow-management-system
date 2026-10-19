@@ -13,6 +13,7 @@ export type CurrentUser = {
   isSuperAdmin: boolean;
   mustChangePassword: boolean;
   preferredLanguage: "en" | "ar";
+  emailNotificationsEnabled: boolean;
   permissions: Record<string, PermissionScope | undefined>;
 };
 

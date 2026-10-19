@@ -99,10 +99,13 @@ model Employee {
   joinedDate   DateString
   // UI language; follows the person to any computer they sign in on.
   preferredLanguage Language              @default(En)
+  emailNotificationsEnabled Boolean        @default(true)
   // Guards edits against lost updates.
   version      Int                        @default(1)
   createdAt    TimestamptzString          @default(now())
   updatedAt    temporal.updatedAtString()
+  notifications Notification[]
+  notificationDigests NotificationDigest[]
 }
 
 enum Language {
@@ -487,10 +490,46 @@ model Setting {
   workdayEnd           String
   // Default "warn this many days before expiry" for new documents.
   documentReminderDays Int                        @default(30)
+  notificationDigestTime String                   @default("08:00")
   version              Int                        @default(1)
   updatedAt            temporal.updatedAtString()
 
   @@check(expression: "\"id\" = 1", name: "Setting_single_row")
   @@check(expression: "\"documentReminderDays\" BETWEEN 0 AND 365", name: "Setting_documentReminderDays_range")
   @@check(expression: "\"workdayStart\" ~ '^[0-2][0-9]:[0-5][0-9]$' AND \"workdayEnd\" ~ '^[0-2][0-9]:[0-5][0-9]$'", name: "Setting_workday_format")
+  @@check(expression: "\"notificationDigestTime\" ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'", name: "Setting_notificationDigestTime_format")
+}
+
+enum NotificationKind {
+  @@type("pg/text@1")
+  DocumentExpiring = "document_expiring"
+  DocumentExpired = "document_expired"
+  LeadFollowUpDue = "lead_follow_up_due"
+  TaskOverdue = "task_overdue"
+  StageAssigned = "stage_assigned"
+}
+
+model Notification {
+  id         Int              @id @default(autoincrement())
+  employeeId Int
+  employee   Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  kind       NotificationKind
+  title      String
+  body       String
+  link       String
+  dedupeKey  String
+  readAt     TimestamptzString?
+  createdAt  TimestamptzString @default(now())
+
+  @@unique([employeeId, dedupeKey])
+  @@index([employeeId, createdAt])
+}
+
+model NotificationDigest {
+  employeeId Int
+  employee   Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  day        DateString
+  sentAt     TimestamptzString?
+
+  @@id([employeeId, day])
 }
