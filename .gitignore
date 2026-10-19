@@ -30,4 +30,5 @@ Thumbs.db
 tmp/
 temp/
 
-*.tsbuildinfoDEPLOYMENT.md
+*.tsbuildinfo
+DEPLOYMENT.md
