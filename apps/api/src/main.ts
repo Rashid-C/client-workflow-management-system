@@ -46,7 +46,7 @@ async function bootstrap() {
   // No CORS: browsers call the API same-origin through the web app's /api
   // rewrite, which keeps the session cookie first-party.
 
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(process.env.PORT ?? 3001, '127.0.0.1');
 }
 
 await bootstrap();
