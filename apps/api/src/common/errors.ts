@@ -63,6 +63,8 @@ export const ERROR_CODES = [
   'settings.stale',
   'settings.invalid_hours',
 
+  'reports.invalid_range',
+
   'notifications.not_found',
   'notifications.invalid_cursor',
 

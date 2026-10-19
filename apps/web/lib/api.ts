@@ -102,6 +102,29 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
     : ((await response.json()) as T);
 }
 
+/** Fetch an authenticated binary response through the same API error/session handling. */
+export async function apiBlob(path: string, init: RequestInit = {}): Promise<Blob> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      credentials: "same-origin",
+      cache: "no-store",
+      ...init,
+      headers: init.headers,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") throw error;
+    throw new ApiError("Could not reach the server.", 0, "network");
+  }
+  if (response.status === 401) redirectTo("/login");
+  if (!response.ok) {
+    const error = await readApiError(response);
+    if (error.code === "auth.password_change_required") redirectTo("/change-password");
+    throw error;
+  }
+  return response.blob();
+}
+
 /** Only same-site paths, so ?next= cannot bounce users to another site. */
 export function safeNextPath(next: string | null): string {
   return next && next.startsWith("/") && !next.startsWith("//") ? next : "/overview";

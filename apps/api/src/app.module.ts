@@ -18,6 +18,7 @@ import { TaskTypesModule } from './task-types/task-types.module.js';
 import { TasksModule } from './tasks/tasks.module.js';
 import { TimeEntriesModule } from './time-entries/time-entries.module.js';
 import { NotificationsModule } from './notifications/notifications.module.js';
+import { ReportsModule } from './reports/reports.module.js';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { NotificationsModule } from './notifications/notifications.module.js';
     DailyUpdatesModule,
     DashboardModule,
     NotificationsModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

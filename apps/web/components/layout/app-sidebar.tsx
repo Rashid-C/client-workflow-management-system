@@ -7,6 +7,7 @@ import {
   Bell,
   BriefcaseBusiness,
   CalendarDays,
+  ChartNoAxesCombined,
   ChevronLeft,
   ChevronRight,
   ClipboardList,
@@ -74,6 +75,7 @@ const navigation: { label: keyof Dictionary['nav']['groups']; items: NavItem[] }
     label: 'management',
     items: [
       { label: 'employees', href: '/employees', icon: Users, permission: 'employees.view' },
+      { label: 'reports', href: '/reports', icon: ChartNoAxesCombined, permission: 'reports.view' },
       { label: 'roles', href: '/roles', icon: ShieldCheck, permission: 'roles.view' },
       { label: 'activity', href: '/activity', icon: History, permission: 'history.view' },
     ],
