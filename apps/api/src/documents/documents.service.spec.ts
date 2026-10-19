@@ -105,6 +105,17 @@ describe('DocumentsService', () => {
     expect(db.query.mock.calls[0][0]).toContain('c."accountManagerId" = $1');
   });
 
+  it('filters dashboard attention links to expired and expiring documents', async () => {
+    const db = fakeDatabase();
+    const { service } = await serviceWith(db);
+
+    await service.list(viewer('all'), { status: 'attention' });
+
+    const [sql, params] = db.query.mock.calls[0] as [string, unknown[]];
+    expect(sql).toContain("IN ('Expired', 'Expiring soon')");
+    expect(params).toEqual([]);
+  });
+
   it('refuses an expiry before the issue date without writing', async () => {
     const db = fakeDatabase();
     const { service } = await serviceWith(db);

@@ -24,8 +24,9 @@ export default async function DocumentsPage({ params, searchParams }: PageProps<
   );
 }
 
-async function DocumentListFromSearch({ searchParams }: { searchParams: Promise<{ documentId?: string }> }) {
-  const requestedId = Number((await searchParams).documentId);
+async function DocumentListFromSearch({ searchParams }: { searchParams: Promise<{ documentId?: string; status?: string }> }) {
+  const search = await searchParams;
+  const requestedId = Number(search.documentId);
   const documentId = Number.isInteger(requestedId) && requestedId > 0 ? requestedId : undefined;
-  return <DocumentList documentId={documentId} />;
+  return <DocumentList documentId={documentId} initialStatus={search.status === "attention" ? "attention" : ""} />;
 }

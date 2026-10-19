@@ -10,6 +10,12 @@ export type MyWorkItem = {
 export type Dashboard = {
   me: { inProgress: number; pending: number; blocked: number; minutesThisWeek: number };
   myWork: MyWorkItem[];
+  alerts: {
+    documents: number | null;
+    leadFollowUps: number | null;
+    missingDailyUpdates: number | null;
+    unreadNotifications: number;
+  };
   team: {
     openTasks: number;
     inProgress: number;

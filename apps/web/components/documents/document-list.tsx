@@ -22,14 +22,14 @@ const iconButton = "rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:tex
  * The documents table. With `clientId` it is the compact list on a client's
  * page (no tiles or client column); without, the full page with filters.
  */
-export default function DocumentList({ clientId, documentId }: { clientId?: number; documentId?: number }) {
+export default function DocumentList({ clientId, documentId, initialStatus = "" }: { clientId?: number; documentId?: number; initialStatus?: string }) {
   const { can } = useCurrentUser();
   const { t, day, errorText } = useI18n();
   const d = t.documents;
   const compact = clientId !== undefined;
   const [documents, setDocuments] = useState<DocumentRecord[]>([]);
   const [summary, setSummary] = useState<DocumentSummary | null>(null);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(initialStatus);
   const [type, setType] = useState("");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -128,6 +128,7 @@ export default function DocumentList({ clientId, documentId }: { clientId?: numb
                 <label htmlFor="doc-status" className="text-sm font-medium">{d.status}</label>
                 <select id="doc-status" value={status} onChange={(ev) => setStatus(ev.target.value)} className={inputClass}>
                   <option value="">{d.allStatuses}</option>
+                  <option value="attention">{d.attention}</option>
                   {DOCUMENT_STATUSES.map((value) => <option key={value} value={value}>{d.statuses[value]}</option>)}
                 </select>
               </div>

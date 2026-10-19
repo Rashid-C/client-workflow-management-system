@@ -157,6 +157,10 @@ export const ar: Dictionary = {
     workloadHint: "المراحل المفتوحة · ساعات هذا الأسبوع",
     noStaff: "لا يوجد موظفون نشطون.",
     openCount: (n) => `${n} مفتوحة`,
+    documentsAttention: "مستندات منتهية أو وشيكة الانتهاء",
+    leadFollowUpsDue: "متابعات العملاء المحتملين المستحقة اليوم",
+    dailyUpdatesMissing: "تحديثات يومية لم تُنشر اليوم",
+    unreadNotifications: "إشعاراتي غير المقروءة",
     unableToLoad: "تعذّر تحميل لوحة المعلومات.",
   },
 
@@ -731,6 +735,7 @@ export const ar: Dictionary = {
     expiringSoon: "تنتهي قريبًا",
     valid: "سارية",
     noExpiry: "بلا تاريخ انتهاء",
+    attention: "منتهية أو وشيكة الانتهاء",
     statuses: {
       Expired: "منتهية",
       "Expiring soon": "تنتهي قريبًا",

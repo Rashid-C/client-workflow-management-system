@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Pool } from 'pg';
 import type { AuthUser } from '../auth/session.js';
+import { clientVisibleTo } from '../clients/clients.service.js';
 import { POSTGRES_POOL } from '../database/database.module.js';
 import { TIME_ZONE, type PersonRef } from '../tasks/task-queries.js';
 import type { WorkStatus } from '../tasks/work-status.js';
@@ -40,6 +41,12 @@ export interface Workload {
 export interface Dashboard {
   me: { inProgress: number; pending: number; blocked: number; minutesThisWeek: number };
   myWork: MyWorkItem[];
+  alerts: {
+    documents: number | null;
+    leadFollowUps: number | null;
+    missingDailyUpdates: number | null;
+    unreadNotifications: number;
+  };
   /** Only for people who can see every task (managers). */
   team: {
     openTasks: number;
@@ -62,12 +69,48 @@ export class DashboardService {
   constructor(@Inject(POSTGRES_POOL) private readonly pool: Pool) {}
 
   async get(viewer: AuthUser): Promise<Dashboard> {
-    const [me, myWork, team] = await Promise.all([
+    const [me, myWork, team, alerts] = await Promise.all([
       this.myCounts(viewer.employeeId),
       this.myWork(viewer.employeeId),
       viewer.permissions['tasks.view'] === 'all' ? this.team() : Promise.resolve(null),
+      this.alerts(viewer),
     ]);
-    return { me, myWork, team };
+    return { me, myWork, team, alerts };
+  }
+
+  /** Permission-gated scalar counts; all dashboard alert data uses one query. */
+  private async alerts(viewer: AuthUser): Promise<Dashboard['alerts']> {
+    const params: unknown[] = [TIME_ZONE, viewer.employeeId];
+    const param = (value: unknown) => {
+      params.push(value);
+      return `$${params.length}`;
+    };
+    const docScope = viewer.permissions['documents.view']
+      ? clientVisibleTo(viewer, 'documents.view', param)
+      : 'FALSE';
+    const leadScope = viewer.permissions['leads.view'] === 'all'
+      ? 'TRUE'
+      : viewer.permissions['leads.view'] === 'own'
+        ? `(l."ownerId" = $2 OR l."createdById" = $2)`
+        : 'FALSE';
+    const result = await this.pool.query<Dashboard['alerts']>(
+      `SELECT
+         (SELECT count(*)::int FROM "Document" d JOIN "Client" c ON c."id" = d."clientId"
+          WHERE d."archivedAt" IS NULL AND d."expiryDate" IS NOT NULL
+            AND (d."expiryDate" < ${TODAY} OR d."expiryDate" <= ${TODAY} + d."reminderDays")
+            AND ${docScope}) AS "documents",
+         (SELECT count(*)::int FROM "Lead" l
+          WHERE l."archivedAt" IS NULL AND l."status" IN ('New', 'Contacted', 'Proposal sent')
+            AND l."nextFollowUpDate" <= ${TODAY} AND ${leadScope}) AS "leadFollowUps",
+         ${viewer.permissions['daily_updates.view'] === 'all'
+           ? `(SELECT count(*)::int FROM "Employee" e WHERE e."status" = 'Active'
+                AND NOT EXISTS (SELECT 1 FROM "DailyUpdate" u WHERE u."employeeId" = e."id" AND u."day" = ${TODAY}))`
+           : 'NULL::int'} AS "missingDailyUpdates",
+         (SELECT count(*)::int FROM "Notification" n WHERE n."employeeId" = $2 AND n."readAt" IS NULL)
+           AS "unreadNotifications"`,
+      params,
+    );
+    return result.rows[0];
   }
 
   private async myCounts(employeeId: number): Promise<Dashboard['me']> {

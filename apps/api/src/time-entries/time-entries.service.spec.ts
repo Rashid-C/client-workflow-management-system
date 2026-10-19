@@ -91,11 +91,54 @@ describe('DashboardService', () => {
     const dashboard = module.get(DashboardService);
 
     await expect(dashboard.get(viewer('own'))).resolves.toMatchObject({ team: null });
-    expect(pool.query).toHaveBeenCalledTimes(2);
+    expect(pool.query).toHaveBeenCalledTimes(3);
 
     pool.query.mockClear();
     const manager = await dashboard.get(viewer('all', 2));
     expect(manager.team).not.toBeNull();
-    expect(pool.query).toHaveBeenCalledTimes(6);
+    expect(pool.query).toHaveBeenCalledTimes(7);
+  });
+
+  it('builds permission-scoped alert counts in one SQL query', async () => {
+    const pool = { query: vi.fn().mockResolvedValue({ rows: [{}] }) };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [DashboardService, { provide: POSTGRES_POOL, useValue: pool }],
+    }).compile();
+    const dashboard = module.get(DashboardService);
+    const own = viewer('own');
+    own.permissions = {
+      ...own.permissions,
+      'documents.view': 'own',
+      'leads.view': 'own',
+      'daily_updates.view': 'own',
+    };
+
+    await dashboard.get(own);
+
+    const alertCalls = pool.query.mock.calls.filter(([sql]) => String(sql).includes('AS "unreadNotifications"'));
+    expect(alertCalls).toHaveLength(1);
+    const [sql, params] = alertCalls[0] as [string, unknown[]];
+    expect(sql).toContain('d."expiryDate" < (now() AT TIME ZONE $1)::date');
+    expect(sql).toContain('c."accountManagerId" = $3');
+    expect(sql).toContain('(l."ownerId" = $2 OR l."createdById" = $2)');
+    expect(sql).toContain('NULL::int AS "missingDailyUpdates"');
+    expect(sql).toContain('n."employeeId" = $2 AND n."readAt" IS NULL');
+    expect(params).toEqual(['Asia/Dubai', 3, 3]);
+  });
+
+  it('counts missing daily updates only for all-scope viewers', async () => {
+    const pool = { query: vi.fn().mockResolvedValue({ rows: [{}] }) };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [DashboardService, { provide: POSTGRES_POOL, useValue: pool }],
+    }).compile();
+    const dashboard = module.get(DashboardService);
+    const manager = viewer('all');
+    manager.permissions = { ...manager.permissions, 'daily_updates.view': 'all' };
+
+    await dashboard.get(manager);
+
+    const sql = pool.query.mock.calls.map(([text]) => String(text)).find((text) => text.includes('AS "unreadNotifications"'))!;
+    expect(sql).toContain('FROM "DailyUpdate" u WHERE u."employeeId" = e."id" AND u."day" = (now() AT TIME ZONE $1)::date');
+    expect(sql).toContain('FROM "Employee" e WHERE e."status" = \'Active\'');
   });
 });

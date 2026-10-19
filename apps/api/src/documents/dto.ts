@@ -75,8 +75,8 @@ export class UpdateDocumentDto extends SaveDocumentDto {
 }
 
 export class DocumentQueryDto {
-  @IsOptional() @IsIn(DOCUMENT_STATUSES)
-  status?: DocumentStatus;
+  @IsOptional() @IsIn([...DOCUMENT_STATUSES, 'attention'])
+  status?: DocumentStatus | 'attention';
 
   @IsOptional() @Type(() => Number) @IsInt() @IsPositive()
   clientId?: number;

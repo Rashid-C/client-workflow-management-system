@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, CircleDot, Clock, ListTodo } from "lucide-react";
+import { AlertTriangle, Bell, CalendarClock, CircleDot, Clock, FileWarning, ListTodo, NotebookPen } from "lucide-react";
 import { useCurrentUser } from "@/components/auth/current-user";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import Link from "@/components/i18n/link";
@@ -56,6 +56,13 @@ export default function OverviewPage() {
             <Tile icon={<ListTodo size={18} />} label={t.dashboard.pending} value={data.me.pending} />
             <Tile icon={<AlertTriangle size={18} />} label={t.dashboard.blocked} value={data.me.blocked} danger={data.me.blocked > 0} />
             <Tile icon={<Clock size={18} />} label={t.dashboard.loggedThisWeek} value={minutes(data.me.minutesThisWeek)} />
+          </section>
+
+          <section aria-label={t.dashboard.title} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {can("documents.view") && <Tile href="/documents?status=attention" icon={<FileWarning size={18} />} label={t.dashboard.documentsAttention} value={data.alerts.documents ?? 0} danger={(data.alerts.documents ?? 0) > 0} />}
+            {can("leads.view") && <Tile href="/leads?due=true" icon={<CalendarClock size={18} />} label={t.dashboard.leadFollowUpsDue} value={data.alerts.leadFollowUps ?? 0} danger={(data.alerts.leadFollowUps ?? 0) > 0} />}
+            {user?.permissions["daily_updates.view"] === "all" && <Tile href="/daily-updates" icon={<NotebookPen size={18} />} label={t.dashboard.dailyUpdatesMissing} value={data.alerts.missingDailyUpdates ?? 0} danger={(data.alerts.missingDailyUpdates ?? 0) > 0} />}
+            <Tile href="/notifications" icon={<Bell size={18} />} label={t.dashboard.unreadNotifications} value={data.alerts.unreadNotifications} danger={data.alerts.unreadNotifications > 0} />
           </section>
 
           <section aria-labelledby="my-work-title" className="rounded-xl border border-slate-200 bg-white">

@@ -145,6 +145,10 @@ export const en = {
     workloadHint: "Open stages · hours this week",
     noStaff: "No active staff.",
     openCount: (n: number) => `${n} open`,
+    documentsAttention: "Documents expired / expiring soon",
+    leadFollowUpsDue: "Lead follow-ups due today",
+    dailyUpdatesMissing: "Daily updates not posted today",
+    unreadNotifications: "My unread notifications",
     unableToLoad: "Unable to load the dashboard.",
   },
 
@@ -735,6 +739,7 @@ export const en = {
     expiringSoon: "Expiring soon",
     valid: "Valid",
     noExpiry: "No expiry",
+    attention: "Expired or expiring soon",
     statuses: {
       Expired: "Expired",
       "Expiring soon": "Expiring soon",

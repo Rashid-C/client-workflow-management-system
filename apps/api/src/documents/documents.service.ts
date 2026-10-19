@@ -96,7 +96,8 @@ export class DocumentsService {
       return `$${params.length}`;
     };
     const where = ['d."archivedAt" IS NULL', clientVisibleTo(viewer, 'documents.view', param)];
-    if (query.status) where.push(`${STATUS} = ${param(query.status)}`);
+    if (query.status === 'attention') where.push(`${STATUS} IN ('Expired', 'Expiring soon')`);
+    else if (query.status) where.push(`${STATUS} = ${param(query.status)}`);
     if (query.clientId) where.push(`d."clientId" = ${param(query.clientId)}`);
     if (query.type) where.push(`d."type" = ${param(query.type)}`);
     if (query.search?.trim()) {
