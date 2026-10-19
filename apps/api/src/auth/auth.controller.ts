@@ -9,6 +9,7 @@ import {
   Version,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { Throttle } from '@nestjs/throttler';
 import { Audit } from '../audit/audit-context.decorator.js';
 import type { AuditContext } from '../audit/audit.service.js';
 import { AuthService } from './auth.service.js';
@@ -19,13 +20,9 @@ import {
 } from './decorators.js';
 import { ChangePasswordDto, LoginDto, SetLanguageDto, SetNotificationPreferencesDto } from './dto.js';
 import { SESSION_COOKIE, type AuthUser } from './session.js';
+import { authCookieOptions } from './cookie-options.js';
 
-const cookieOptions = {
-  httpOnly: true,
-  secure: process.env['NODE_ENV'] === 'production',
-  sameSite: 'lax' as const,
-  path: '/',
-};
+const cookies = authCookieOptions(process.env['NODE_ENV'] === 'production');
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +30,7 @@ export class AuthController {
 
   @Version('1')
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('login')
   @HttpCode(200)
   async login(
@@ -46,7 +44,8 @@ export class AuthController {
       audit,
     );
 
-    response.cookie(SESSION_COOKIE, token, { ...cookieOptions, expires: expiresAt });
+    response.cookie(SESSION_COOKIE, token, { ...cookies.session, expires: expiresAt });
+    response.cookie('tw_lang', user.preferredLanguage, cookies.language);
     return toMe(user);
   }
 
@@ -60,7 +59,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     await this.authService.logout(user, audit);
-    response.clearCookie(SESSION_COOKIE, cookieOptions);
+    response.clearCookie(SESSION_COOKIE, cookies.session);
   }
 
   @Version('1')
@@ -74,8 +73,24 @@ export class AuthController {
   @AllowPendingPassword()
   @Put('me/language')
   @HttpCode(204)
-  async setLanguage(@CurrentUser() user: AuthUser, @Body() data: SetLanguageDto) {
+  async setLanguage(
+    @CurrentUser() user: AuthUser,
+    @Body() data: SetLanguageDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     await this.authService.setLanguage(user, data.language);
+    response.cookie('tw_lang', data.language, cookies.language);
+  }
+
+  @Version('1')
+  @Public()
+  @Post('language')
+  @HttpCode(204)
+  setPublicLanguage(
+    @Body() data: SetLanguageDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    response.cookie('tw_lang', data.language, cookies.language);
   }
 
   @Version('1')
@@ -92,6 +107,7 @@ export class AuthController {
 
   @Version('1')
   @AllowPendingPassword()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('change-password')
   @HttpCode(204)
   async changePassword(

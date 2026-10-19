@@ -6,7 +6,6 @@ import { ar } from "@/lib/i18n/ar";
 import {
   directionOf,
   intlLocale,
-  LOCALE_COOKIE,
   withLocale,
   withoutLocale,
   type Locale,
@@ -103,13 +102,20 @@ export function I18nProvider({ locale, children }: { locale: Locale; children: R
       },
       switchTo: async (next) => {
         // A year, so the proxy remembers the choice on this computer.
-        document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
-        await fetch("/api/v1/auth/me/language", {
+        const response = await fetch("/api/v1/auth/me/language", {
           method: "PUT",
           credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ language: next }),
         }).catch(() => {});
+        if (response && response.status === 401) {
+          await fetch("/api/v1/auth/language", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ language: next }),
+          }).catch(() => {});
+        }
         const { pathname, search, hash } = window.location;
         // Full reload so <html lang/dir> and every server part switch too.
         window.location.assign(withLocale(next, withoutLocale(pathname)) + search + hash);

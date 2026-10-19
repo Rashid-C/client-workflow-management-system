@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, safeNextPath, type CurrentUser } from "@/lib/api";
-import { LOCALE_COOKIE, withLocale } from "@/lib/i18n/config";
+import { withLocale } from "@/lib/i18n/config";
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
@@ -28,7 +28,6 @@ export default function LoginForm() {
 
       // Continue in the person's saved language, wherever they signed in.
       const language = user.preferredLanguage;
-      document.cookie = `${LOCALE_COOKIE}=${language}; path=/; max-age=31536000; samesite=lax`;
       const next = safeNextPath(new URLSearchParams(window.location.search).get("next"));
       window.location.assign(
         withLocale(
