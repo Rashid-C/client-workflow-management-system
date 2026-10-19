@@ -13,8 +13,8 @@ import {
   FileText,
   History,
   LayoutDashboard,
-  LogOut,
-  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   Settings,
   ShieldCheck,
   Users,
@@ -23,7 +23,6 @@ import {
 import { useCurrentUser } from '@/components/auth/current-user';
 import BrandLogo from '@/components/brand/brand-logo';
 import { useI18n } from '@/components/i18n/i18n-provider';
-import LanguageSwitch from '@/components/i18n/language-switch';
 import Link from '@/components/i18n/link';
 import type { Dictionary } from '@/lib/i18n/en';
 import { withoutLocale } from '@/lib/i18n/config';
@@ -82,15 +81,19 @@ const navigation: { label: keyof Dictionary['nav']['groups']; items: NavItem[] }
 type AppSidebarProps = {
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
+  mobileOpen: boolean;
+  onMobileOpenChange: (open: boolean) => void;
 };
 
 export default function AppSidebar({
   collapsed: controlledCollapsed,
   onCollapsedChange,
+  mobileOpen,
+  onMobileOpenChange,
 }: AppSidebarProps) {
   const pathname = withoutLocale(usePathname());
   const { t } = useI18n();
-  const { user, can, signOut } = useCurrentUser();
+  const { can } = useCurrentUser();
   const [internalCollapsed, setInternalCollapsed] = useState(false);
 
   const visibleNavigation = navigation
@@ -101,7 +104,6 @@ export default function AppSidebar({
       ),
     }))
     .filter((group) => group.items.length > 0);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const collapsed = controlledCollapsed ?? internalCollapsed;
 
@@ -138,7 +140,7 @@ export default function AppSidebar({
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={() => onMobileOpenChange(false)}
                       title={!mobile && collapsed ? label : undefined}
                       aria-current={active ? 'page' : undefined}
                       className={[
@@ -163,37 +165,38 @@ export default function AppSidebar({
   }
 
   const logo = <BrandLogo />;
+  const topCollapseButton = (
+    <button
+      type="button"
+      onClick={toggleCollapsed}
+      aria-label={collapsed ? t.nav.expand : t.nav.collapse}
+      aria-controls="app-sidebar-navigation"
+      aria-expanded={!collapsed}
+      title={collapsed ? t.nav.expand : t.nav.collapse}
+      className="hidden size-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 md:inline-flex"
+    >
+      {collapsed ? (
+        <PanelLeftOpen size={17} className="rtl:rotate-180" aria-hidden="true" />
+      ) : (
+        <PanelLeftClose size={17} className="rtl:rotate-180" aria-hidden="true" />
+      )}
+    </button>
+  );
 
   return (
     <>
-      {/* Mobile header */}
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
-        <Link href="/overview" className="text-lg font-semibold tracking-tight text-slate-950">
-          {logo}
-        </Link>
-
-        <button
-          type="button"
-          onClick={() => setMobileOpen(true)}
-          aria-label={t.nav.openNavigation}
-          aria-expanded={mobileOpen}
-          className="inline-flex size-10 items-center justify-center rounded-md text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-        >
-          <Menu size={21} />
-        </button>
-      </header>
-
       {/* Desktop and tablet sidebar */}
       <aside
         className={[
-          'hidden min-h-screen shrink-0 flex-col border-e border-slate-200 bg-white transition-[width] duration-200 md:flex',
+          'hidden h-full min-h-0 shrink-0 flex-col border-e border-slate-200 bg-white transition-[width] duration-200 md:flex',
           collapsed ? 'w-19' : 'w-64',
         ].join(' ')}
       >
+        {/* Same height and border as the top bar, so the two read as one header line. */}
         <div
           className={[
-            'flex h-16 items-center border-b border-slate-100 px-5',
-            collapsed ? 'justify-center px-2' : 'justify-between',
+            'flex h-14 shrink-0 items-center border-b border-slate-200',
+            collapsed ? 'justify-center px-2' : 'justify-between gap-2 px-3',
           ].join(' ')}
         >
           <Link
@@ -203,26 +206,15 @@ export default function AppSidebar({
           >
             {collapsed ? <BrandLogo variant="mark" /> : logo}
           </Link>
-
-          {!collapsed && (
-            <span className="rounded border border-slate-200 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
-              {t.nav.workspaceBadge}
-            </span>
-          )}
+          {/* Collapsed, the expand button sits at the bottom of the sidebar. */}
+          {!collapsed && topCollapseButton}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 py-6">
+        <div id="app-sidebar-navigation" className="min-h-0 flex-1 overflow-y-auto px-3 py-6">
           {renderNavigation()}
         </div>
 
-        <div className="border-t border-slate-100 p-3">
-          {user && !collapsed && (
-            <div className="mb-2 px-3 py-1">
-              <p className="truncate text-sm font-medium text-slate-900">{user.name}</p>
-              <a href={`mailto:${user.email}`} className="block truncate text-xs text-slate-500 hover:text-brand-700" dir="ltr">{user.email}</a>
-            </div>
-          )}
-
+        <div className="shrink-0 border-t border-slate-100 p-3">
           {can('settings.manage') && (
             <Link
               href="/settings"
@@ -236,23 +228,6 @@ export default function AppSidebar({
               {!collapsed && <span>{t.nav.settings}</span>}
             </Link>
           )}
-
-          <LanguageSwitch
-            className={['min-h-10 w-full px-3', collapsed ? 'justify-center px-0' : ''].join(' ')}
-          />
-
-          <button
-            type="button"
-            onClick={() => void signOut()}
-            title={collapsed ? t.auth.signOut : undefined}
-            className={[
-              'flex min-h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100',
-              collapsed ? 'justify-center px-0' : '',
-            ].join(' ')}
-          >
-            <LogOut size={18} strokeWidth={1.8} className="rtl:rotate-180" aria-hidden="true" />
-            {!collapsed && <span>{t.auth.signOut}</span>}
-          </button>
 
           <button
             type="button"
@@ -276,7 +251,7 @@ export default function AppSidebar({
           <button
             type="button"
             aria-label={t.nav.closeOverlay}
-            onClick={() => setMobileOpen(false)}
+            onClick={() => onMobileOpenChange(false)}
             className="absolute inset-0 bg-slate-950/40"
           />
 
@@ -292,7 +267,7 @@ export default function AppSidebar({
 
               <button
                 type="button"
-                onClick={() => setMobileOpen(false)}
+                onClick={() => onMobileOpenChange(false)}
                 aria-label={t.nav.closeNavigation}
                 className="inline-flex size-9 items-center justify-center rounded-md hover:bg-slate-100"
               >
@@ -300,36 +275,21 @@ export default function AppSidebar({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-3 py-6">
+            <div className="min-h-0 flex-1 overflow-y-auto px-3 py-6">
               {renderNavigation(true)}
             </div>
 
-            <div className="border-t border-slate-100 p-3">
-              {user && (
-                <div className="mb-2 px-3 py-1">
-                  <p className="truncate text-sm font-medium text-slate-900">{user.name}</p>
-                  <a href={`mailto:${user.email}`} className="block truncate text-xs text-slate-500 hover:text-brand-700" dir="ltr">{user.email}</a>
-                </div>
-              )}
+            <div className="shrink-0 border-t border-slate-100 p-3">
               {can('settings.manage') && (
                 <Link
                   href="/settings"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() => onMobileOpenChange(false)}
                   className="flex min-h-10 items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100"
                 >
                   <Settings size={18} />
                   {t.nav.settings}
                 </Link>
               )}
-              <LanguageSwitch className="min-h-10 w-full px-3" />
-              <button
-                type="button"
-                onClick={() => void signOut()}
-                className="flex min-h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100"
-              >
-                <LogOut size={18} className="rtl:rotate-180" />
-                {t.auth.signOut}
-              </button>
             </div>
           </aside>
         </div>
