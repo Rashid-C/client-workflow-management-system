@@ -2,7 +2,7 @@
 
 ഈ runbook Vercel-ൽ web app-ും, ഓഫീസിലെ Windows machine-ൽ API + PostgreSQL-ും ഉള്ള setup-നാണ്. Commands production മാറ്റങ്ങൾ വരുത്തും; ഓരോ command-വും run ചെയ്യുന്നതിന് മുമ്പ് review ചെയ്യുക. ഈ repo-യിൽ production command സ്വയം run ചെയ്തിട്ടില്ല.
 
-This runbook is for the web app on Vercel and the API/PostgreSQL on the office Windows machine. Commands below can change production; review each before running it. No production command has been run from this repository.
+This runbook is for the web app on Vercel and the API/PostgreSQL on the office Windows machine. Commands below can change production; review each before running it. No production services or configuration were changed. A restore rehearsal was completed against a disposable database using a snapshot of `tickwise_dev`.
 
 ## 1. First install / ആദ്യ install
 
@@ -103,7 +103,7 @@ Command for review before execution:
 .\deploy\restore-rehearsal.ps1
 ```
 
-This workspace restore rehearsal has not been run. It copies data from `tickwise_dev`; I will run it only after you review and approve that command.
+Restore rehearsal completed successfully on 2026-10-19: the script dumped `tickwise_dev`, restored into `tickwise_golive_restoretest`, matched Employee/Client/Task row counts, and dropped the disposable database. The temporary dump and password file were removed. The command used an explicit PostgreSQL 18 client-tools path.
 
 ## 5. Tunnel outage / Tunnel down ആയാൽ
 
