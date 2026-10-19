@@ -40,6 +40,7 @@ function fakeDatabase(options: { visible?: boolean; allowed?: boolean; client?: 
   const writes: { sql: string; params: unknown[] }[] = [];
   const query = vi.fn(async (sql: string, params: unknown[] = []) => {
     if (/^(BEGIN|COMMIT|ROLLBACK)$/.test(sql)) return {};
+    if (sql.includes('"documentReminderDays" FROM "Setting"')) return { rows: [{ days: 45 }] };
     if (sql.includes('AS "visible"')) {
       return { rows: options.visible === false ? [] : [{ visible: true, allowed: options.allowed ?? true }] };
     }
@@ -110,7 +111,18 @@ describe('DocumentsService', () => {
     await expect(
       service.create(viewer('all'), { ...edit({ expiryDate: '2025-01-01' }) }, context),
     ).rejects.toMatchObject({ response: { code: 'documents.invalid_dates' } });
-    expect(db.query).not.toHaveBeenCalled();
+    expect(db.writes).toEqual([]);
+  });
+
+  it('takes the reminder days from Settings when the form leaves them out', async () => {
+    const db = fakeDatabase();
+    const { service } = await serviceWith(db);
+
+    const { reminderDays: _, ...withoutReminder } = edit();
+    await service.create(viewer('all'), withoutReminder, context);
+
+    const insert = db.writes.find((w) => w.sql.includes('INSERT INTO "Document"'))!;
+    expect(insert.params[6]).toBe(45); // FIELDS order: … expiryDate, reminderDays
   });
 
   it('refuses a document for an archived client', async () => {

@@ -60,6 +60,9 @@ export const ERROR_CODES = [
   'daily_updates.stale',
   'daily_updates.team_only',
 
+  'settings.stale',
+  'settings.invalid_hours',
+
   'roles.not_found',
   'roles.stale',
   'roles.system_locked',

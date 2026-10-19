@@ -18,9 +18,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'57988ab684b65ca73cd48d351fa619ddb505aaa44fe76d911164c19b375a9f64'>;
+  StorageHashBase<'0341170e5148caf97ea3ae32ca5002518143cfae6d064903d37c34d5253390a0'>;
 export type ExecutionHash =
-  ExecutionHashBase<'c5d0bf0e2457d89034142d511afa0188be5d52cdb521a0f75b6aba0ff380a5b3'>;
+  ExecutionHashBase<'106cc71e5d38ffbc0b53c9a78a6e1005bf970429d0add8458f2b13f4b7adb2a2'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -422,6 +422,21 @@ export type FieldOutputTypes = {
       readonly tokenHash: CodecTypes['pg/text@1']['output'];
       readonly userAgent: CodecTypes['pg/text@1']['output'] | null;
     };
+    readonly Setting: {
+      readonly address: CodecTypes['pg/text@1']['output'] | null;
+      readonly companyName: CodecTypes['pg/text@1']['output'];
+      readonly companyNameAr: CodecTypes['pg/text@1']['output'] | null;
+      readonly companyTrn: CodecTypes['pg/text@1']['output'] | null;
+      readonly documentReminderDays: CodecTypes['pg/int4@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly version: CodecTypes['pg/int4@1']['output'];
+      readonly workdayEnd: CodecTypes['pg/text@1']['output'];
+      readonly workdayStart: CodecTypes['pg/text@1']['output'];
+      readonly workingDays: CodecTypes['pg/jsonb@1']['output'];
+    };
     readonly Task: {
       readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly clientId: CodecTypes['pg/int4@1']['output'];
@@ -667,6 +682,21 @@ export type FieldInputTypes = {
       readonly lastSeenAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly tokenHash: CodecTypes['pg/text@1']['input'];
       readonly userAgent: CodecTypes['pg/text@1']['input'] | null;
+    };
+    readonly Setting: {
+      readonly address: CodecTypes['pg/text@1']['input'] | null;
+      readonly companyName: CodecTypes['pg/text@1']['input'];
+      readonly companyNameAr: CodecTypes['pg/text@1']['input'] | null;
+      readonly companyTrn: CodecTypes['pg/text@1']['input'] | null;
+      readonly documentReminderDays: CodecTypes['pg/int4@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly version: CodecTypes['pg/int4@1']['input'];
+      readonly workdayEnd: CodecTypes['pg/text@1']['input'];
+      readonly workdayStart: CodecTypes['pg/text@1']['input'];
+      readonly workingDays: CodecTypes['pg/jsonb@1']['input'];
     };
     readonly Task: {
       readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -914,6 +944,21 @@ export type StorageColumnTypes = {
       readonly tokenHash: CodecTypes['pg/text@1']['output'];
       readonly userAgent: CodecTypes['pg/text@1']['output'] | null;
     };
+    readonly Setting: {
+      readonly address: CodecTypes['pg/text@1']['output'] | null;
+      readonly companyName: CodecTypes['pg/text@1']['output'];
+      readonly companyNameAr: CodecTypes['pg/text@1']['output'] | null;
+      readonly companyTrn: CodecTypes['pg/text@1']['output'] | null;
+      readonly documentReminderDays: CodecTypes['pg/int4@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly version: CodecTypes['pg/int4@1']['output'];
+      readonly workdayEnd: CodecTypes['pg/text@1']['output'];
+      readonly workdayStart: CodecTypes['pg/text@1']['output'];
+      readonly workingDays: CodecTypes['pg/jsonb@1']['output'];
+    };
     readonly Task: {
       readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly clientId: CodecTypes['pg/int4@1']['output'];
@@ -1159,6 +1204,21 @@ export type StorageColumnInputTypes = {
       readonly lastSeenAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly tokenHash: CodecTypes['pg/text@1']['input'];
       readonly userAgent: CodecTypes['pg/text@1']['input'] | null;
+    };
+    readonly Setting: {
+      readonly address: CodecTypes['pg/text@1']['input'] | null;
+      readonly companyName: CodecTypes['pg/text@1']['input'];
+      readonly companyNameAr: CodecTypes['pg/text@1']['input'] | null;
+      readonly companyTrn: CodecTypes['pg/text@1']['input'] | null;
+      readonly documentReminderDays: CodecTypes['pg/int4@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly version: CodecTypes['pg/int4@1']['input'];
+      readonly workdayEnd: CodecTypes['pg/text@1']['input'];
+      readonly workdayStart: CodecTypes['pg/text@1']['input'];
+      readonly workingDays: CodecTypes['pg/jsonb@1']['input'];
     };
     readonly Task: {
       readonly archivedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -1432,6 +1492,22 @@ export namespace Models {
     employee: public_Employee;
     readonly [RelationKeys]?: 'employee';
   };
+  export type public_Setting = {
+    address: CodecTypes['pg/text@1']['output'] | null;
+    companyName: CodecTypes['pg/text@1']['output'];
+    companyNameAr: CodecTypes['pg/text@1']['output'] | null;
+    companyTrn: CodecTypes['pg/text@1']['output'] | null;
+    documentReminderDays: CodecTypes['pg/int4@1']['output'];
+    email: CodecTypes['pg/text@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    phone: CodecTypes['pg/text@1']['output'] | null;
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    version: CodecTypes['pg/int4@1']['output'];
+    workdayEnd: CodecTypes['pg/text@1']['output'];
+    workdayStart: CodecTypes['pg/text@1']['output'];
+    workingDays: CodecTypes['pg/jsonb@1']['output'];
+    readonly [RelationKeys]?: never;
+  };
   export type public_Task = {
     archivedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     clientId: CodecTypes['pg/int4@1']['output'];
@@ -1517,6 +1593,7 @@ export declare const models: {
     Role: Models.public_Role;
     RolePermission: Models.public_RolePermission;
     Session: Models.public_Session;
+    Setting: Models.public_Setting;
     Task: Models.public_Task;
     TaskStage: Models.public_TaskStage;
     TaskType: Models.public_TaskType;
@@ -2904,6 +2981,100 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly Setting: {
+              columns: {
+                readonly address: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly companyName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly companyNameAr: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly companyTrn: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly documentReminderDays: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 30>;
+                  };
+                  readonly many: false;
+                };
+                readonly email: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly phone: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly version: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                  readonly many: false;
+                };
+                readonly workdayEnd: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly workdayStart: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly workingDays: {
+                  readonly dataType: 'pg/jsonb';
+                  readonly codecId: 'pg/jsonb@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
             readonly Task: {
               columns: {
                 readonly archivedAt: {
@@ -3592,6 +3763,7 @@ type ContractBase = Omit<
       readonly model: 'RolePermission';
     };
     readonly Session: { readonly namespace: 'public' & NamespaceId; readonly model: 'Session' };
+    readonly Setting: { readonly namespace: 'public' & NamespaceId; readonly model: 'Setting' };
     readonly Task: { readonly namespace: 'public' & NamespaceId; readonly model: 'Task' };
     readonly TaskStage: { readonly namespace: 'public' & NamespaceId; readonly model: 'TaskStage' };
     readonly TaskType: { readonly namespace: 'public' & NamespaceId; readonly model: 'TaskType' };
@@ -4663,6 +4835,85 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly Setting: {
+            readonly fields: {
+              readonly address: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly companyName: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly companyNameAr: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly companyTrn: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly documentReminderDays: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly email: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly phone: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly version: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly workdayEnd: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly workdayStart: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly workingDays: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/jsonb@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'Setting';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly address: { readonly column: 'address' };
+                readonly companyName: { readonly column: 'companyName' };
+                readonly companyNameAr: { readonly column: 'companyNameAr' };
+                readonly companyTrn: { readonly column: 'companyTrn' };
+                readonly documentReminderDays: { readonly column: 'documentReminderDays' };
+                readonly email: { readonly column: 'email' };
+                readonly id: { readonly column: 'id' };
+                readonly phone: { readonly column: 'phone' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+                readonly version: { readonly column: 'version' };
+                readonly workdayEnd: { readonly column: 'workdayEnd' };
+                readonly workdayStart: { readonly column: 'workdayStart' };
+                readonly workingDays: { readonly column: 'workingDays' };
+              };
+            };
+          };
           readonly Task: {
             readonly fields: {
               readonly archivedAt: {
@@ -5377,6 +5628,15 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'Role';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'timestampNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'Setting';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };

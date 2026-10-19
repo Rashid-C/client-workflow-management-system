@@ -36,6 +36,16 @@ export default function DocumentFormDialog({
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // A new document starts from the firm's default reminder (Settings).
+  useEffect(() => {
+    if (document) return;
+    api<{ documentReminderDays: number }>("/settings")
+      .then((settings) =>
+        setForm((current) => ({ ...current, reminderDays: String(settings.documentReminderDays) })),
+      )
+      .catch(() => {});
+  }, [document]);
+
   useEffect(() => {
     if (fixedClient) return;
     api<ClientSummary[]>("/clients")

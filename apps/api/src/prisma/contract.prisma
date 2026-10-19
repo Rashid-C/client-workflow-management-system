@@ -469,3 +469,28 @@ model DailyUpdate {
   @@unique([employeeId, day])
   @@index([day])
 }
+
+// Firm-wide settings: exactly one row (id 1), created by the migration.
+model Setting {
+  id                   Int                        @id
+  companyName          String
+  companyNameAr        String?
+  // The firm's own FTA registration number.
+  companyTrn           String?
+  email                String?
+  phone                String?
+  address              String?
+  // ISO weekdays (1 = Monday … 7 = Sunday) the office works.
+  workingDays          Jsonb
+  // "08:30" style, office time.
+  workdayStart         String
+  workdayEnd           String
+  // Default "warn this many days before expiry" for new documents.
+  documentReminderDays Int                        @default(30)
+  version              Int                        @default(1)
+  updatedAt            temporal.updatedAtString()
+
+  @@check(expression: "\"id\" = 1", name: "Setting_single_row")
+  @@check(expression: "\"documentReminderDays\" BETWEEN 0 AND 365", name: "Setting_documentReminderDays_range")
+  @@check(expression: "\"workdayStart\" ~ '^[0-2][0-9]:[0-5][0-9]$' AND \"workdayEnd\" ~ '^[0-2][0-9]:[0-5][0-9]$'", name: "Setting_workday_format")
+}

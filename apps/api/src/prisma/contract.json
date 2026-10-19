@@ -52,6 +52,10 @@
       "model": "Session",
       "namespace": "public"
     },
+    "Setting": {
+      "model": "Setting",
+      "namespace": "public"
+    },
     "Task": {
       "model": "Task",
       "namespace": "public"
@@ -2138,6 +2142,147 @@
               },
               "namespaceId": "public",
               "table": "Session"
+            }
+          },
+          "Setting": {
+            "fields": {
+              "address": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "companyName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "companyNameAr": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "companyTrn": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "documentReminderDays": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "phone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "version": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "workdayEnd": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "workdayStart": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "workingDays": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "address": {
+                  "column": "address"
+                },
+                "companyName": {
+                  "column": "companyName"
+                },
+                "companyNameAr": {
+                  "column": "companyNameAr"
+                },
+                "companyTrn": {
+                  "column": "companyTrn"
+                },
+                "documentReminderDays": {
+                  "column": "documentReminderDays"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "phone": {
+                  "column": "phone"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "version": {
+                  "column": "version"
+                },
+                "workdayEnd": {
+                  "column": "workdayEnd"
+                },
+                "workdayStart": {
+                  "column": "workdayStart"
+                },
+                "workingDays": {
+                  "column": "workingDays"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Setting"
             }
           },
           "Task": {
@@ -4518,6 +4663,108 @@
                 }
               ]
             },
+            "Setting": {
+              "checks": [
+                {
+                  "expression": "\"documentReminderDays\" BETWEEN 0 AND 365",
+                  "name": "Setting_documentReminderDays_range_fd011ea6",
+                  "prefix": "Setting_documentReminderDays_range"
+                },
+                {
+                  "expression": "\"id\" = 1",
+                  "name": "Setting_single_row_99dee7f0",
+                  "prefix": "Setting_single_row"
+                },
+                {
+                  "expression": "\"workdayStart\" ~ '^[0-2][0-9]:[0-5][0-9]$' AND \"workdayEnd\" ~ '^[0-2][0-9]:[0-5][0-9]$'",
+                  "name": "Setting_workday_format_e04f78ac",
+                  "prefix": "Setting_workday_format"
+                }
+              ],
+              "columns": {
+                "address": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "companyName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "companyNameAr": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "companyTrn": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "documentReminderDays": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 30
+                  },
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": false
+                },
+                "phone": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false
+                },
+                "version": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nullable": false
+                },
+                "workdayEnd": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "workdayStart": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "workingDays": {
+                  "codecId": "pg/jsonb@1",
+                  "dataType": "pg/jsonb",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Task": {
               "checks": [
                 {
@@ -5362,10 +5609,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "57988ab684b65ca73cd48d351fa619ddb505aaa44fe76d911164c19b375a9f64"
+    "storageHash": "0341170e5148caf97ea3ae32ca5002518143cfae6d064903d37c34d5253390a0"
   },
   "execution": {
-    "executionHash": "c5d0bf0e2457d89034142d511afa0188be5d52cdb521a0f75b6aba0ff380a5b3",
+    "executionHash": "106cc71e5d38ffbc0b53c9a78a6e1005bf970429d0add8458f2b13f4b7adb2a2",
     "mutations": {
       "defaults": [
         {
@@ -5469,6 +5716,21 @@
           },
           "ref": {
             "entry": "Role",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "Setting",
             "field": "updatedAt",
             "namespace": "public"
           }

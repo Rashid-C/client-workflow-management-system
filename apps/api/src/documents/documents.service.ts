@@ -69,14 +69,15 @@ const SELECT = `
 const describe = (doc: { type: string; title: string | null; client: { name: string } }) =>
   `${doc.type}${doc.title ? ` (${doc.title})` : ''} for ${doc.client.name}`;
 
-const normalize = (data: SaveDocumentDto): Values => ({
+/** `reminderDays` falls back to the given default when the form leaves it out. */
+const normalize = (data: SaveDocumentDto, defaultReminderDays: number): Values => ({
   clientId: data.clientId,
   type: data.type,
   title: data.title ?? null,
   documentNumber: data.documentNumber ?? null,
   issueDate: data.issueDate ?? null,
   expiryDate: data.expiryDate ?? null,
-  reminderDays: data.reminderDays ?? 30,
+  reminderDays: data.reminderDays ?? defaultReminderDays,
   notes: data.notes ?? null,
 });
 
@@ -132,9 +133,13 @@ export class DocumentsService {
   }
 
   async create(viewer: AuthUser, data: SaveDocumentDto, context: AuditContext): Promise<DocumentRecord> {
-    const values = normalize(data);
-    checkDates(values);
     return this.transaction(async (db) => {
+      // The firm's default (Settings), else 30.
+      const fallback = (await db.query<{ days: number }>(
+        `SELECT COALESCE((SELECT "documentReminderDays" FROM "Setting" WHERE "id" = 1), 30) AS "days"`,
+      )).rows[0].days;
+      const values = normalize(data, fallback);
+      checkDates(values);
       await this.assertClientUsable(db, viewer, values.clientId);
       const inserted = await db.query<{ id: number }>(
         `INSERT INTO "Document" (${FIELDS.map((f) => `"${f}"`).join(', ')}, "createdById", "updatedAt")
@@ -159,10 +164,11 @@ export class DocumentsService {
   }
 
   async update(viewer: AuthUser, id: number, data: UpdateDocumentDto, context: AuditContext): Promise<DocumentRecord> {
-    const next = normalize(data);
-    checkDates(next);
     return this.transaction(async (db) => {
       const current = await this.lockVisible(db, viewer, id, 'documents.edit');
+      // Left out on an edit means "keep what it has".
+      const next = normalize(data, current.reminderDays);
+      checkDates(next);
       if (current.version !== data.version) {
         throw new ConflictException(
           problem('documents.stale', 'Someone else changed this document. Reload it and make your changes again.'),

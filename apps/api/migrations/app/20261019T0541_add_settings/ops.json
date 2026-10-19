@@ -1,0 +1,72 @@
+[
+  {
+    "id": "table.Setting",
+    "label": "Create table \"Setting\"",
+    "summary": "Creates table \"Setting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Setting\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Setting\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Setting\"",
+        "sql": "CREATE TABLE \"public\".\"Setting\" (\n  \"address\" text,\n  \"companyName\" text NOT NULL,\n  \"companyNameAr\" text,\n  \"companyTrn\" text,\n  \"documentReminderDays\" int4 DEFAULT 30 NOT NULL,\n  \"email\" text,\n  \"id\" int4 NOT NULL,\n  \"phone\" text,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"version\" int4 DEFAULT 1 NOT NULL,\n  \"workdayEnd\" text NOT NULL,\n  \"workdayStart\" text NOT NULL,\n  \"workingDays\" jsonb NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Setting_documentReminderDays_range_fd011ea6\" CHECK (\"documentReminderDays\" BETWEEN 0 AND 365),\n  CONSTRAINT \"Setting_single_row_99dee7f0\" CHECK (\"id\" = 1),\n  CONSTRAINT \"Setting_workday_format_e04f78ac\" CHECK (\"workdayStart\" ~ '^[0-2][0-9]:[0-5][0-9]$' AND \"workdayEnd\" ~ '^[0-2][0-9]:[0-5][0-9]$')\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Setting\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Setting\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "seed.Setting.defaults",
+    "label": "Create the settings row with Al Fath defaults",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure the settings row does not exist yet",
+        "sql": "SELECT NOT EXISTS (SELECT 1 FROM \"public\".\"Setting\") AS \"result\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "insert the defaults (UAE week: Monday to Friday)",
+        "sql": "INSERT INTO \"public\".\"Setting\"\n  (\"id\", \"companyName\", \"email\", \"phone\", \"address\", \"workingDays\", \"workdayStart\", \"workdayEnd\", \"documentReminderDays\", \"updatedAt\")\nVALUES (1, 'Al Fath Accounts & Tax Solutions', 'info@alfathuae.com', '+971 58 584 8008',\n        'Building No. 33 M04, Defence Road, Al Nahyan, Abu Dhabi, UAE', '[1,2,3,4,5]'::jsonb, '08:30', '17:30', 30, NOW())"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify the settings row exists",
+        "sql": "SELECT EXISTS (SELECT 1 FROM \"public\".\"Setting\" WHERE \"id\" = 1) AS \"result\""
+      }
+    ]
+  }
+]
