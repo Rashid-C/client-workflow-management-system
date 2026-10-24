@@ -3,6 +3,16 @@ import Image from "next/image";
 import {
   ArrowRight,
   BadgeCheck,
+  BriefcaseBusiness,
+  Building2,
+  Calculator,
+  ChartLine,
+  Cpu,
+  FileCheck,
+  HandCoins,
+  Layers,
+  Network,
+  Users,
   BookOpenCheck,
   Check,
   Factory,
@@ -16,11 +26,12 @@ import {
 } from "lucide-react";
 import BrandLogo, { BRAND_NAME } from "@/components/brand/brand-logo";
 import Link from "@/components/i18n/link";
+import ContactFab from "@/components/marketing/contact-fab";
 import MobileNavigation from "@/components/marketing/mobile-navigation";
 import SocialLinks, { SocialIcon, type SocialNetwork } from "@/components/marketing/social-icons";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
 import { DEVELOPER } from "@/lib/developer";
-import { OFFICE } from "@/lib/office";
+import { OFFICE, telHref } from "@/lib/office";
 import accountingPhoto from "@/public/services/accounting.jpg";
 import adnocPhoto from "@/public/services/adnoc.jpg";
 import auditingPhoto from "@/public/services/auditing.jpg";
@@ -44,11 +55,20 @@ const DEMO_LOGOS = ["skoola", "zenyoga", "bugblock", "skillscape", "femmous", "n
   .map((name) => ({ name, src: `/demo-logos/${name}.png` }));
 const TRUSTED_LOGOS = CLIENT_LOGOS.length > 0 || process.env.NODE_ENV === "production" ? CLIENT_LOGOS : DEMO_LOGOS;
 
-// Add each profile's address here when the client provides it; icons only
-// appear for networks listed (the old site's icons linked nowhere).
-const SOCIAL: readonly { network: SocialNetwork; url: string }[] = [];
+// Add each profile's `url` when the client provides it; until then the icon
+// shows without a link (the old site's icons linked nowhere).
+const SOCIAL: readonly { network: SocialNetwork; url?: string }[] = [
+  { network: "facebook" },
+  { network: "instagram" },
+  { network: "x" },
+  { network: "linkedin" },
+];
 
 type Service = { title: string; text: string; icon: LucideIcon };
+
+// Icons for `more` (the extra services) and `why`, in order.
+const MORE_ICONS: LucideIcon[] = [Network, BriefcaseBusiness, FileCheck, ChartLine, Calculator, Building2];
+const WHY_ICONS: LucideIcon[] = [Users, Cpu, Layers, HandCoins];
 
 // One photo per service, in the same order as `services` in both languages.
 // The ICV and ADNOC photos are cropped clear of those programmes' logos.
@@ -66,8 +86,25 @@ const content = {
     intro:
       "Al Fath Accounts & Tax Solutions supports businesses across the UAE with auditing, accounting, tax compliance and business advisory — from company setup to corporate compliance.",
     contactCta: "Talk to us",
-    ctaHeading: "Let's put your books and tax in order.",
-    ctaText: "Speak to our team in Abu Dhabi about your accounting, audit or tax needs.",
+    ctaHeading: "Partner with experts who understand your business.",
+    ctaText: "Let Al Fath handle your accounting, tax and compliance needs — so you can focus on growing your business.",
+    addressShort: "Building No. 33 M04, Defence Road, Abu Dhabi",
+    stats: [
+      ["500+", "Satisfied clients"],
+      ["1,200+", "Audits completed"],
+      ["15+", "Years of experience"],
+      ["12", "Services"],
+    ],
+    whyHeading: "Why businesses trust Al Fath",
+    why: [
+      ["Qualified & experienced team", "Chartered Accountants and tax professionals with global expertise."],
+      ["Modern accounting tools", "Advanced technology for precision and efficiency."],
+      ["End-to-end financial solutions", "From startup setup to corporate compliance, we have you covered."],
+      ["Affordable & transparent pricing", "High-quality financial services at competitive rates."],
+    ],
+    reach:
+      "Our team of experienced Chartered Accountants and tax experts supports clients across the UAE, Bahrain and India.",
+    fab: { open: "Contact options", close: "Close contact options", whatsapp: "WhatsApp", call: "Call", email: "Email" },
     callUs: "Call us",
     emailUs: "Email us",
     servicesCta: "Explore services",
@@ -122,6 +159,14 @@ const content = {
       "Tax advisory",
       "Company incorporation & winding-up",
     ],
+    moreText: [
+      "Efficient business structures that support growth while staying compliant with UAE regulations.",
+      "Strategic advice to improve operations, profitability and sustainable growth.",
+      "Help meeting ESR, AML and ISO requirements, avoiding penalties.",
+      "Financial planning, budgeting and analysis to strengthen business decisions.",
+      "Guidance on VAT, excise and corporate tax for complete regulatory compliance.",
+      "Company formation, licensing and orderly winding-up with full legal compliance.",
+    ],
     aboutEyebrow: "About Al Fath",
     aboutHeading: "Built on accuracy, integrity and expertise.",
     mission:
@@ -165,8 +210,24 @@ const content = {
     intro:
       "تدعم الفتح لحلول الحسابات والضرائب الشركات في دولة الإمارات بخدمات التدقيق والمحاسبة والامتثال الضريبي والاستشارات، من تأسيس الشركة إلى الامتثال المؤسسي.",
     contactCta: "تواصل معنا",
-    ctaHeading: "لنرتّب حساباتكم وضرائبكم معًا.",
-    ctaText: "تحدّثوا مع فريقنا في أبوظبي بشأن احتياجاتكم في المحاسبة والتدقيق والضرائب.",
+    ctaHeading: "شاركوا خبراء يفهمون أعمالكم.",
+    ctaText: "دعوا الفتح تتولى احتياجاتكم في المحاسبة والضرائب والامتثال، لتتفرغوا لتنمية أعمالكم.",
+    addressShort: "المبنى رقم 33 M04، شارع الدفاع، أبوظبي",
+    stats: [
+      ["+500", "عميل راضٍ"],
+      ["+1,200", "عملية تدقيق منجزة"],
+      ["+15", "عامًا من الخبرة"],
+      ["12", "خدمة"],
+    ],
+    whyHeading: "لماذا تثق الشركات بالفتح",
+    why: [
+      ["فريق مؤهل وذو خبرة", "محاسبون قانونيون وخبراء ضرائب بخبرة عالمية."],
+      ["أدوات محاسبية حديثة", "تقنيات متقدمة لدقة وكفاءة أعلى."],
+      ["حلول مالية متكاملة", "من تأسيس الشركات الناشئة إلى الامتثال المؤسسي، نحن معكم."],
+      ["أسعار مناسبة وشفافة", "خدمات مالية عالية الجودة بأسعار تنافسية."],
+    ],
+    reach: "يدعم فريقنا من المحاسبين القانونيين وخبراء الضرائب ذوي الخبرة العملاء في الإمارات والبحرين والهند.",
+    fab: { open: "خيارات التواصل", close: "إغلاق خيارات التواصل", whatsapp: "واتساب", call: "اتصال", email: "البريد الإلكتروني" },
     callUs: "اتصل بنا",
     emailUs: "راسلنا",
     servicesCta: "استكشف خدماتنا",
@@ -220,6 +281,14 @@ const content = {
       "خدمات المدير المالي الافتراضي",
       "الاستشارات الضريبية",
       "تأسيس الشركات وتصفيتها",
+    ],
+    moreText: [
+      "هياكل أعمال فعّالة تدعم النمو مع الالتزام بأنظمة الإمارات.",
+      "استشارات استراتيجية لتحسين العمليات والربحية والنمو المستدام.",
+      "المساعدة في استيفاء متطلبات ESR وAML وISO وتجنّب الغرامات.",
+      "تخطيط مالي وموازنات وتحليلات لدعم قرارات الأعمال.",
+      "إرشاد في ضريبة القيمة المضافة والضريبة الانتقائية وضريبة الشركات لامتثال كامل.",
+      "تأسيس الشركات وترخيصها وتصفيتها بشكل منظم مع امتثال قانوني كامل.",
     ],
     aboutEyebrow: "عن الفتح",
     aboutHeading: "قائمون على الدقة والنزاهة والخبرة.",
@@ -284,6 +353,28 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
 
   return (
     <main id="top" className="min-h-screen bg-white text-slate-900">
+      <div className="hidden bg-navy-950 text-xs text-slate-300 md:block">
+        <div className="mx-auto flex h-10 max-w-7xl items-center justify-between gap-6 px-5 sm:px-8">
+          <p className="flex items-center gap-2">
+            <MapPin className="size-3.5 shrink-0 text-signal-300" aria-hidden="true" />
+            {copy.addressShort}
+          </p>
+          <div className="flex items-center gap-5">
+            <a href={`mailto:${OFFICE.email}`} dir="ltr" className="flex items-center gap-1.5 transition hover:text-white">
+              <Mail className="size-3.5 text-signal-300" aria-hidden="true" />
+              {OFFICE.email}
+            </a>
+            {OFFICE.phones.map((phone) => (
+              <a key={phone} href={telHref(phone)} dir="ltr" className="hidden items-center gap-1.5 transition hover:text-white lg:flex">
+                <Phone className="size-3.5 text-signal-300" aria-hidden="true" />
+                {phone}
+              </a>
+            ))}
+            <SocialLinks links={SOCIAL} compact />
+          </div>
+        </div>
+      </div>
+
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
           <Link href="/" aria-label={BRAND_NAME} className="shrink-0">
@@ -375,8 +466,18 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           </div>
         </div>
       </section>
-      {/* Room for the photo row that overlaps the hero's lower edge. */}
-      <div className="h-36 bg-white sm:h-44" aria-hidden="true" />
+      {/* The firm's numbers, confirmed by the client; the top padding leaves
+          room for the photo row that overlaps the hero's lower edge. */}
+      <section className="bg-white px-5 pb-4 pt-40 sm:px-8 sm:pt-52">
+        <dl className="mx-auto grid max-w-5xl grid-cols-2 gap-4 lg:grid-cols-4">
+          {copy.stats.map(([value, label]) => (
+            <div key={label} className="flex flex-col-reverse rounded-2xl border border-signal-100 bg-gradient-to-b from-signal-50 to-white px-5 py-6 text-center">
+              <dt className="mt-1 text-sm text-slate-600">{label}</dt>
+              <dd className="text-3xl font-semibold tracking-tight text-signal-700 sm:text-4xl" dir="ltr">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
 
       {/* Trusted by */}
       {TRUSTED_LOGOS.length > 0 && (
@@ -434,16 +535,52 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             ))}
           </div>
 
-          <div className="mt-10 rounded-2xl border border-signal-100 bg-gradient-to-br from-signal-50 via-white to-sky-50 p-6 sm:p-8">
-            <h3 className="text-sm font-semibold text-navy-950">{copy.moreHeading}</h3>
-            <ul className="mt-4 flex flex-wrap gap-2.5">
-              {copy.more.map((item) => (
-                <li key={item} className="rounded-full border border-signal-200 bg-white px-3.5 py-1.5 text-sm font-medium text-signal-900 shadow-xs">
-                  {item}
-                </li>
-              ))}
+          <div className="mt-14">
+            <h3 className="text-xl font-semibold text-navy-950">{copy.moreHeading}</h3>
+            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {copy.more.map((title, index) => {
+                const Icon = MORE_ICONS[index];
+                return (
+                  <li key={title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-signal-200 hover:shadow-md">
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-signal-50 text-signal-700">
+                      <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
+                    </span>
+                    <div>
+                      <h4 className="font-semibold text-navy-950">{title}</h4>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">{copy.moreText[index]}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
+        </div>
+      </section>
+
+      {/* Why Al Fath */}
+      <section className="bg-gradient-to-b from-signal-50/70 to-white px-5 py-20 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-7xl">
+          <h2 className={`${sectionHeading} mx-auto max-w-2xl text-center`}>{copy.whyHeading}</h2>
+          <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {copy.why.map(([title, text], index) => {
+              const Icon = WHY_ICONS[index];
+              const featured = index === 1;
+              return (
+                <li
+                  key={title}
+                  className={featured
+                    ? "rounded-3xl bg-gradient-to-br from-signal-500 to-signal-800 p-7 text-white shadow-xl shadow-signal-900/20"
+                    : "rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"}
+                >
+                  <span className={`flex size-12 items-center justify-center rounded-2xl ${featured ? "bg-white/15 text-white" : "bg-signal-50 text-signal-700"}`}>
+                    <Icon size={22} strokeWidth={1.8} aria-hidden="true" />
+                  </span>
+                  <h3 className={`mt-6 text-lg font-semibold ${featured ? "" : "text-navy-950"}`}>{title}</h3>
+                  <p className={`mt-2 text-sm leading-6 ${featured ? "text-signal-50/90" : "text-slate-600"}`}>{text}</p>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </section>
 
@@ -455,6 +592,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             <h2 className={sectionHeading}>{copy.aboutHeading}</h2>
             <p className="mt-6 text-base leading-7 text-slate-600">{copy.mission}</p>
             <p className="mt-4 text-base leading-7 text-slate-600">{copy.vision}</p>
+            <p className="mt-4 text-base leading-7 text-slate-600">{copy.reach}</p>
           </div>
           <ul className="grid gap-4 self-center">
             {copy.values.map(([title, text], index) => (
@@ -624,6 +762,8 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           </div>
         </div>
       </footer>
+
+      <ContactFab labels={copy.fab} phones={OFFICE.phones} email={OFFICE.email} />
     </main>
   );
 }
