@@ -31,7 +31,7 @@ export default function Modal({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/45 backdrop-blur-[2px] sm:items-center sm:p-4">
       <section
         role="dialog"
         aria-modal="true"
@@ -40,7 +40,7 @@ export default function Modal({
       >
         <header className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
           <div>
-            <h2 id={titleId} className="font-semibold">{title}</h2>
+            <h2 id={titleId} className="text-base font-semibold text-slate-900">{title}</h2>
             {subtitle && <p className="mt-0.5 text-xs text-slate-500">{subtitle}</p>}
           </div>
           <button
@@ -53,7 +53,7 @@ export default function Modal({
           </button>
         </header>
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">{children}</div>
-        <footer className="flex flex-col-reverse gap-2 border-t border-slate-100 px-5 py-3 sm:flex-row sm:justify-end">
+        <footer className="flex flex-col-reverse gap-2 border-t border-slate-100 bg-slate-50/70 px-5 py-3 sm:flex-row sm:justify-end sm:rounded-b-xl">
           {footer}
         </footer>
       </section>
