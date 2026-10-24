@@ -45,6 +45,14 @@
   --color-canvas: #f4f6f8;
 }
 
+/* Browsers centre <th> by default and ignore the table's own alignment;
+   headings should line up with their column. Utilities still override. */
+@layer base {
+  th {
+    text-align: start;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5rem;
