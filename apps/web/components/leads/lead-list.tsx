@@ -11,6 +11,7 @@ import StatCard from "@/components/ui/stat-card";
 import { api } from "@/lib/api";
 import { formatAmount, LEAD_STATUSES, LEAD_STATUS_STYLES, type Lead, type LeadSummary } from "@/lib/leads";
 import { alertClass, labelClass } from "@/components/ui/styles";
+import { cardClass } from "@/components/ui/card";
 
 export default function LeadList() {
   const router = useRouter();
@@ -101,7 +102,7 @@ export default function LeadList() {
       ) : leads.length === 0 ? (
         <p className="rounded-lg border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500">{l.none}</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200">
+        <div className={`overflow-x-auto ${cardClass}`}>
           <table className="w-full min-w-[760px] border-collapse text-sm">
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>

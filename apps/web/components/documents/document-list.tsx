@@ -17,6 +17,7 @@ import {
   type DocumentRecord,
   type DocumentSummary,
 } from "@/lib/documents";
+import { cardClass } from "@/components/ui/card";
 
 const iconButton = "rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900";
 
@@ -165,7 +166,7 @@ export default function DocumentList({ clientId, documentId, initialStatus = "",
           {compact ? d.noneForClient : d.none}
         </p>
       ) : (
-        <div className="relative overflow-x-auto rounded-lg border border-slate-200">
+        <div className={`relative overflow-x-auto ${cardClass}`}>
           <table className={`w-full border-collapse text-sm ${compact ? "" : "min-w-190"}`}>
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>

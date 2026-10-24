@@ -10,6 +10,7 @@ import { inputClass, primaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { EMIRATES, type ClientSummary } from "@/lib/clients";
 import { labelClass } from "@/components/ui/styles";
+import { cardClass } from "@/components/ui/card";
 
 type StatusFilter = "active" | "archived" | "all";
 
@@ -103,8 +104,8 @@ export default function ClientList() {
         <p role="status" className="py-8 text-sm text-slate-500">{t.clients.loading}</p>
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border border-slate-200">
-            <table className="w-full min-w-[760px] border-collapse text-start text-sm">
+          <div className={`overflow-x-auto ${cardClass}`}>
+            <table className="w-full min-w-190 border-collapse text-start text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-4 py-3 text-start font-medium">{t.clients.client}</th>
