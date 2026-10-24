@@ -54,28 +54,41 @@ export function SocialIcon({ network, size = 17 }: { network: SocialNetwork; siz
   );
 }
 
-/** Links to the firm's social profiles; renders nothing for an empty list. */
+/**
+ * The firm's social profiles. A network without a URL yet shows as a plain
+ * icon (not a link, hidden from screen readers) until its address is added.
+ */
 export default function SocialLinks({
   links,
   className = "",
+  compact = false,
 }: {
-  links: readonly { network: SocialNetwork; url: string }[];
+  links: readonly { network: SocialNetwork; url?: string }[];
   className?: string;
+  compact?: boolean;
 }) {
   if (!links.length) return null;
+  const box = `flex items-center justify-center rounded-lg border border-white/15 text-slate-300 ${compact ? "size-7" : "size-9"}`;
+  const iconSize = compact ? 14 : 17;
   return (
     <ul className={`flex gap-2 ${className}`}>
       {links.map(({ network, url }) => (
         <li key={network}>
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={ICONS[network].label}
-            className="flex size-9 items-center justify-center rounded-lg border border-white/15 text-slate-300 transition hover:border-brand-400 hover:text-white"
-          >
-            <SocialIcon network={network} />
-          </a>
+          {url ? (
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={ICONS[network].label}
+              className={`${box} transition hover:border-signal-400 hover:text-white`}
+            >
+              <SocialIcon network={network} size={iconSize} />
+            </a>
+          ) : (
+            <span aria-hidden="true" className={box}>
+              <SocialIcon network={network} size={iconSize} />
+            </span>
+          )}
         </li>
       ))}
     </ul>
