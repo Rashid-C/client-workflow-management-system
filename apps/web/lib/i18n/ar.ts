@@ -112,6 +112,7 @@ export const ar: Dictionary = {
     workspaceBadge: "مساحة العمل",
     openNavigation: "فتح القائمة",
     accountMenu: "قائمة الحساب",
+    skipToContent: "تخطَّ إلى المحتوى",
     darkMode: "التبديل إلى الوضع الداكن",
     lightMode: "التبديل إلى الوضع الفاتح",
     closeNavigation: "إغلاق القائمة",
