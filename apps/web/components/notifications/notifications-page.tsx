@@ -7,7 +7,7 @@ import Link from "@/components/i18n/link";
 import { api } from "@/lib/api";
 import { notificationTime, type NotificationItem, type NotificationPage } from "@/lib/notifications";
 import { Page, PageHeader } from "@/components/ui/page";
-import { secondaryButton } from "@/components/ui/styles";
+import { emptyClass, secondaryButton } from "@/components/ui/styles";
 
 export default function NotificationsPage() {
   const { t, locale, errorText } = useI18n();
@@ -89,7 +89,7 @@ export default function NotificationsPage() {
 
       {error && <p role="alert" className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
       {loading && <p role="status" className="py-8 text-center text-sm text-slate-500">{n.loading}</p>}
-      {!loading && items.length === 0 && <p className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center text-sm text-slate-500">{n.empty}</p>}
+      {!loading && items.length === 0 && <p className={emptyClass}>{n.empty}</p>}
       <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white">
         {items.map((item) => <li key={item.id}>
           <Link href={item.link} onClick={() => void markRead(item)} className={`block px-4 py-4 sm:px-5 ${item.readAt ? "hover:bg-slate-50" : "bg-brand-50/50 hover:bg-brand-50"}`}>

@@ -34,3 +34,6 @@ export const alertClass = "rounded-lg border border-red-200 bg-red-50 px-3 py-2 
 
 export const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-xs outline-none transition placeholder:text-slate-400 focus:border-brand-500 disabled:bg-slate-50 disabled:text-slate-500";
+
+/** The dashed box shown where a list has nothing in it. */
+export const emptyClass = "rounded-xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center text-sm text-slate-500";

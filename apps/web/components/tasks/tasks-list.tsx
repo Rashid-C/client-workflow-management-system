@@ -10,7 +10,7 @@ import NewTaskDialog from "@/components/tasks/new-task-dialog";
 import { inputClass } from "@/components/ui/modal";
 import { cardClass } from "@/components/ui/card";
 import { Page, PageHeader } from "@/components/ui/page";
-import { alertClass, labelClass, primaryButton, secondaryButton } from "@/components/ui/styles";
+import { alertClass, emptyClass, labelClass, primaryButton, secondaryButton } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import {
   isOverdue,
@@ -162,7 +162,7 @@ export default function TasksList() {
         {loading ? (
           <p role="status" className="py-8 text-center text-sm text-slate-500">{t.tasks.loading}</p>
         ) : tasks.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center">
+          <div className={emptyClass}>
             <p className="font-medium">{t.tasks.noneFound}</p>
             <p className="mt-1 text-sm text-slate-500">{t.tasks.noneFoundHint}</p>
           </div>

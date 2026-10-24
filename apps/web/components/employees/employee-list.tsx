@@ -12,7 +12,7 @@ import { cardClass } from "@/components/ui/card";
 import StatCard from "@/components/ui/stat-card";
 import { api, ApiError } from "@/lib/api";
 import { roleStyle, type Employee, type Role } from "@/lib/people";
-import { alertClass, labelClass } from "@/components/ui/styles";
+import { alertClass, emptyClass, labelClass } from "@/components/ui/styles";
 
 export default function EmployeeList() {
   const router = useRouter();
@@ -135,7 +135,7 @@ export default function EmployeeList() {
         ) : loading ? (
           <p role="status" className="py-8 text-center text-sm text-slate-500">{e.loading}</p>
         ) : shown.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center">
+          <div className={emptyClass}>
             <p className="font-medium">{e.noneFound}</p>
             <p className="mt-1 text-sm text-slate-500">{e.noneFoundHint}</p>
           </div>

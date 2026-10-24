@@ -8,7 +8,7 @@ import Link from "@/components/i18n/link";
 import { api } from "@/lib/api";
 import type { TaskType } from "@/lib/task-types";
 import { Page, PageHeader } from "@/components/ui/page";
-import { alertClass, primaryButton } from "@/components/ui/styles";
+import { alertClass, emptyClass, primaryButton } from "@/components/ui/styles";
 
 export default function TaskTypesPage() {
   const { can } = useCurrentUser();
@@ -75,7 +75,7 @@ export default function TaskTypesPage() {
           {t.taskTypes.loading}
         </p>
       ) : types.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-200 px-4 py-12 text-center">
+        <div className={emptyClass}>
           <p className="font-medium">{t.taskTypes.noneYet}</p>
           <p className="mt-1 text-sm text-slate-500">
             {t.taskTypes.noneYetHint}
