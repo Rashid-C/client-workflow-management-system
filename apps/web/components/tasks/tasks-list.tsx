@@ -8,8 +8,9 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import NewTaskDialog from "@/components/tasks/new-task-dialog";
 import { inputClass } from "@/components/ui/modal";
+import { cardClass } from "@/components/ui/card";
 import { Page, PageHeader } from "@/components/ui/page";
-import { alertClass, labelClass, primaryButton } from "@/components/ui/styles";
+import { alertClass, labelClass, primaryButton, secondaryButton } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import {
   isOverdue,
@@ -112,7 +113,7 @@ export default function TasksList() {
         )}
       />
 
-      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+      <div className="space-y-4">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
           <div className="md:col-span-2">
             <label htmlFor="task-search" className={labelClass}>{t.common.search}</label>
@@ -161,15 +162,15 @@ export default function TasksList() {
         {loading ? (
           <p role="status" className="py-8 text-center text-sm text-slate-500">{t.tasks.loading}</p>
         ) : tasks.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-slate-200 px-4 py-12 text-center">
+          <div className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center">
             <p className="font-medium">{t.tasks.noneFound}</p>
             <p className="mt-1 text-sm text-slate-500">{t.tasks.noneFoundHint}</p>
           </div>
         ) : (
           <>
-            <div className="hidden overflow-x-auto md:block">
+            <div className={`hidden overflow-x-auto md:block ${cardClass}`}>
               <table className="w-full min-w-212.5 text-start text-sm">
-                <thead>
+                <thead className="bg-slate-50">
                   <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
                     <th className="px-3 py-3 font-medium">{t.tasks.task}</th>
                     <th className="px-3 py-3 font-medium">{t.tasks.currentStage}</th>
@@ -213,7 +214,7 @@ export default function TasksList() {
             <ul className="space-y-3 md:hidden">
               {tasks.map((task) => (
                 <li key={task.id}>
-                  <Link href={`/tasks/${task.id}`} className="block rounded-lg border border-slate-200 p-4">
+                  <Link href={`/tasks/${task.id}`} className={`block p-4 ${cardClass}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="font-medium"><span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span> {task.title}</p>
@@ -236,14 +237,14 @@ export default function TasksList() {
 
             {nextBefore !== null && (
               <div className="text-center">
-                <button type="button" onClick={() => void loadOlder()} className="rounded-lg border border-slate-200 px-4 py-2 text-sm hover:bg-slate-100">
+                <button type="button" onClick={() => void loadOlder()} className={secondaryButton}>
                   {t.common.loadMore}
                 </button>
               </div>
             )}
           </>
         )}
-      </section>
+      </div>
 
       {showNew && (
         <NewTaskDialog
