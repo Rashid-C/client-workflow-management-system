@@ -100,6 +100,8 @@ export const en = {
     workspaceBadge: "Workspace",
     openNavigation: "Open navigation",
     accountMenu: "Account menu",
+    darkMode: "Switch to dark mode",
+    lightMode: "Switch to light mode",
     closeNavigation: "Close navigation",
     closeOverlay: "Close navigation overlay",
     expand: "Expand sidebar",

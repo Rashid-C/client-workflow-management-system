@@ -38,6 +38,10 @@ export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
 }
 
+// Runs before the first paint so a dark-mode user never sees a white flash:
+// the saved choice, else the computer's setting. ThemeToggle keeps it in sync.
+const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){}`;
+
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
@@ -47,7 +51,12 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
       lang={lang}
       dir={directionOf(lang)}
       className={`${geistSans.variable} ${geistMono.variable} ${plexArabic.variable} h-full antialiased`}
+      // The theme script sets data-theme before React hydrates.
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <I18nProvider locale={lang}>{children}</I18nProvider>
       </body>
