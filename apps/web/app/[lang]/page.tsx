@@ -33,6 +33,17 @@ import vatPhoto from "@/public/services/vat.jpg";
 const DIRECTIONS_URL = `https://www.google.com/maps/search/?api=1&query=${OFFICE.coordinates}`;
 const MAP_EMBED_URL = `https://www.google.com/maps?q=${OFFICE.coordinates}&z=16&output=embed`;
 
+// Client logos for the "Trusted by" strip: add each real client here, with
+// their permission, as { name, src } (src: a file under public/clients/).
+// The strip stays hidden in production until this list has entries.
+const CLIENT_LOGOS: readonly { name: string; src: string }[] = [];
+
+// Template demo logos — fictional brands, shown only in development so the
+// strip's design can be reviewed. Never published: they are not clients.
+const DEMO_LOGOS = ["skoola", "zenyoga", "bugblock", "skillscape", "femmous", "nouvo", "freshmoo", "brandcy", "farmica", "digancy"]
+  .map((name) => ({ name, src: `/demo-logos/${name}.png` }));
+const TRUSTED_LOGOS = CLIENT_LOGOS.length > 0 || process.env.NODE_ENV === "production" ? CLIENT_LOGOS : DEMO_LOGOS;
+
 // Add each profile's address here when the client provides it; icons only
 // appear for networks listed (the old site's icons linked nowhere).
 const SOCIAL: readonly { network: SocialNetwork; url: string }[] = [];
@@ -61,6 +72,7 @@ const content = {
       "ICV certification and ADNOC vendor registration",
       "An office in Abu Dhabi",
     ],
+    trustedHeading: "Trusted by leading businesses",
     servicesEyebrow: "What we do",
     servicesHeading: "Services for every stage of your business.",
     servicesIntro:
@@ -153,6 +165,7 @@ const content = {
       "شهادة القيمة المحلية المضافة والتسجيل كمورد لدى أدنوك",
       "مكتبنا في أبوظبي",
     ],
+    trustedHeading: "شركات رائدة تثق بنا",
     servicesEyebrow: "خدماتنا",
     servicesHeading: "خدمات لكل مرحلة من مراحل أعمالكم.",
     servicesIntro:
@@ -341,6 +354,30 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           </div>
         </div>
       </section>
+
+      {/* Trusted by */}
+      {TRUSTED_LOGOS.length > 0 && (
+        <section aria-labelledby="trusted-heading" className="border-t border-slate-200 bg-white px-5 py-12 sm:px-8">
+          <div className="mx-auto max-w-7xl">
+            <h2 id="trusted-heading" className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+              {copy.trustedHeading}
+            </h2>
+            <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-8 sm:gap-x-14">
+              {TRUSTED_LOGOS.map((logo) => (
+                <li key={logo.name}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- small fixed logos */}
+                  <img
+                    src={logo.src}
+                    alt={logo.name}
+                    loading="lazy"
+                    className="h-8 w-auto opacity-60 grayscale transition hover:opacity-100 hover:grayscale-0 sm:h-9"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {/* Services */}
       <section id="services" className="scroll-mt-20 border-t border-slate-200 px-5 py-20 sm:px-8 sm:py-24">
