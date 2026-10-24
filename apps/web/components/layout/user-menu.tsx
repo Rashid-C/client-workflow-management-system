@@ -59,7 +59,7 @@ export default function UserMenu() {
           {initialsOf(user.name)}
         </span>
         <span className="hidden max-w-40 truncate text-sm font-medium sm:block">{user.name}</span>
-        <ChevronDown size={16} aria-hidden="true" className="hidden text-slate-400 sm:block" />
+        <ChevronDown size={16} aria-hidden="true" className="hidden text-slate-500 sm:block" />
       </button>
 
       {open && (
@@ -78,7 +78,7 @@ export default function UserMenu() {
             onClick={() => void signOut()}
             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100"
           >
-            <LogOut size={16} aria-hidden="true" className="text-slate-400 rtl:rotate-180" />
+            <LogOut size={16} aria-hidden="true" className="text-slate-500 rtl:rotate-180" />
             {t.auth.signOut}
           </button>
         </div>

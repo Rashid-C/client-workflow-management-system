@@ -97,7 +97,7 @@ export default function OverviewPage() {
                         <li key={`${item.task.id}-${item.stage.position}`}>
                           <Link href={`/tasks/${item.task.id}`} className="block px-4 py-3 hover:bg-slate-50">
                             <div className="flex items-start justify-between gap-3">
-                              <p className="text-sm font-medium"><span className="text-slate-400" dir="ltr">{taskRef(item.task.id)}</span> {item.task.title}</p>
+                              <p className="text-sm font-medium"><span className="text-slate-500" dir="ltr">{taskRef(item.task.id)}</span> {item.task.title}</p>
                               <span className="shrink-0 text-xs text-slate-500">{item.assignee?.name ?? t.common.unassigned}</span>
                             </div>
                             <p className="text-xs text-slate-500">{item.client.name} · {item.stage.name}</p>
@@ -126,7 +126,7 @@ export default function OverviewPage() {
                         <li key={task.id}>
                           <Link href={`/tasks/${task.id}`} className="flex items-start justify-between gap-3 px-4 py-3 hover:bg-slate-50">
                             <div className="min-w-0">
-                              <p className="text-sm font-medium"><span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span> {task.title}</p>
+                              <p className="text-sm font-medium"><span className="text-slate-500" dir="ltr">{taskRef(task.id)}</span> {task.title}</p>
                               <p className="text-xs text-slate-500">{task.client.name}</p>
                             </div>
                             <div className="shrink-0 text-end">

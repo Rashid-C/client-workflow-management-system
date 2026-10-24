@@ -75,7 +75,7 @@ export default function NotificationsBell() {
                 <span className="flex items-center gap-2 text-xs font-semibold text-brand-800"><span>{n.kinds[item.kind]}</span>{!item.readAt && <span className="size-1.5 rounded-full bg-brand-600" />}</span>
                 <span className="mt-1 block text-sm font-medium text-slate-900">{item.title}</span>
                 <span className="mt-0.5 block text-xs leading-5 text-slate-600">{item.body}</span>
-                <span className="mt-1 block text-[11px] text-slate-400">{notificationTime(item.createdAt, locale)}</span>
+                <span className="mt-1 block text-[11px] text-slate-500">{notificationTime(item.createdAt, locale)}</span>
               </Link>
             </li>)}</ul> : <p className="px-4 py-8 text-center text-sm text-slate-500">{n.empty}</p>}
           <Link href="/notifications" onClick={() => setOpen(false)} className="block border-t border-slate-100 px-4 py-3 text-center text-sm font-medium text-brand-800 hover:bg-slate-50">{n.title}</Link>

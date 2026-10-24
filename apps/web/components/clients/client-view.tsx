@@ -67,7 +67,7 @@ export default function ClientView({ clientId }: { clientId: number }) {
   if (!client) return <p role="status" className="p-6 text-sm text-slate-500">{t.clients.loadingClient}</p>;
 
   const f = t.clients.fields;
-  const none = <span className="text-slate-400">{t.common.none}</span>;
+  const none = <span className="text-slate-500">{t.common.none}</span>;
   const ltr = (value: string | null) => (value ? <span dir="ltr">{value}</span> : none);
   const plain = (value: string | null) => value ?? none;
 
@@ -77,7 +77,7 @@ export default function ClientView({ clientId }: { clientId: number }) {
         backHref="/clients"
         backLabel={t.clients.backToClients}
         meta={<>
-          <span className="text-slate-400" dir="ltr">{client.clientCode}</span>
+          <span className="text-slate-500" dir="ltr">{client.clientCode}</span>
           <Badge tone={client.isActive ? "success" : "neutral"}>{client.isActive ? t.clients.active : t.clients.archived}</Badge>
         </>}
         title={client.name}
@@ -150,7 +150,7 @@ export default function ClientView({ clientId }: { clientId: number }) {
         </Card>
 
         <Card title={t.clients.sections.internal}>
-          <Fact label={f.accountManager}>{client.accountManager?.name ?? <span className="text-slate-400">{t.clients.noManager}</span>}</Fact>
+          <Fact label={f.accountManager}>{client.accountManager?.name ?? <span className="text-slate-500">{t.clients.noManager}</span>}</Fact>
           <Fact label={t.clients.added}>{dateTime(client.createdAt)}</Fact>
           {client.notes && <p className="whitespace-pre-wrap border-t border-slate-100 pt-3 text-sm text-slate-700">{client.notes}</p>}
         </Card>
@@ -166,7 +166,7 @@ export default function ClientView({ clientId }: { clientId: number }) {
                 {tasks.map((task) => (
                   <li key={task.id} className="flex items-center justify-between gap-3 py-2">
                     <Link href={`/tasks/${task.id}`} className="min-w-0 text-sm hover:text-brand-700 hover:underline">
-                      <span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span> {task.title}
+                      <span className="text-slate-500" dir="ltr">{taskRef(task.id)}</span> {task.title}
                       {task.dueDate && (
                         <span className={`ms-2 text-xs ${isOverdue(task) ? "font-semibold text-red-700" : "text-slate-500"}`}>{day(task.dueDate)}</span>
                       )}

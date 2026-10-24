@@ -96,7 +96,7 @@ export default function TaskTypesPage() {
                       <p className="mt-0.5 text-sm text-slate-500">{type.description}</p>
                     )}
                   </div>
-                  <ChevronRight size={18} className="shrink-0 text-slate-400 rtl:rotate-180" aria-hidden="true" />
+                  <ChevronRight size={18} className="shrink-0 text-slate-500 rtl:rotate-180" aria-hidden="true" />
                 </div>
                 {!type.isActive && (
                   <span className="mt-2 inline-flex rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-600">

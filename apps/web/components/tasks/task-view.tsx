@@ -105,7 +105,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
         backHref="/tasks"
         backLabel={t.tasks.title}
         meta={<>
-          <span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span>
+          <span className="text-slate-500" dir="ltr">{taskRef(task.id)}</span>
           <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[task.status]}`}>{status(task.status)}</span>
           {!live && <Badge>{t.tasks.archived}</Badge>}
         </>}
@@ -165,7 +165,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
                         {stage.minutes > 0 && ` · ${t.tasks.logged(minutes(stage.minutes))}`}
                       </p>
                       {stage.status === "Pending" && !ready && (
-                        <p className="mt-0.5 text-xs text-slate-400">{t.tasks.startsAfter}</p>
+                        <p className="mt-0.5 text-xs text-slate-500">{t.tasks.startsAfter}</p>
                       )}
                       {stage.status === "Blocked" && stage.blockedReason && (
                         <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-xs text-red-800">
@@ -218,7 +218,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
 
         <aside className="h-fit rounded-xl border border-slate-200 bg-white p-4 text-sm">
           <dl className="space-y-3">
-            <Fact label={t.common.client}>{task.client.name} <span className="text-slate-400" dir="ltr">({task.client.clientCode})</span></Fact>
+            <Fact label={t.common.client}>{task.client.name} <span className="text-slate-500" dir="ltr">({task.client.clientCode})</span></Fact>
             <Fact label={t.tasks.taskTypeLabel}>{task.taskType.name}</Fact>
             <Fact label={t.tasks.dueDate}>
               {task.dueDate ? (
@@ -281,7 +281,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
 function Fact({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</dt>
+      <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">{label}</dt>
       <dd className="mt-0.5 text-slate-800">{children}</dd>
     </div>
   );

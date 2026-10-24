@@ -96,7 +96,7 @@ export default function NotificationsPage() {
             <span className="flex items-center gap-2 text-xs font-semibold text-brand-800"><span>{n.kinds[item.kind]}</span>{!item.readAt && <span className="size-1.5 rounded-full bg-brand-600" />}</span>
             <span className="mt-1 block font-medium text-slate-900">{item.title}</span>
             <span className="mt-1 block text-sm leading-6 text-slate-600">{item.body}</span>
-            <span className="mt-2 block text-xs text-slate-400">{notificationTime(item.createdAt, locale)}</span>
+            <span className="mt-2 block text-xs text-slate-500">{notificationTime(item.createdAt, locale)}</span>
           </Link>
         </li>)}
       </ul>

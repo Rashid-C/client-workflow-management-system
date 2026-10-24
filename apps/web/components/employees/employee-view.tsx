@@ -80,7 +80,7 @@ export default function EmployeeView({ employeeCode }: { employeeCode: string })
   const self = employee.id === user?.employeeId;
   // A Super Admin account is managed only by a Super Admin (the API enforces it).
   const manageable = !isSuperAdmin(employee) || Boolean(user?.isSuperAdmin);
-  const none = <span className="text-slate-400">{e.notProvided}</span>;
+  const none = <span className="text-slate-500">{e.notProvided}</span>;
 
   return (
     <Page size="narrow" className="space-y-6">
@@ -88,7 +88,7 @@ export default function EmployeeView({ employeeCode }: { employeeCode: string })
         backHref="/employees"
         backLabel={e.back}
         meta={<>
-          <span className="text-slate-400" dir="ltr">{employee.employeeCode}</span>
+          <span className="text-slate-500" dir="ltr">{employee.employeeCode}</span>
           <Badge tone={employee.status === "Active" ? "success" : "neutral"}>{employee.status === "Active" ? e.active : e.inactive}</Badge>
         </>}
         title={employee.name}

@@ -32,7 +32,7 @@ export default function MyWorkList({ items }: { items: MyWorkItem[] }) {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="truncate text-sm font-medium">
-                    <span className="text-slate-400" dir="ltr">{taskRef(item.task.id)}</span> {item.task.title}
+                    <span className="text-slate-500" dir="ltr">{taskRef(item.task.id)}</span> {item.task.title}
                   </p>
                   <span className={`rounded-full border px-2 py-0.5 text-xs ${STATUS_STYLES[item.stage.status]}`}>
                     {status(item.stage.status)}

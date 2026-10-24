@@ -167,7 +167,7 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
                         <td className="px-4 py-3 text-xs">{entry.employee.name}</td>
                         <td className="px-4 py-3 text-xs">
                           <Link href={`/tasks/${entry.task.id}`} className="font-medium text-slate-900 hover:underline">
-                            <span className="text-slate-400" dir="ltr">{taskRef(entry.task.id)}</span> {entry.task.title}
+                            <span className="text-slate-500" dir="ltr">{taskRef(entry.task.id)}</span> {entry.task.title}
                           </Link>
                           <div className="text-slate-500">{entry.client.name} · {entry.stage.name}</div>
                         </td>
@@ -183,7 +183,7 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
                   <li key={entry.id} className="px-4 py-3 text-xs">
                     <div className="flex items-start justify-between gap-3">
                       <Link href={`/tasks/${entry.task.id}`} className="font-medium text-slate-900">
-                        <span className="text-slate-400" dir="ltr">{taskRef(entry.task.id)}</span> {entry.task.title}
+                        <span className="text-slate-500" dir="ltr">{taskRef(entry.task.id)}</span> {entry.task.title}
                       </Link>
                       <span className="shrink-0 font-medium">{minutes(entry.minutes)}</span>
                     </div>

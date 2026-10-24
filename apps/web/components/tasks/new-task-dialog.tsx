@@ -175,7 +175,7 @@ export default function NewTaskDialog({
             {type.stages.map((stage) => (
               <li key={stage.position} className="flex items-center justify-between gap-3 rounded-lg bg-slate-50 px-3 py-2">
                 <label htmlFor={`assignee-${stage.position}`} className="text-sm">
-                  <span className="text-slate-400">{stage.position}.</span> {stage.name}
+                  <span className="text-slate-500">{stage.position}.</span> {stage.name}
                 </label>
                 <select
                   id={`assignee-${stage.position}`}

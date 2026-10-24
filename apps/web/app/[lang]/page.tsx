@@ -239,7 +239,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">): Promis
 
 const sectionEyebrow = "text-xs font-semibold uppercase tracking-[0.16em] text-brand-700";
 const footerHeading = "text-xs font-semibold uppercase tracking-[0.16em] text-white";
-const footerLink = "text-slate-400 transition hover:text-white";
+const footerLink = "text-slate-500 transition hover:text-white";
 const sectionHeading = "mt-3 text-3xl font-semibold leading-tight tracking-[-0.03em] text-navy-950 sm:text-4xl";
 
 export default async function HomePage({ params }: PageProps<"/[lang]">) {
@@ -446,7 +446,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 sm:px-8 lg:grid-cols-[1.3fr_0.7fr_1.4fr_1fr] lg:gap-12">
           <div>
             <BrandLogo variant="full" tone="dark" />
-            <p className="mt-5 max-w-sm text-sm leading-6 text-slate-400">{copy.footerAbout}</p>
+            <p className="mt-5 max-w-sm text-sm leading-6 text-slate-500">{copy.footerAbout}</p>
             <SocialLinks links={SOCIAL} className="mt-5" />
           </div>
 
@@ -492,7 +492,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         </div>
 
         <div className="border-t border-white/10">
-          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8">
             <p>© 2026 {BRAND_NAME}. {copy.copyright}</p>
             <Link href={copy.languagePath} className="w-fit transition hover:text-white">{copy.languageName}</Link>
           </div>

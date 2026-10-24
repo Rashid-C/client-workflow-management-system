@@ -132,7 +132,7 @@ export default function ClientList() {
                     <td className="px-4 py-3 text-slate-700">
                       {client.emirate ? t.clients.emirates[client.emirate] : t.common.none}
                     </td>
-                    <td className="px-4 py-3 text-slate-700">{client.accountManager?.name ?? <span className="text-slate-400">{t.clients.noManager}</span>}</td>
+                    <td className="px-4 py-3 text-slate-700">{client.accountManager?.name ?? <span className="text-slate-500">{t.clients.noManager}</span>}</td>
                     <td className="px-4 py-3 text-slate-700">{client.openTasks ? t.clients.openTasks(client.openTasks) : t.common.none}</td>
                     <td className="px-4 py-3">
                       <span

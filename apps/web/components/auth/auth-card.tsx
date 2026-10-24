@@ -38,7 +38,7 @@ export default function AuthCard({
           <aside className="relative hidden flex-col justify-center overflow-hidden bg-navy-950 px-10 py-12 text-white md:flex lg:px-14">
             <div className="absolute inset-0 opacity-[0.12] marketing-grid" aria-hidden="true" />
             <div className="relative">
-              <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-slate-400">
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
                 {t.auth.workspaceLabel}
               </p>
               <h2 className="max-w-sm text-3xl font-semibold leading-tight tracking-tight">
@@ -47,7 +47,7 @@ export default function AuthCard({
               <p className="mt-5 max-w-sm text-sm leading-6 text-slate-300">
                 {t.auth.welcomeSubtitle}
               </p>
-              <div className="mt-10 border-t border-white/15 pt-5 text-xs text-slate-400">
+              <div className="mt-10 border-t border-white/15 pt-5 text-xs text-slate-500">
                 {t.auth.welcomeFooter}
               </div>
             </div>

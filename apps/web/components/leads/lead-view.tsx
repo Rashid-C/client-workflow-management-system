@@ -78,7 +78,7 @@ export default function LeadView({ leadId }: { leadId: number }) {
   }
   if (!lead) return <p role="status" className="p-6 text-sm text-slate-500">{l.loadingOne}</p>;
 
-  const none = <span className="text-slate-400">{t.common.none}</span>;
+  const none = <span className="text-slate-500">{t.common.none}</span>;
   const open = lead.status !== "Won" && lead.status !== "Lost";
 
   return (
@@ -130,7 +130,7 @@ export default function LeadView({ leadId }: { leadId: number }) {
               ) : none}
             </Fact>
             <Fact label={l.value}><span dir="ltr">{lead.estimatedValue === null ? t.common.none : l.aed(formatAmount(lead.estimatedValue))}</span></Fact>
-            <Fact label={l.owner}>{lead.owner?.name ?? <span className="text-slate-400">{l.noOwner}</span>}</Fact>
+            <Fact label={l.owner}>{lead.owner?.name ?? <span className="text-slate-500">{l.noOwner}</span>}</Fact>
             <Fact label={l.nextFollowUp}>
               {lead.nextFollowUpDate ? <span className={lead.followUpDue ? "font-semibold text-red-700" : ""}>{day(lead.nextFollowUpDate)}</span> : none}
             </Fact>

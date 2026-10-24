@@ -123,7 +123,7 @@ export default function LeadList() {
                   <td className="px-3 py-2.5">
                     <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${LEAD_STATUS_STYLES[lead.status]}`}>{l.statuses[lead.status]}</span>
                   </td>
-                  <td className="px-3 py-2.5 text-slate-700">{lead.owner?.name ?? <span className="text-slate-400">{l.noOwner}</span>}</td>
+                  <td className="px-3 py-2.5 text-slate-700">{lead.owner?.name ?? <span className="text-slate-500">{l.noOwner}</span>}</td>
                   <td className="px-3 py-2.5">
                     {lead.nextFollowUpDate ? (
                       <span className={lead.followUpDue ? "font-semibold text-red-700" : "text-slate-700"}>

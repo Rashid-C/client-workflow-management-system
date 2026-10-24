@@ -188,7 +188,7 @@ export default function TasksList() {
                     >
                       <td className="px-3 py-3">
                         <Link href={`/tasks/${task.id}`} className="font-medium hover:underline" onClick={(event) => event.stopPropagation()}>
-                          <span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span> {task.title}
+                          <span className="text-slate-500" dir="ltr">{taskRef(task.id)}</span> {task.title}
                         </Link>
                         <div className="text-xs text-slate-500">{task.client.name} · {task.taskType.name}</div>
                       </td>
@@ -217,7 +217,7 @@ export default function TasksList() {
                   <Link href={`/tasks/${task.id}`} className={`block p-4 ${cardClass}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="font-medium"><span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span> {task.title}</p>
+                        <p className="font-medium"><span className="text-slate-500" dir="ltr">{taskRef(task.id)}</span> {task.title}</p>
                         <p className="mt-0.5 text-xs text-slate-500">{task.client.name} · {task.taskType.name}</p>
                       </div>
                       <StatusBadge status={task.status} />

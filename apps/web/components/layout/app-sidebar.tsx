@@ -91,7 +91,7 @@ function navLinkClass(active: boolean, iconOnly: boolean) {
 }
 
 function navIconClass(active: boolean) {
-  return active ? 'shrink-0 text-brand-600' : 'shrink-0 text-slate-400';
+  return active ? 'shrink-0 text-brand-600' : 'shrink-0 text-slate-500';
 }
 
 type AppSidebarProps = {
