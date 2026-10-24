@@ -31,7 +31,7 @@ export default function Modal({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/45 backdrop-blur-[2px] sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-[2px] sm:items-center sm:p-4">
       <section
         role="dialog"
         aria-modal="true"

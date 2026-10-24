@@ -28,7 +28,7 @@ export default function BrandLogo({
       // The text beside it already names the firm; alone, the image must.
       alt={variant === "mark" ? BRAND_NAME : ""}
       priority={priority}
-      className={variant === "full" ? "h-10 w-auto" : "h-8 w-auto"}
+      className={`brand-mark ${variant === "full" ? "h-10 w-auto" : "h-8 w-auto"}`}
     />
   );
   // The navy ribbon would vanish into a dark background without the tile.

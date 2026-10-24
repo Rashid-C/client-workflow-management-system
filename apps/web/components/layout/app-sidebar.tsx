@@ -262,7 +262,7 @@ export default function AppSidebar({
             type="button"
             aria-label={t.nav.closeOverlay}
             onClick={() => onMobileOpenChange(false)}
-            className="absolute inset-0 bg-slate-950/40"
+            className="absolute inset-0 bg-black/50"
           />
 
           <aside
