@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { ArrowLeft, KeyRound, Pencil, Power } from "lucide-react";
+import { KeyRound, Pencil, Power } from "lucide-react";
 import EntityHistory from "@/components/audit/entity-history";
 import { useCurrentUser } from "@/components/auth/current-user";
 import EmployeeFormDialog from "@/components/employees/employee-form-dialog";
@@ -10,9 +10,9 @@ import Link from "@/components/i18n/link";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api, ApiError } from "@/lib/api";
 import { isSuperAdmin, roleStyle, type Employee, type Role } from "@/lib/people";
-
-const smallButton =
-  "inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium hover:bg-slate-100 disabled:opacity-50";
+import { DetailHeader, Page } from "@/components/ui/page";
+import { buttonClass } from "@/components/ui/styles";
+import Badge from "@/components/ui/badge";
 
 export default function EmployeeView({ employeeCode }: { employeeCode: string }) {
   const { user, can } = useCurrentUser();
@@ -83,42 +83,34 @@ export default function EmployeeView({ employeeCode }: { employeeCode: string })
   const none = <span className="text-slate-400">{e.notProvided}</span>;
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div className="min-w-0">
-          <Link href="/employees" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900">
-            <ArrowLeft size={15} className="rtl:rotate-180" aria-hidden="true" />
-            {e.back}
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-slate-400" dir="ltr">{employee.employeeCode}</span>
-            <span className={employee.status === "Active" ? "rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700" : "rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600"}>
-              {employee.status === "Active" ? e.active : e.inactive}
-            </span>
-          </div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{employee.name}</h1>
-          <p className="text-sm text-slate-500">{employee.designation}</p>
-        </div>
-        {manageable && (
-          <div className="flex shrink-0 flex-wrap gap-2">
-            {can("employees.edit") && (
-              <button type="button" onClick={() => setEditing(true)} disabled={!roles.length} className={smallButton}>
-                <Pencil size={14} aria-hidden="true" /> {e.edit}
-              </button>
-            )}
-            {can("employees.edit") && !self && (
-              <button type="button" onClick={() => setResetting(true)} className={smallButton}>
-                <KeyRound size={14} aria-hidden="true" /> {e.resetPassword}
-              </button>
-            )}
-            {can("employees.deactivate") && !self && (
-              <button type="button" onClick={() => void toggleStatus(employee)} disabled={busy} className={smallButton}>
-                <Power size={14} aria-hidden="true" /> {employee.status === "Active" ? e.markInactive : e.markActive}
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+    <Page size="narrow" className="space-y-6">
+      <DetailHeader
+        backHref="/employees"
+        backLabel={e.back}
+        meta={<>
+          <span className="text-slate-400" dir="ltr">{employee.employeeCode}</span>
+          <Badge tone={employee.status === "Active" ? "success" : "neutral"}>{employee.status === "Active" ? e.active : e.inactive}</Badge>
+        </>}
+        title={employee.name}
+        subtitle={employee.designation}
+        actions={manageable && <>
+          {can("employees.edit") && (
+            <button type="button" onClick={() => setEditing(true)} disabled={!roles.length} className={buttonClass("secondary", "sm")}>
+              <Pencil size={14} aria-hidden="true" /> {e.edit}
+            </button>
+          )}
+          {can("employees.edit") && !self && (
+            <button type="button" onClick={() => setResetting(true)} className={buttonClass("secondary", "sm")}>
+              <KeyRound size={14} aria-hidden="true" /> {e.resetPassword}
+            </button>
+          )}
+          {can("employees.deactivate") && !self && (
+            <button type="button" onClick={() => void toggleStatus(employee)} disabled={busy} className={buttonClass("secondary", "sm")}>
+              <Power size={14} aria-hidden="true" /> {employee.status === "Active" ? e.markInactive : e.markActive}
+            </button>
+          )}
+        </>}
+      />
 
       {notice && <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{notice}</p>}
       {actionError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{actionError}</p>}
@@ -163,7 +155,7 @@ export default function EmployeeView({ employeeCode }: { employeeCode: string })
       {resetting && (
         <ResetPasswordDialog employee={employee} path={path} onClose={() => setResetting(false)} onDone={(saved) => updated(saved, e.resetDone(saved.name))} />
       )}
-    </div>
+    </Page>
   );
 }
 
