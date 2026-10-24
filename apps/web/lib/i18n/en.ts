@@ -56,6 +56,8 @@ export const en = {
       "Keep client records, engagement stages, team assignments and time history connected in one place.",
     welcomeFooter: "Al Fath Accounts & Tax Solutions · Abu Dhabi",
     homeLink: "Al Fath home page",
+    backToWebsite: "Back to website",
+    rightsReserved: "All rights reserved.",
     email: "Email",
     password: "Password",
     signOut: "Sign out",
