@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Archive, ArchiveRestore, ArrowLeft, Ban, CheckCircle2, Pencil, Play, RotateCcw, UserRound } from "lucide-react";
+import { Archive, ArchiveRestore, Ban, CheckCircle2, Pencil, Play, RotateCcw, UserRound } from "lucide-react";
 import EntityHistory from "@/components/audit/entity-history";
 import { useCurrentUser } from "@/components/auth/current-user";
 import { useI18n } from "@/components/i18n/i18n-provider";
@@ -9,6 +9,9 @@ import Link from "@/components/i18n/link";
 import StageActionDialog, { type StageDialogKind } from "@/components/tasks/stage-action-dialog";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api, ApiError } from "@/lib/api";
+import { DetailHeader, Page } from "@/components/ui/page";
+import { buttonClass } from "@/components/ui/styles";
+import Badge from "@/components/ui/badge";
 import {
   canOnStage,
   earlierStagesDone,
@@ -19,9 +22,6 @@ import {
   type TaskDetail,
   type TaskStage,
 } from "@/lib/tasks";
-
-const smallButton =
-  "inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium hover:bg-slate-100 disabled:opacity-50";
 
 export default function TaskView({ taskId }: { taskId: number }) {
   const { user, can } = useCurrentUser();
@@ -100,35 +100,31 @@ export default function TaskView({ taskId }: { taskId: number }) {
   const completedCount = task.stages.filter((s) => s.status === "Completed").length;
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div className="min-w-0">
-          <Link href="/tasks" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900">
-            <ArrowLeft size={15} className="rtl:rotate-180" aria-hidden="true" />
-            {t.tasks.title}
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-slate-400" dir="ltr">{taskRef(task.id)}</span>
-            <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[task.status]}`}>{status(task.status)}</span>
-            {!live && <span className="rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs">{t.tasks.archived}</span>}
-          </div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{task.title}</h1>
-          <p className="text-sm text-slate-500">{task.client.name} · {task.taskType.name}</p>
-        </div>
-        <div className="flex shrink-0 gap-2">
+    <Page className="space-y-6">
+      <DetailHeader
+        backHref="/tasks"
+        backLabel={t.tasks.title}
+        meta={<>
+          <span className="text-slate-400" dir="ltr">{taskRef(task.id)}</span>
+          <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[task.status]}`}>{status(task.status)}</span>
+          {!live && <Badge>{t.tasks.archived}</Badge>}
+        </>}
+        title={task.title}
+        subtitle={<>{task.client.name} · {task.taskType.name}</>}
+        actions={<>
           {live && can("tasks.edit") && (
-            <button type="button" onClick={() => setEditing(true)} className={smallButton}>
+            <button type="button" onClick={() => setEditing(true)} className={buttonClass("secondary", "sm")}>
               <Pencil size={14} aria-hidden="true" /> {t.common.edit}
             </button>
           )}
           {can("tasks.delete") && (
-            <button type="button" onClick={() => void setArchived(live)} disabled={busy} className={smallButton}>
+            <button type="button" onClick={() => void setArchived(live)} disabled={busy} className={buttonClass("secondary", "sm")}>
               {live ? <Archive size={14} aria-hidden="true" /> : <ArchiveRestore size={14} aria-hidden="true" />}
               {live ? t.tasks.archive : t.tasks.restore}
             </button>
           )}
-        </div>
-      </div>
+        </>}
+      />
 
       {actionError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{actionError}</p>}
 
@@ -182,32 +178,32 @@ export default function TaskView({ taskId }: { taskId: number }) {
 
                       <div className="mt-2 flex flex-wrap gap-2">
                         {canWork && stage.status === "Pending" && ready && (
-                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "start")} className={`${smallButton} border-brand-600 bg-brand-600 text-white hover:bg-brand-700`}>
+                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "start")} className={buttonClass("primary", "sm")}>
                             <Play size={13} className="rtl:rotate-180" aria-hidden="true" /> {t.tasks.start}
                           </button>
                         )}
                         {canWork && stage.status === "In progress" && (
-                          <button type="button" onClick={() => setDialog({ kind: "complete", stage })} className={`${smallButton} border-brand-600 bg-brand-600 text-white hover:bg-brand-700`}>
+                          <button type="button" onClick={() => setDialog({ kind: "complete", stage })} className={buttonClass("primary", "sm")}>
                             <CheckCircle2 size={13} aria-hidden="true" /> {t.tasks.complete}
                           </button>
                         )}
                         {canWork && stage.status === "Blocked" && ready && (
-                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "resume")} className={`${smallButton} border-brand-600 bg-brand-600 text-white hover:bg-brand-700`}>
+                          <button type="button" disabled={busy} onClick={() => void quickAction(stage, "resume")} className={buttonClass("primary", "sm")}>
                             <Play size={13} className="rtl:rotate-180" aria-hidden="true" /> {t.tasks.resume}
                           </button>
                         )}
                         {canWork && (stage.status === "In progress" || (stage.status === "Pending" && ready)) && (
-                          <button type="button" onClick={() => setDialog({ kind: "block", stage })} className={smallButton}>
+                          <button type="button" onClick={() => setDialog({ kind: "block", stage })} className={buttonClass("secondary", "sm")}>
                             <Ban size={13} aria-hidden="true" /> {t.tasks.block}
                           </button>
                         )}
                         {canMove && stage.status !== "Completed" && (
-                          <button type="button" onClick={() => setDialog({ kind: "reassign", stage })} className={smallButton}>
+                          <button type="button" onClick={() => setDialog({ kind: "reassign", stage })} className={buttonClass("secondary", "sm")}>
                             <UserRound size={13} aria-hidden="true" /> {stage.assignee ? t.tasks.reassign : t.tasks.assign}
                           </button>
                         )}
                         {live && can("tasks.reopen") && stage.status === "Completed" && (
-                          <button type="button" onClick={() => setDialog({ kind: "reopen", stage })} className={smallButton}>
+                          <button type="button" onClick={() => setDialog({ kind: "reopen", stage })} className={buttonClass("secondary", "sm")}>
                             <RotateCcw size={13} aria-hidden="true" /> {t.tasks.reopen}
                           </button>
                         )}
@@ -278,7 +274,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
         />
       )}
       {editing && <EditTaskDialog task={task} onClose={() => setEditing(false)} onSaved={updated} />}
-    </div>
+    </Page>
   );
 }
 
