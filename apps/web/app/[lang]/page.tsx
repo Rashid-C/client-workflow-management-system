@@ -385,7 +385,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
       )}
 
       {/* Services */}
-      <section id="services" className="scroll-mt-20 border-t border-slate-200 px-5 py-20 sm:px-8 sm:py-24">
+      <section id="services" className="scroll-mt-20 border-t border-slate-200 bg-porcelain px-5 py-20 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="max-w-2xl">
             <p className={sectionEyebrow}>{copy.servicesEyebrow}</p>
@@ -416,7 +416,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             ))}
           </div>
 
-          <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+          <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
             <h3 className="text-sm font-semibold text-navy-950">{copy.moreHeading}</h3>
             <ul className="mt-4 flex flex-wrap gap-2.5">
               {copy.more.map((item) => (

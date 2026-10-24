@@ -41,8 +41,11 @@
   --color-navy-900: #0d2c4c;
   --color-navy-950: #061a2f;
 
-  /* The signed-in page background: a shade under white, so cards stand out. */
-  --color-canvas: #f4f6f8;
+  /* Porcelain: a warm, paper-like off-white for page backgrounds, so white
+     cards stand out. canvas is the signed-in app's background (dark mode
+     swaps it); porcelain is the public and sign-in pages'. */
+  --color-porcelain: #f8f7f4;
+  --color-canvas: #f8f7f4;
 }
 
 /* Browsers centre <th> by default and ignore the table's own alignment;

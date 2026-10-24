@@ -24,7 +24,7 @@ export default function AuthCard({
   const { t } = useI18n();
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-slate-950">
+    <div className="flex min-h-screen flex-col bg-porcelain text-slate-950">
       <header className="border-b border-slate-200/80 bg-white">
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8">
           <Link href="/" aria-label={t.auth.homeLink} className="shrink-0">
