@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, IBM_Plex_Sans_Arabic } from "next/font/google";
 import { notFound } from "next/navigation";
 import { I18nProvider } from "@/components/i18n/i18n-provider";
+import { DEVELOPER } from "@/lib/developer";
 import { directionOf, isLocale, LOCALES } from "@/lib/i18n/config";
 import "../globals.css";
 
@@ -30,6 +31,8 @@ export const metadata: Metadata = {
   },
   description:
     "Accounting, audit, tax and compliance services in Abu Dhabi, UAE.",
+  authors: [{ name: DEVELOPER.name, url: DEVELOPER.url }],
+  creator: DEVELOPER.name,
 };
 
 // Both languages are known at build time, so every page is prerendered once

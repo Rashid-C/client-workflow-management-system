@@ -19,6 +19,7 @@ import Link from "@/components/i18n/link";
 import MobileNavigation from "@/components/marketing/mobile-navigation";
 import SocialLinks, { type SocialNetwork } from "@/components/marketing/social-icons";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
+import { DEVELOPER } from "@/lib/developer";
 import { OFFICE } from "@/lib/office";
 import logo from "@/public/brand/alfath-logo.png";
 import accountingPhoto from "@/public/services/accounting.jpg";
@@ -145,6 +146,7 @@ const content = {
     ourServices: "Our services",
     contactUs: "Contact us",
     copyright: "All rights reserved.",
+    developedBy: "Designed & developed by",
     languageName: "العربية",
     languagePath: "/ar",
   },
@@ -237,6 +239,7 @@ const content = {
     ourServices: "خدماتنا",
     contactUs: "تواصل معنا",
     copyright: "جميع الحقوق محفوظة.",
+    developedBy: "تصميم وتطوير",
     languageName: "English",
     languagePath: "/en",
   },
@@ -547,7 +550,15 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         <div className="border-t border-white/10">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-8">
             <p>© 2026 {BRAND_NAME}. {copy.copyright}</p>
-            <Link href={copy.languagePath} className="w-fit transition hover:text-white">{copy.languageName}</Link>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <p>
+                {copy.developedBy}{" "}
+                <a href={DEVELOPER.url} target="_blank" rel="noopener" dir="ltr" className="font-medium text-slate-300 transition hover:text-white">
+                  {DEVELOPER.name}
+                </a>
+              </p>
+              <Link href={copy.languagePath} className="w-fit transition hover:text-white">{copy.languageName}</Link>
+            </div>
           </div>
         </div>
       </footer>
