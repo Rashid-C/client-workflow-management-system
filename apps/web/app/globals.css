@@ -40,6 +40,9 @@
   --color-navy-800: #12365c;
   --color-navy-900: #0d2c4c;
   --color-navy-950: #061a2f;
+
+  /* The signed-in page background: a shade under white, so cards stand out. */
+  --color-canvas: #f4f6f8;
 }
 
 html {
