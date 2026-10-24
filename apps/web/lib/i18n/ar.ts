@@ -111,6 +111,7 @@ export const ar: Dictionary = {
     notifications: "\u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a",
     workspaceBadge: "مساحة العمل",
     openNavigation: "فتح القائمة",
+    accountMenu: "قائمة الحساب",
     closeNavigation: "إغلاق القائمة",
     closeOverlay: "إغلاق القائمة",
     expand: "توسيع الشريط الجانبي",

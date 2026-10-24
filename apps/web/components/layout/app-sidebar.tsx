@@ -8,8 +8,6 @@ import {
   BriefcaseBusiness,
   CalendarDays,
   ChartNoAxesCombined,
-  ChevronLeft,
-  ChevronRight,
   ClipboardList,
   FileClock,
   FileText,
@@ -82,6 +80,20 @@ const navigation: { label: keyof Dictionary['nav']['groups']; items: NavItem[] }
   },
 ];
 
+function navLinkClass(active: boolean, iconOnly: boolean) {
+  return [
+    'flex min-h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors',
+    iconOnly ? 'justify-center px-0' : '',
+    active
+      ? 'bg-brand-50 font-medium text-brand-800'
+      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950',
+  ].join(' ');
+}
+
+function navIconClass(active: boolean) {
+  return active ? 'shrink-0 text-brand-600' : 'shrink-0 text-slate-400';
+}
+
 type AppSidebarProps = {
   collapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
@@ -110,6 +122,7 @@ export default function AppSidebar({
     .filter((group) => group.items.length > 0);
 
   const collapsed = controlledCollapsed ?? internalCollapsed;
+  const settingsActive = pathname === '/settings' || pathname.startsWith('/settings/');
 
   function toggleCollapsed() {
     const next = !collapsed;
@@ -123,7 +136,7 @@ export default function AppSidebar({
         {visibleNavigation.map((group) => (
           <section key={group.label}>
             {!collapsed || mobile ? (
-              <h2 className="mb-2 px-3 text-[10px] font-semibold tracking-[0.16em] text-slate-400">
+              <h2 className="mb-1.5 px-3 text-[10px] font-semibold tracking-[0.16em] text-slate-500">
                 {t.nav.groups[group.label]}
               </h2>
             ) : (
@@ -147,15 +160,9 @@ export default function AppSidebar({
                       onClick={() => onMobileOpenChange(false)}
                       title={!mobile && collapsed ? label : undefined}
                       aria-current={active ? 'page' : undefined}
-                      className={[
-                        'flex min-h-10 items-center gap-3 rounded-md px-3 text-sm transition-colors',
-                        collapsed && !mobile ? 'justify-center px-0' : '',
-                        active
-                          ? 'bg-slate-900 font-medium text-white'
-                          : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950',
-                      ].join(' ')}
+                      className={navLinkClass(active, collapsed && !mobile)}
                     >
-                      <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
+                      <Icon size={18} strokeWidth={1.8} aria-hidden="true" className={navIconClass(active)} />
                       {!collapsed || mobile ? <span>{label}</span> : null}
                     </Link>
                   </li>
@@ -177,7 +184,7 @@ export default function AppSidebar({
       aria-controls="app-sidebar-navigation"
       aria-expanded={!collapsed}
       title={collapsed ? t.nav.expand : t.nav.collapse}
-      className="hidden size-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-slate-50 text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 md:inline-flex"
+      className="hidden size-9 shrink-0 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 md:inline-flex"
     >
       {collapsed ? (
         <PanelLeftOpen size={17} className="rtl:rotate-180" aria-hidden="true" />
@@ -223,29 +230,28 @@ export default function AppSidebar({
             <Link
               href="/settings"
               title={collapsed ? t.nav.settings : undefined}
-              className={[
-                'flex min-h-10 items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100',
-                collapsed ? 'justify-center px-0' : '',
-              ].join(' ')}
+              aria-current={settingsActive ? 'page' : undefined}
+              className={navLinkClass(settingsActive, collapsed)}
             >
-              <Settings size={18} strokeWidth={1.8} aria-hidden="true" />
+              <Settings size={18} strokeWidth={1.8} aria-hidden="true" className={navIconClass(settingsActive)} />
               {!collapsed && <span>{t.nav.settings}</span>}
             </Link>
           )}
 
-          <button
-            type="button"
-            onClick={toggleCollapsed}
-            aria-label={collapsed ? t.nav.expand : t.nav.collapse}
-            className="mt-2 hidden min-h-9 w-full items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-900 lg:flex"
-          >
-            {collapsed ? (
-              <ChevronRight size={17} className="rtl:rotate-180" />
-            ) : (
-              <ChevronLeft size={17} className="rtl:rotate-180" />
-            )}
-            {!collapsed && <span className="ms-2 text-xs">{t.nav.collapse}</span>}
-          </button>
+          {/* Collapsed, the top button is hidden, so this is the way back. */}
+          {collapsed && (
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              aria-label={t.nav.expand}
+              title={t.nav.expand}
+              aria-controls="app-sidebar-navigation"
+              aria-expanded={false}
+              className="mt-2 flex min-h-9 w-full items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            >
+              <PanelLeftOpen size={17} className="rtl:rotate-180" aria-hidden="true" />
+            </button>
+          )}
         </div>
       </aside>
 
@@ -288,9 +294,10 @@ export default function AppSidebar({
                 <Link
                   href="/settings"
                   onClick={() => onMobileOpenChange(false)}
-                  className="flex min-h-10 items-center gap-3 rounded-md px-3 text-sm text-slate-600 hover:bg-slate-100"
+                  aria-current={settingsActive ? 'page' : undefined}
+                  className={navLinkClass(settingsActive, false)}
                 >
-                  <Settings size={18} />
+                  <Settings size={18} strokeWidth={1.8} aria-hidden="true" className={navIconClass(settingsActive)} />
                   {t.nav.settings}
                 </Link>
               )}

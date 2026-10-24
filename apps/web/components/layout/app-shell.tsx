@@ -13,7 +13,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
 
   return (
-    <div className="flex h-dvh min-h-0 overflow-hidden bg-slate-50 text-slate-900">
+    <div className="flex h-dvh min-h-0 overflow-hidden bg-canvas text-slate-900">
       {/* Dynamic routes need the pathname available per request. */}
       <Suspense
         fallback={

@@ -99,6 +99,7 @@ export const en = {
     notifications: "Notifications",
     workspaceBadge: "Workspace",
     openNavigation: "Open navigation",
+    accountMenu: "Account menu",
     closeNavigation: "Close navigation",
     closeOverlay: "Close navigation overlay",
     expand: "Expand sidebar",
