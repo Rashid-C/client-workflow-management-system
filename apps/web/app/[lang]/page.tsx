@@ -17,7 +17,7 @@ import {
 import BrandLogo, { BRAND_NAME } from "@/components/brand/brand-logo";
 import Link from "@/components/i18n/link";
 import MobileNavigation from "@/components/marketing/mobile-navigation";
-import SocialLinks, { type SocialNetwork } from "@/components/marketing/social-icons";
+import SocialLinks, { SocialIcon, type SocialNetwork } from "@/components/marketing/social-icons";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
 import { DEVELOPER } from "@/lib/developer";
 import { OFFICE } from "@/lib/office";
@@ -147,6 +147,7 @@ const content = {
     contactUs: "Contact us",
     copyright: "All rights reserved.",
     developedBy: "Designed & developed by",
+    developerLinkedIn: (name: string) => `${name} on LinkedIn`,
     languageName: "العربية",
     languagePath: "/ar",
   },
@@ -240,6 +241,7 @@ const content = {
     contactUs: "تواصل معنا",
     copyright: "جميع الحقوق محفوظة.",
     developedBy: "تصميم وتطوير",
+    developerLinkedIn: (name: string) => `${name} على LinkedIn`,
     languageName: "English",
     languagePath: "/en",
   },
@@ -551,10 +553,20 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-8">
             <p>© 2026 {BRAND_NAME}. {copy.copyright}</p>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              <p>
+              <p className="inline-flex items-center gap-1.5">
                 {copy.developedBy}{" "}
                 <a href={DEVELOPER.url} target="_blank" rel="noopener" dir="ltr" className="font-medium text-slate-300 transition hover:text-white">
                   {DEVELOPER.name}
+                </a>
+                <a
+                  href={DEVELOPER.linkedin}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={copy.developerLinkedIn(DEVELOPER.name)}
+                  title={copy.developerLinkedIn(DEVELOPER.name)}
+                  className="inline-flex size-6 items-center justify-center rounded text-slate-300 transition hover:text-white"
+                >
+                  <SocialIcon network="linkedin" size={14} />
                 </a>
               </p>
               <Link href={copy.languagePath} className="w-fit transition hover:text-white">{copy.languageName}</Link>

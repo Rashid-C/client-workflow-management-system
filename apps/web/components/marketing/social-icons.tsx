@@ -35,6 +35,25 @@ const ICONS: Record<SocialNetwork, { label: string; paths: ReactNode }> = {
   },
 };
 
+/** One network's mark, sized to sit in a line of text or a button. */
+export function SocialIcon({ network, size = 17 }: { network: SocialNetwork; size?: number }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {ICONS[network].paths}
+    </svg>
+  );
+}
+
 /** Links to the firm's social profiles; renders nothing for an empty list. */
 export default function SocialLinks({
   links,
@@ -55,19 +74,7 @@ export default function SocialLinks({
             aria-label={ICONS[network].label}
             className="flex size-9 items-center justify-center rounded-lg border border-white/15 text-slate-300 transition hover:border-brand-400 hover:text-white"
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="17"
-              height="17"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              {ICONS[network].paths}
-            </svg>
+            <SocialIcon network={network} />
           </a>
         </li>
       ))}
