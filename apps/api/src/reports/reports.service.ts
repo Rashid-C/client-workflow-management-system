@@ -115,6 +115,33 @@ export class ReportsService {
     }
   }
 
+  /**
+   * Choices for the report filter dropdowns, within the viewer's report scope.
+   * Own-scope viewers only ever see their own time, so they get no employee list.
+   */
+  async filters(viewer: AuthUser) {
+    const values: unknown[] = [];
+    const param = (value: unknown) => { values.push(value); return `$${values.length}`; };
+    const scope = clientScope(viewer, 'reports.view', param);
+    const own = ownScope(viewer, 'reports.view');
+    const [clients, employees, taskTypes] = await Promise.all([
+      this.pool.query<{ id: number; name: string; clientCode: string }>(
+        `SELECT c."id", c."name", c."clientCode" FROM "Client" c
+         WHERE c."isActive" AND ${scope} ORDER BY c."name"`,
+        values,
+      ),
+      own
+        ? Promise.resolve({ rows: [] })
+        : this.pool.query<{ id: number; name: string }>(
+            `SELECT "id", "name" FROM "Employee" WHERE "status" = 'Active' ORDER BY "name"`,
+          ),
+      this.pool.query<{ id: number; name: string }>(
+        `SELECT "id", "name" FROM "TaskType" WHERE "isActive" ORDER BY "name"`,
+      ),
+    ]);
+    return { clients: clients.rows, employees: employees.rows, taskTypes: taskTypes.rows };
+  }
+
   async exportXlsx(name: string, viewer: AuthUser, query: ReportQueryDto, language: ReportLanguage) {
     const data = await this.getReport(name, viewer, query, 'reports.export') as Record<string, unknown>;
     const workbook = new ExcelJS.Workbook();

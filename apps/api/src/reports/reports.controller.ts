@@ -9,6 +9,14 @@ import { ReportsService } from './reports.service.js';
 export class ReportsController {
   constructor(private readonly reports: ReportsService) {}
 
+  // Declared before ':name' so "filters" is not read as a report name.
+  @Version('1')
+  @RequirePermission('reports.view')
+  @Get('filters')
+  filters(@CurrentUser() user: AuthUser) {
+    return this.reports.filters(user);
+  }
+
   @Version('1')
   @RequirePermission('reports.export')
   @Get(':name.xlsx')

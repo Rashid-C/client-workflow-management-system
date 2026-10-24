@@ -54,6 +54,23 @@ describe('ReportsService', () => {
     expect(pool.query.mock.calls[1][1]).toEqual(['2026-06-01', '2026-07-01', 17]);
   });
 
+  it('scopes filter choices: own viewers get only their clients and no employee list', async () => {
+    const pool = { query: vi.fn().mockResolvedValue({ rows: [{ id: 1, name: 'X' }] }) };
+    const service = new ReportsService(pool as never);
+    const own = await service.filters(viewer({ 'reports.view': 'own' }));
+    const clientCall = pool.query.mock.calls.find(([sql]) => String(sql).includes('FROM "Client"'));
+    expect(clientCall?.[0]).toContain('c."accountManagerId" = $1');
+    expect(clientCall?.[1]).toEqual([17]);
+    expect(pool.query.mock.calls.some(([sql]) => String(sql).includes('FROM "Employee"'))).toBe(false);
+    expect(own.employees).toEqual([]);
+
+    pool.query.mockClear();
+    const all = await service.filters(viewer({ 'reports.view': 'all' }));
+    const allClients = pool.query.mock.calls.find(([sql]) => String(sql).includes('FROM "Client"'));
+    expect(allClients?.[0]).not.toContain('accountManagerId');
+    expect(all.employees).toEqual([{ id: 1, name: 'X' }]);
+  });
+
   it('uses the Dubai office date at midnight edges when choosing the current month', () => {
     expect(officeDateRange(new Date('2026-05-31T19:59:59.999Z'))).toEqual({
       from: '2026-05-01', to: '2026-05-31', today: '2026-05-31',
