@@ -8,6 +8,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import { inputClass, primaryButton } from "@/components/ui/modal";
 import Badge from "@/components/ui/badge";
+import { cardClass } from "@/components/ui/card";
 import StatCard from "@/components/ui/stat-card";
 import { api, ApiError } from "@/lib/api";
 import { roleStyle, type Employee, type Role } from "@/lib/people";
@@ -90,7 +91,7 @@ export default function EmployeeList() {
         ))}
       </section>
 
-      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+      <div className="space-y-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
           <div className="flex-1">
             <label htmlFor="employee-search" className={labelClass}>{t.common.search}</label>
@@ -134,67 +135,69 @@ export default function EmployeeList() {
         ) : loading ? (
           <p role="status" className="py-8 text-center text-sm text-slate-500">{e.loading}</p>
         ) : shown.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-slate-200 px-4 py-12 text-center">
+          <div className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-12 text-center">
             <p className="font-medium">{e.noneFound}</p>
             <p className="mt-1 text-sm text-slate-500">{e.noneFoundHint}</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-start text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-                  <th className="px-3 py-3 text-start font-medium">{e.employee}</th>
-                  <th className="px-3 py-3 text-start font-medium">{e.designation}</th>
-                  <th className="px-3 py-3 text-start font-medium">{e.roles}</th>
-                  <th className="px-3 py-3 text-start font-medium">{e.openStages}</th>
-                  <th className="px-3 py-3 text-start font-medium">{t.common.status}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {shown.map((person) => (
-                  <tr key={person.id} className="hover:bg-slate-50">
-                    <td className="px-3 py-3">
-                      <Link href={`/employees/${encodeURIComponent(person.employeeCode)}`} className="font-medium text-slate-900 hover:text-brand-700 hover:underline">
-                        {person.name}
-                      </Link>
-                      <p className="mt-0.5 text-xs text-slate-500">
-                        <span dir="ltr">{person.employeeCode}</span> · <span dir="ltr">{person.email}</span>
-                      </p>
-                    </td>
-                    <td className="px-3 py-3 text-slate-700">{person.designation}</td>
-                    <td className="px-3 py-3">
-                      <div className="flex flex-wrap gap-1">
-                        {person.roles.map((role) => (
-                          <span key={role.id} className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${roleStyle(role)}`}>{role.name}</span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-3 py-3 text-slate-700">{person.openStages || t.common.none}</td>
-                    <td className="px-3 py-3">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <Badge tone={person.status === "Active" ? "success" : "neutral"}>
-                          {person.status === "Active" ? e.active : e.inactive}
-                        </Badge>
-                        {person.isLocked && (
-                          <Badge tone="danger">
-                            <Lock size={11} aria-hidden="true" /> {e.locked}
-                          </Badge>
-                        )}
-                        {person.mustChangePassword && (
-                          <Badge tone="warning">
-                            <KeyRound size={11} aria-hidden="true" /> {e.tempPassword}
-                          </Badge>
-                        )}
-                      </div>
-                    </td>
+          <div>
+            <div className={`overflow-x-auto ${cardClass}`}>
+              <table className="w-full min-w-190 text-start text-sm">
+                <thead className="bg-slate-50">
+                  <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
+                    <th className="px-3 py-3 text-start font-medium">{e.employee}</th>
+                    <th className="px-3 py-3 text-start font-medium">{e.designation}</th>
+                    <th className="px-3 py-3 text-start font-medium">{e.roles}</th>
+                    <th className="px-3 py-3 text-start font-medium">{e.openStages}</th>
+                    <th className="px-3 py-3 text-start font-medium">{t.common.status}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {shown.map((person) => (
+                    <tr key={person.id} className="hover:bg-slate-50">
+                      <td className="px-3 py-3">
+                        <Link href={`/employees/${encodeURIComponent(person.employeeCode)}`} className="font-medium text-slate-900 hover:text-brand-700 hover:underline">
+                          {person.name}
+                        </Link>
+                        <p className="mt-0.5 text-xs text-slate-500">
+                          <span dir="ltr">{person.employeeCode}</span> · <span dir="ltr">{person.email}</span>
+                        </p>
+                      </td>
+                      <td className="px-3 py-3 text-slate-700">{person.designation}</td>
+                      <td className="px-3 py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {person.roles.map((role) => (
+                            <span key={role.id} className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${roleStyle(role)}`}>{role.name}</span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 text-slate-700">{person.openStages || t.common.none}</td>
+                      <td className="px-3 py-3">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <Badge tone={person.status === "Active" ? "success" : "neutral"}>
+                            {person.status === "Active" ? e.active : e.inactive}
+                          </Badge>
+                          {person.isLocked && (
+                            <Badge tone="danger">
+                              <Lock size={11} aria-hidden="true" /> {e.locked}
+                            </Badge>
+                          )}
+                          {person.mustChangePassword && (
+                            <Badge tone="warning">
+                              <KeyRound size={11} aria-hidden="true" /> {e.tempPassword}
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <p className="mt-3 text-sm text-slate-500">{e.count(shown.length, employees.length)}</p>
           </div>
         )}
-      </section>
+      </div>
 
       {creating && (
         <EmployeeFormDialog
