@@ -8,10 +8,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import { api, ApiError } from "@/lib/api";
 import { MAX_STAGES, type TaskType } from "@/lib/task-types";
-import { alertClass, labelClass } from "@/components/ui/styles";
-
-const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 disabled:bg-slate-50";
+import { alertClass, inputClass, labelClass } from "@/components/ui/styles";
 
 type DraftStage = { key: number; name: string };
 

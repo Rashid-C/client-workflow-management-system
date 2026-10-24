@@ -4,10 +4,7 @@ import { useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, safeNextPath, type CurrentUser } from "@/lib/api";
 import { withLocale } from "@/lib/i18n/config";
-import { alertClass, labelClass } from "@/components/ui/styles";
-
-const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
+import { alertClass, inputClass, labelClass, primaryButton } from "@/components/ui/styles";
 
 export default function LoginForm() {
   const { t, errorText } = useI18n();
@@ -85,7 +82,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={submitting || !email || !password}
-        className="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+        className={`${primaryButton} w-full`}
       >
         {submitting ? t.auth.signingIn : t.auth.signIn}
       </button>

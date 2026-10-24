@@ -4,12 +4,9 @@ import { useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, safeNextPath } from "@/lib/api";
 import { withLocale } from "@/lib/i18n/config";
-import { alertClass, labelClass } from "@/components/ui/styles";
+import { alertClass, inputClass, labelClass, primaryButton } from "@/components/ui/styles";
 
 const MIN_LENGTH = 12;
-
-const inputClass =
-  "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
 
 export default function ChangePasswordForm() {
   const { t, locale, errorText } = useI18n();
@@ -107,7 +104,7 @@ export default function ChangePasswordForm() {
       <button
         type="submit"
         disabled={submitting || !currentPassword || !newPassword}
-        className="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+        className={`${primaryButton} w-full`}
       >
         {submitting ? t.common.saving : t.auth.changePassword}
       </button>
