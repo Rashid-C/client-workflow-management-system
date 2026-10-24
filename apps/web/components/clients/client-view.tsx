@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { Archive, ArchiveRestore, ArrowLeft, Pencil } from "lucide-react";
+import { Archive, ArchiveRestore, Pencil } from "lucide-react";
 import EntityHistory from "@/components/audit/entity-history";
 import { useCurrentUser } from "@/components/auth/current-user";
 import ClientFormDialog from "@/components/clients/client-form-dialog";
@@ -13,9 +13,9 @@ import { api, ApiError } from "@/lib/api";
 import { monthName, type ClientDetail } from "@/lib/clients";
 import { intlLocale } from "@/lib/i18n/config";
 import { isOverdue, STATUS_STYLES, taskRef, type TaskListItem } from "@/lib/tasks";
-
-const smallButton =
-  "inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium hover:bg-slate-100 disabled:opacity-50";
+import { DetailHeader, Page } from "@/components/ui/page";
+import { buttonClass } from "@/components/ui/styles";
+import Badge from "@/components/ui/badge";
 
 export default function ClientView({ clientId }: { clientId: number }) {
   const { can } = useCurrentUser();
@@ -72,48 +72,34 @@ export default function ClientView({ clientId }: { clientId: number }) {
   const plain = (value: string | null) => value ?? none;
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div className="min-w-0">
-          <Link href="/clients" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900">
-            <ArrowLeft size={15} className="rtl:rotate-180" aria-hidden="true" />
-            {t.clients.backToClients}
-          </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-slate-400" dir="ltr">{client.clientCode}</span>
-            <span
-              className={
-                client.isActive
-                  ? "rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700"
-                  : "rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600"
-              }
-            >
-              {client.isActive ? t.clients.active : t.clients.archived}
-            </span>
-          </div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{client.name}</h1>
-          {(client.companyName || client.legalNameAr) && (
-            <p className="text-sm text-slate-500">
-              {client.companyName}
-              {client.companyName && client.legalNameAr && " · "}
-              {client.legalNameAr && <span dir="rtl">{client.legalNameAr}</span>}
-            </p>
-          )}
-        </div>
-        <div className="flex shrink-0 gap-2">
+    <Page className="space-y-6">
+      <DetailHeader
+        backHref="/clients"
+        backLabel={t.clients.backToClients}
+        meta={<>
+          <span className="text-slate-400" dir="ltr">{client.clientCode}</span>
+          <Badge tone={client.isActive ? "success" : "neutral"}>{client.isActive ? t.clients.active : t.clients.archived}</Badge>
+        </>}
+        title={client.name}
+        subtitle={(client.companyName || client.legalNameAr) && <>
+          {client.companyName}
+          {client.companyName && client.legalNameAr && " · "}
+          {client.legalNameAr && <span dir="rtl">{client.legalNameAr}</span>}
+        </>}
+        actions={<>
           {client.isActive && can("clients.edit") && (
-            <button type="button" onClick={() => setEditing(true)} className={smallButton}>
+            <button type="button" onClick={() => setEditing(true)} className={buttonClass("secondary", "sm")}>
               <Pencil size={14} aria-hidden="true" /> {t.common.edit}
             </button>
           )}
           {can("clients.delete") && (
-            <button type="button" onClick={() => setArchiving(true)} className={smallButton}>
+            <button type="button" onClick={() => setArchiving(true)} className={buttonClass("secondary", "sm")}>
               {client.isActive ? <Archive size={14} aria-hidden="true" /> : <ArchiveRestore size={14} aria-hidden="true" />}
               {client.isActive ? t.clients.archive : t.clients.restore}
             </button>
           )}
-        </div>
-      </div>
+        </>}
+      />
 
       {!client.isActive && (
         <p className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">{t.clients.archivedNotice}</p>
@@ -208,7 +194,7 @@ export default function ClientView({ clientId }: { clientId: number }) {
 
       {editing && <ClientFormDialog client={client} onClose={() => setEditing(false)} onSaved={updated} />}
       {archiving && <ArchiveDialog client={client} onClose={() => setArchiving(false)} onDone={updated} />}
-    </div>
+    </Page>
   );
 }
 
