@@ -7,6 +7,7 @@ import EmployeeFormDialog from "@/components/employees/employee-form-dialog";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import { inputClass, primaryButton } from "@/components/ui/modal";
+import StatCard from "@/components/ui/stat-card";
 import { api, ApiError } from "@/lib/api";
 import { roleStyle, type Employee, type Role } from "@/lib/people";
 
@@ -83,11 +84,7 @@ export default function EmployeeList() {
     <div className="space-y-6">
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-500">{stat.label}</p>
-            <p className="mt-3 text-3xl font-semibold tracking-tight">{loading ? "–" : stat.value}</p>
-            <p className="mt-1 text-xs text-slate-500">{stat.note}</p>
-          </div>
+          <StatCard key={stat.label} label={stat.label} value={loading ? "–" : stat.value} hint={stat.note} />
         ))}
       </section>
 

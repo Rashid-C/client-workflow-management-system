@@ -9,6 +9,9 @@ import MyWorkList from "@/components/dashboard/my-work-list";
 import { api } from "@/lib/api";
 import type { Dashboard } from "@/lib/dashboard";
 import { STATUS_STYLES, taskRef } from "@/lib/tasks";
+import { Page, PageHeader } from "@/components/ui/page";
+import StatCard from "@/components/ui/stat-card";
+import { primaryButton } from "@/components/ui/styles";
 
 export default function OverviewPage() {
   const { user, can } = useCurrentUser();
@@ -31,20 +34,17 @@ export default function OverviewPage() {
   const firstName = user?.name.split(" ")[0];
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {firstName ? t.dashboard.hello(firstName) : t.dashboard.title}
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">{t.dashboard.subtitle}</p>
-        </div>
-        {can("tasks.create") && (
-          <Link href="/tasks" className="inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700">
+    <Page className="space-y-6">
+      <PageHeader
+        eyebrow={t.nav.groups.workspace}
+        title={firstName ? t.dashboard.hello(firstName) : t.dashboard.title}
+        subtitle={t.dashboard.subtitle}
+        actions={can("tasks.create") && (
+          <Link href="/tasks" className={primaryButton}>
             {t.dashboard.goToTasks}
           </Link>
         )}
-      </header>
+      />
 
       {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
       {!data && !error && <p role="status" className="py-8 text-center text-sm text-slate-500">{t.common.loading}</p>}
@@ -52,17 +52,17 @@ export default function OverviewPage() {
       {data && (
         <>
           <section aria-label={t.dashboard.myWork} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <Tile icon={<CircleDot size={18} />} label={t.dashboard.inProgress} value={data.me.inProgress} />
-            <Tile icon={<ListTodo size={18} />} label={t.dashboard.pending} value={data.me.pending} />
-            <Tile icon={<AlertTriangle size={18} />} label={t.dashboard.blocked} value={data.me.blocked} danger={data.me.blocked > 0} />
-            <Tile icon={<Clock size={18} />} label={t.dashboard.loggedThisWeek} value={minutes(data.me.minutesThisWeek)} />
+            <Tile icon={<CircleDot size={16} />} label={t.dashboard.inProgress} value={data.me.inProgress} />
+            <Tile icon={<ListTodo size={16} />} label={t.dashboard.pending} value={data.me.pending} />
+            <Tile icon={<AlertTriangle size={16} />} label={t.dashboard.blocked} value={data.me.blocked} danger={data.me.blocked > 0} />
+            <Tile icon={<Clock size={16} />} label={t.dashboard.loggedThisWeek} value={minutes(data.me.minutesThisWeek)} />
           </section>
 
           <section aria-label={t.dashboard.title} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            {can("documents.view") && <Tile href="/documents?status=attention" icon={<FileWarning size={18} />} label={t.dashboard.documentsAttention} value={data.alerts.documents ?? 0} danger={(data.alerts.documents ?? 0) > 0} />}
-            {can("leads.view") && <Tile href="/leads?due=true" icon={<CalendarClock size={18} />} label={t.dashboard.leadFollowUpsDue} value={data.alerts.leadFollowUps ?? 0} danger={(data.alerts.leadFollowUps ?? 0) > 0} />}
-            {user?.permissions["daily_updates.view"] === "all" && <Tile href="/daily-updates" icon={<NotebookPen size={18} />} label={t.dashboard.dailyUpdatesMissing} value={data.alerts.missingDailyUpdates ?? 0} danger={(data.alerts.missingDailyUpdates ?? 0) > 0} />}
-            <Tile href="/notifications" icon={<Bell size={18} />} label={t.dashboard.unreadNotifications} value={data.alerts.unreadNotifications} danger={data.alerts.unreadNotifications > 0} />
+            {can("documents.view") && <Tile href="/documents?status=attention" icon={<FileWarning size={16} />} label={t.dashboard.documentsAttention} value={data.alerts.documents ?? 0} danger={(data.alerts.documents ?? 0) > 0} />}
+            {can("leads.view") && <Tile href="/leads?due=true" icon={<CalendarClock size={16} />} label={t.dashboard.leadFollowUpsDue} value={data.alerts.leadFollowUps ?? 0} danger={(data.alerts.leadFollowUps ?? 0) > 0} />}
+            {user?.permissions["daily_updates.view"] === "all" && <Tile href="/daily-updates" icon={<NotebookPen size={16} />} label={t.dashboard.dailyUpdatesMissing} value={data.alerts.missingDailyUpdates ?? 0} danger={(data.alerts.missingDailyUpdates ?? 0) > 0} />}
+            <Tile href="/notifications" icon={<Bell size={16} />} label={t.dashboard.unreadNotifications} value={data.alerts.unreadNotifications} danger={data.alerts.unreadNotifications > 0} />
           </section>
 
           <section aria-labelledby="my-work-title" className="rounded-xl border border-slate-200 bg-white">
@@ -152,7 +152,7 @@ export default function OverviewPage() {
           )}
         </>
       )}
-    </div>
+    </Page>
   );
 }
 
@@ -169,21 +169,7 @@ function Tile({
   href?: string;
   danger?: boolean;
 }) {
-  const body = (
-    <>
-      <div className="flex items-center gap-2 text-sm text-slate-500">
-        {icon && <span className="text-slate-400" aria-hidden="true">{icon}</span>}
-        {label}
-      </div>
-      <p className={`mt-2 text-2xl font-semibold tracking-tight ${danger ? "text-red-700" : ""}`}>{value}</p>
-    </>
-  );
-  const className = "block rounded-xl border border-slate-200 bg-white p-4";
-  return href ? (
-    <Link href={href} className={`${className} transition hover:border-slate-300 hover:shadow-sm`}>{body}</Link>
-  ) : (
-    <div className={className}>{body}</div>
-  );
+  return <StatCard label={label} value={value} icon={icon} href={href} tone={danger ? "danger" : "neutral"} />;
 }
 
 function WorkloadList({ rows }: { rows: NonNullable<Dashboard["team"]>["workload"] }) {

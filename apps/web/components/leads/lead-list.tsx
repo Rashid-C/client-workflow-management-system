@@ -7,6 +7,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import LeadFormDialog from "@/components/leads/lead-form-dialog";
 import { inputClass, primaryButton } from "@/components/ui/modal";
+import StatCard from "@/components/ui/stat-card";
 import { api } from "@/lib/api";
 import { formatAmount, LEAD_STATUSES, LEAD_STATUS_STYLES, type Lead, type LeadSummary } from "@/lib/leads";
 
@@ -60,30 +61,24 @@ export default function LeadList() {
       {summary && (
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
           {LEAD_STATUSES.map((value) => (
-            <button
+            <StatCard
               key={value}
-              type="button"
+              compact
+              label={l.statuses[value]}
+              value={summary.byStatus[value]}
               onClick={() => setStatus((current) => (current === value ? "" : value))}
-              aria-pressed={status === value}
-              className={`rounded-xl border bg-white p-3 text-start transition hover:border-brand-300 ${status === value ? "border-brand-500 ring-2 ring-brand-100" : "border-slate-200"}`}
-            >
-              <p className="text-xs text-slate-500">{l.statuses[value]}</p>
-              <p className="mt-1 text-2xl font-semibold">{summary.byStatus[value]}</p>
-            </button>
+              active={status === value}
+            />
           ))}
-          <button
-            type="button"
+          <StatCard
+            compact
+            label={l.followUpsDue}
+            value={summary.followUpsDue}
+            tone={summary.followUpsDue ? "danger" : "neutral"}
             onClick={() => setDue((current) => !current)}
-            aria-pressed={due}
-            className={`rounded-xl border bg-white p-3 text-start transition hover:border-brand-300 ${due ? "border-brand-500 ring-2 ring-brand-100" : "border-slate-200"}`}
-          >
-            <p className="text-xs text-slate-500">{l.followUpsDue}</p>
-            <p className={`mt-1 text-2xl font-semibold ${summary.followUpsDue ? "text-red-700" : ""}`}>{summary.followUpsDue}</p>
-          </button>
-          <div className="rounded-xl border border-slate-200 bg-white p-3">
-            <p className="text-xs text-slate-500">{l.openValue}</p>
-            <p className="mt-1 text-lg font-semibold" dir="ltr">{l.aed(formatAmount(summary.openValue))}</p>
-          </div>
+            active={due}
+          />
+          <StatCard compact label={l.openValue} value={<span dir="ltr">{l.aed(formatAmount(summary.openValue))}</span>} tone="brand" />
         </section>
       )}
 

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { CircleAlert, CircleCheck, Clock, Infinity as InfinityIcon, Pencil, Plus, Trash2 } from "lucide-react";
 import { useCurrentUser } from "@/components/auth/current-user";
 import DocumentFormDialog from "@/components/documents/document-form-dialog";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import Link from "@/components/i18n/link";
 import { inputClass, primaryButton } from "@/components/ui/modal";
+import StatCard from "@/components/ui/stat-card";
 import { api } from "@/lib/api";
 import {
   DOCUMENT_STATUSES,
@@ -91,27 +92,26 @@ export default function DocumentList({ clientId, documentId, initialStatus = "" 
     doc.daysLeft === null ? null : doc.daysLeft < 0 ? d.daysAgo(-doc.daysLeft) : d.daysLeft(doc.daysLeft);
 
   const tiles = summary && [
-    { status: "Expired", label: d.expired, value: summary.Expired, tone: "text-red-700" },
-    { status: "Expiring soon", label: d.expiringSoon, value: summary["Expiring soon"], tone: "text-amber-700" },
-    { status: "Valid", label: d.valid, value: summary.Valid, tone: "text-emerald-700" },
-    { status: "No expiry", label: d.noExpiry, value: summary["No expiry"], tone: "text-slate-700" },
-  ];
+    { status: "Expired", label: d.expired, value: summary.Expired, tone: "danger", icon: <CircleAlert size={16} /> },
+    { status: "Expiring soon", label: d.expiringSoon, value: summary["Expiring soon"], tone: "warning", icon: <Clock size={16} /> },
+    { status: "Valid", label: d.valid, value: summary.Valid, tone: "success", icon: <CircleCheck size={16} /> },
+    { status: "No expiry", label: d.noExpiry, value: summary["No expiry"], tone: "neutral", icon: <InfinityIcon size={16} /> },
+  ] as const;
 
   return (
     <div className="space-y-4">
       {tiles && (
         <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {tiles.map((tile) => (
-            <button
+            <StatCard
               key={tile.status}
-              type="button"
+              label={tile.label}
+              value={tile.value}
+              icon={tile.icon}
+              tone={tile.value > 0 ? tile.tone : "neutral"}
               onClick={() => setStatus((current) => (current === tile.status ? "" : tile.status))}
-              aria-pressed={status === tile.status}
-              className={`rounded-xl border bg-white p-4 text-start transition hover:border-brand-300 ${status === tile.status ? "border-brand-500 ring-2 ring-brand-100" : "border-slate-200"}`}
-            >
-              <p className="text-sm text-slate-500">{tile.label}</p>
-              <p className={`mt-2 text-3xl font-semibold tracking-tight ${tile.tone}`}>{tile.value}</p>
-            </button>
+              active={status === tile.status}
+            />
           ))}
         </section>
       )}
