@@ -6,7 +6,7 @@ import TimeInput from "@/components/tasks/time-input";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { officeToday, type Assignable, type TaskDetail, type TaskStage } from "@/lib/tasks";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 export type StageDialogKind = "complete" | "block" | "reassign" | "reopen";
 
@@ -190,7 +190,7 @@ export default function StageActionDialog({
         </div>
       )}
 
-      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
     </Modal>
   );
 }

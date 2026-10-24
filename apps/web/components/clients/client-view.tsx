@@ -14,7 +14,7 @@ import { monthName, type ClientDetail } from "@/lib/clients";
 import { intlLocale } from "@/lib/i18n/config";
 import { isOverdue, STATUS_STYLES, taskRef, type TaskListItem } from "@/lib/tasks";
 import { DetailHeader, Page } from "@/components/ui/page";
-import { buttonClass, labelClass } from "@/components/ui/styles";
+import { alertClass, buttonClass, labelClass } from "@/components/ui/styles";
 import Badge from "@/components/ui/badge";
 
 export default function ClientView({ clientId }: { clientId: number }) {
@@ -59,7 +59,7 @@ export default function ClientView({ clientId }: { clientId: number }) {
   if (error) {
     return (
       <div className="p-6">
-        <p role="alert" className="text-sm text-red-700">{error}</p>
+        <p role="alert" className={alertClass}>{error}</p>
         <Link href="/clients" className="mt-3 inline-block text-sm text-brand-700 hover:underline">{t.clients.backToClients}</Link>
       </div>
     );
@@ -262,7 +262,7 @@ function ArchiveDialog({
       }
     >
       <p className="text-sm text-slate-600">{archiving ? t.clients.archiveHint : t.clients.restoreHint}</p>
-      {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
       <div>
         <label htmlFor="client-archive-reason" className={labelClass}>{t.clients.reason}</label>
         <textarea

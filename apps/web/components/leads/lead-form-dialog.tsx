@@ -14,7 +14,7 @@ import {
   type OwnerOption,
   type ServiceKey,
 } from "@/lib/leads";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 /** Add a lead, or edit `lead` when given. */
 export default function LeadFormDialog({
@@ -106,7 +106,7 @@ export default function LeadFormDialog({
       }
     >
       <form id="lead-form" onSubmit={save} className="space-y-4">
-        {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className={alertClass}>{error}</p>}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {field("lead-name", `${l.name} *`, <input id="lead-name" required maxLength={150} value={form.name} onChange={set("name")} className={inputClass} />, undefined, true)}
           {field("lead-contact", l.contactName, <input id="lead-contact" maxLength={150} value={form.contactName} onChange={set("contactName")} className={inputClass} />)}

@@ -6,6 +6,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import { api } from "@/lib/api";
 import type { Dashboard } from "@/lib/dashboard";
 import { Page, PageHeader } from "@/components/ui/page";
+import { alertClass } from "@/components/ui/styles";
 
 export default function MyWorkPage() {
   const { t, minutes, errorText } = useI18n();
@@ -32,7 +33,7 @@ export default function MyWorkPage() {
         subtitle={<>{t.myWork.subtitle}{data && t.myWork.loggedThisWeek(minutes(data.me.minutesThisWeek))}</>}
       />
 
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
 
       <section className="rounded-xl border border-slate-200 bg-white">
         {data ? (

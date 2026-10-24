@@ -10,7 +10,7 @@ import StageActionDialog, { type StageDialogKind } from "@/components/tasks/stag
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api, ApiError } from "@/lib/api";
 import { DetailHeader, Page } from "@/components/ui/page";
-import { buttonClass, labelClass } from "@/components/ui/styles";
+import { alertClass, buttonClass, labelClass } from "@/components/ui/styles";
 import Badge from "@/components/ui/badge";
 import {
   canOnStage,
@@ -89,7 +89,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
   if (error) {
     return (
       <div className="p-6">
-        <p role="alert" className="text-sm text-red-700">{error}</p>
+        <p role="alert" className={alertClass}>{error}</p>
         <Link href="/tasks" className="mt-3 inline-block text-sm text-brand-700 hover:underline">{t.tasks.backToTasks}</Link>
       </div>
     );
@@ -126,7 +126,7 @@ export default function TaskView({ taskId }: { taskId: number }) {
         </>}
       />
 
-      {actionError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{actionError}</p>}
+      {actionError && <p role="alert" className={alertClass}>{actionError}</p>}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_18rem]">
         <section aria-labelledby="stages-title" className="rounded-xl border border-slate-200 bg-white">
@@ -350,7 +350,7 @@ function EditTaskDialog({
         <label htmlFor="edit-description" className={labelClass}>{t.tasks.description}</label>
         <textarea id="edit-description" rows={4} maxLength={2000} value={description} onChange={(event) => setDescription(event.target.value)} className={inputClass} />
       </div>
-      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
     </Modal>
   );
 }

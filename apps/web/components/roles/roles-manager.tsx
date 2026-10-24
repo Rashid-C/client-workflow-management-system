@@ -7,7 +7,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import type { PermissionInfo, PermissionScope, Role } from "@/lib/people";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 type Draft = { name: string; description: string; grants: Map<string, PermissionScope> };
 
@@ -182,7 +182,7 @@ export default function RolesManager() {
           {role?.isSystem && <p className="rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm text-purple-800">{r.systemNote}</p>}
           {!canManage && !role?.isSystem && <p className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">{r.viewOnly}</p>}
           {notice && <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{notice}</p>}
-          {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+          {error && <p role="alert" className={alertClass}>{error}</p>}
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>

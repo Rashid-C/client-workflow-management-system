@@ -6,7 +6,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { todayInBrowserTimeZone, type Employee, type Role } from "@/lib/people";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 const MIN_PASSWORD = 12;
 
@@ -92,7 +92,7 @@ export default function EmployeeFormDialog({
       }
     >
       <form id="employee-form" onSubmit={save} className="space-y-4">
-        {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className={alertClass}>{error}</p>}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>

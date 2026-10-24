@@ -9,7 +9,7 @@ import Link, { useRouter } from "@/components/i18n/link";
 import NewTaskDialog from "@/components/tasks/new-task-dialog";
 import { inputClass } from "@/components/ui/modal";
 import { Page, PageHeader } from "@/components/ui/page";
-import { labelClass, primaryButton } from "@/components/ui/styles";
+import { alertClass, labelClass, primaryButton } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import {
   isOverdue,
@@ -156,7 +156,7 @@ export default function TasksList() {
           </label>
         </div>
 
-        {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className={alertClass}>{error}</p>}
 
         {loading ? (
           <p role="status" className="py-8 text-center text-sm text-slate-500">{t.tasks.loading}</p>

@@ -10,7 +10,7 @@ import {
   type AuditFilters,
   type AuditLogEntry,
 } from "@/lib/audit";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
@@ -127,7 +127,7 @@ export default function ActivityPage() {
         </div>
 
         {error && (
-          <p role="alert" className="text-sm text-red-700">
+          <p role="alert" className={alertClass}>
             {error}
           </p>
         )}

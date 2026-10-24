@@ -8,7 +8,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import { api, ApiError } from "@/lib/api";
 import { MAX_STAGES, type TaskType } from "@/lib/task-types";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 disabled:bg-slate-50";
@@ -156,7 +156,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
   if (loadError) {
     return (
       <div className="p-6">
-        <p role="alert" className="text-sm text-red-700">{loadError}</p>
+        <p role="alert" className={alertClass}>{loadError}</p>
         <Link href="/task-types" className="mt-3 inline-block text-sm text-brand-700 hover:underline">
           {t.taskTypes.back}
         </Link>
@@ -315,7 +315,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
         </section>
 
         {error && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className={alertClass}>
             {error}
           </p>
         )}

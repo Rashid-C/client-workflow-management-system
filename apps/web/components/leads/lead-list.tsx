@@ -10,7 +10,7 @@ import { inputClass, primaryButton } from "@/components/ui/modal";
 import StatCard from "@/components/ui/stat-card";
 import { api } from "@/lib/api";
 import { formatAmount, LEAD_STATUSES, LEAD_STATUS_STYLES, type Lead, type LeadSummary } from "@/lib/leads";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 export default function LeadList() {
   const router = useRouter();
@@ -95,7 +95,7 @@ export default function LeadList() {
         )}
       </div>
 
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
       {loading ? (
         <p role="status" className="py-6 text-sm text-slate-500">{l.loading}</p>
       ) : leads.length === 0 ? (

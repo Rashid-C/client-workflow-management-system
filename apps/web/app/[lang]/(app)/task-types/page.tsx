@@ -8,7 +8,7 @@ import Link from "@/components/i18n/link";
 import { api } from "@/lib/api";
 import type { TaskType } from "@/lib/task-types";
 import { Page, PageHeader } from "@/components/ui/page";
-import { primaryButton } from "@/components/ui/styles";
+import { alertClass, primaryButton } from "@/components/ui/styles";
 
 export default function TaskTypesPage() {
   const { can } = useCurrentUser();
@@ -65,7 +65,7 @@ export default function TaskTypesPage() {
       </label>
 
       {error && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className={alertClass}>
           {error}
         </p>
       )}

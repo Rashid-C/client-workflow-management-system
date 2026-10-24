@@ -6,7 +6,7 @@ import { useCurrentUser } from "@/components/auth/current-user";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { inputClass, primaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 type Person = { id: number; name: string; designation: string };
 
@@ -109,7 +109,7 @@ function MyUpdate() {
       )}
 
       <form onSubmit={save} className="mt-4 space-y-3">
-        {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className={alertClass}>{error}</p>}
         {notice && <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">{notice}</p>}
         <div>
           <label htmlFor="du-done" className={labelClass}>{d.done} *</label>

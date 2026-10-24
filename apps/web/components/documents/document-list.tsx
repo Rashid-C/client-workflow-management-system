@@ -8,7 +8,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link from "@/components/i18n/link";
 import { inputClass, primaryButton } from "@/components/ui/modal";
 import StatCard from "@/components/ui/stat-card";
-import { buttonClass, labelClass } from "@/components/ui/styles";
+import { alertClass, buttonClass, labelClass } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import {
   DOCUMENT_STATUSES,
@@ -157,7 +157,7 @@ export default function DocumentList({ clientId, documentId, initialStatus = "",
         </div>
       )}
 
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
       {loading ? (
         <p role="status" className="py-6 text-sm text-slate-500">{d.loading}</p>
       ) : documents.length === 0 ? (

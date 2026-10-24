@@ -11,7 +11,7 @@ import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/
 import { api, ApiError } from "@/lib/api";
 import { isSuperAdmin, roleStyle, type Employee, type Role } from "@/lib/people";
 import { DetailHeader, Page } from "@/components/ui/page";
-import { buttonClass, labelClass } from "@/components/ui/styles";
+import { alertClass, buttonClass, labelClass } from "@/components/ui/styles";
 import Badge from "@/components/ui/badge";
 
 export default function EmployeeView({ employeeCode }: { employeeCode: string }) {
@@ -70,7 +70,7 @@ export default function EmployeeView({ employeeCode }: { employeeCode: string })
   if (error) {
     return (
       <div className="p-6">
-        <p role="alert" className="text-sm text-red-700">{error}</p>
+        <p role="alert" className={alertClass}>{error}</p>
         <Link href="/employees" className="mt-3 inline-block text-sm text-brand-700 hover:underline">{e.back}</Link>
       </div>
     );
@@ -113,7 +113,7 @@ export default function EmployeeView({ employeeCode }: { employeeCode: string })
       />
 
       {notice && <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{notice}</p>}
-      {actionError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{actionError}</p>}
+      {actionError && <p role="alert" className={alertClass}>{actionError}</p>}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card title={e.sections.details}>
@@ -218,7 +218,7 @@ function ResetPasswordDialog({
       }
     >
       <p className="text-sm text-slate-600">{e.resetHint}</p>
-      {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
       <div>
         <label htmlFor="reset-password" className={labelClass}>{e.temporaryPassword}</label>
         <input

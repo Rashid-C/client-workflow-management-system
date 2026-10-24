@@ -8,7 +8,7 @@ import { inputClass } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { taskRef, type PersonRef } from "@/lib/tasks";
 import { Page, PageHeader } from "@/components/ui/page";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 type TimeLogEntry = {
   id: number;
@@ -136,7 +136,7 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
         </div>
       </section>
 
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_16rem]">
         <section aria-labelledby="entries-title" className="rounded-xl border border-slate-200 bg-white">

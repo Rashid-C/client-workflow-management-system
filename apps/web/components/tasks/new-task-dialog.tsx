@@ -7,7 +7,7 @@ import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/
 import { api } from "@/lib/api";
 import type { TaskType } from "@/lib/task-types";
 import type { Assignable, TaskDetail } from "@/lib/tasks";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 type ClientOption = { id: number; name: string; clientCode: string; isActive: boolean };
 
@@ -103,7 +103,7 @@ export default function NewTaskDialog({
         </>
       }
     >
-      {loadError && <p role="alert" className="text-sm text-red-700">{loadError}</p>}
+      {loadError && <p role="alert" className={alertClass}>{loadError}</p>}
 
       <div>
         <label htmlFor="task-title" className={labelClass}>{t.tasks.titleLabel} *</label>
@@ -196,7 +196,7 @@ export default function NewTaskDialog({
         </fieldset>
       )}
 
-      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
     </Modal>
   );
 }

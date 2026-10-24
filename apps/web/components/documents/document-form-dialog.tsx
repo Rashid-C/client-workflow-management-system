@@ -6,7 +6,7 @@ import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/
 import { api } from "@/lib/api";
 import type { ClientSummary } from "@/lib/clients";
 import { DOCUMENT_TYPES, type DocumentRecord, type DocumentType } from "@/lib/documents";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 /** Add a document (for `clientId` when given), or edit `document`. */
 export default function DocumentFormDialog({
@@ -105,7 +105,7 @@ export default function DocumentFormDialog({
       }
     >
       <form id="document-form" onSubmit={save} className="space-y-4">
-        {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className={alertClass}>{error}</p>}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {!fixedClient &&
             field("doc-client", `${d.client} *`, (

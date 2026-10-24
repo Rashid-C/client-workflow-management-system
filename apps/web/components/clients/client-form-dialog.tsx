@@ -19,7 +19,7 @@ import {
   type ClientValues,
 } from "@/lib/clients";
 import { intlLocale } from "@/lib/i18n/config";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 type Key = keyof ClientValues;
 /** The form holds text for every field; it becomes typed values on save. */
@@ -185,7 +185,7 @@ export default function ClientFormDialog({
       }
     >
       <form id="client-form" onSubmit={save} noValidate className="space-y-5">
-        {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className={alertClass}>{error}</p>}
 
         {section(t.clients.sections.company, <>
           {field("name", `${f.name} *`, text("name"), { hint: f.nameHint, wide: true })}

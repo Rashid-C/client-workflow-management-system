@@ -11,7 +11,7 @@ import Badge from "@/components/ui/badge";
 import StatCard from "@/components/ui/stat-card";
 import { api, ApiError } from "@/lib/api";
 import { roleStyle, type Employee, type Role } from "@/lib/people";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 export default function EmployeeList() {
   const router = useRouter();
@@ -122,7 +122,7 @@ export default function EmployeeList() {
 
         {error ? (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-            <p role="alert" className="text-sm text-red-700">{error}</p>
+            <p role="alert" className={alertClass}>{error}</p>
             <button type="button" onClick={() => {
                 setError("");
                 setLoading(true);

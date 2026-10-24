@@ -12,7 +12,7 @@ import { api, ApiError } from "@/lib/api";
 import { formatAmount, FOLLOW_UP_KINDS, LEAD_STATUS_STYLES, type FollowUpKind, type LeadDetail } from "@/lib/leads";
 import { todayInBrowserTimeZone } from "@/lib/people";
 import { DetailHeader, Page } from "@/components/ui/page";
-import { buttonClass } from "@/components/ui/styles";
+import { alertClass, buttonClass } from "@/components/ui/styles";
 
 export default function LeadView({ leadId }: { leadId: number }) {
   const router = useRouter();
@@ -71,7 +71,7 @@ export default function LeadView({ leadId }: { leadId: number }) {
   if (error) {
     return (
       <div className="p-6">
-        <p role="alert" className="text-sm text-red-700">{error}</p>
+        <p role="alert" className={alertClass}>{error}</p>
         <Link href="/leads" className="mt-3 inline-block text-sm text-brand-700 hover:underline">{l.back}</Link>
       </div>
     );
@@ -114,7 +114,7 @@ export default function LeadView({ leadId }: { leadId: number }) {
           <Link href={`/clients/${lead.client.id}`} className="font-medium underline">{l.openClient}</Link>
         </p>
       )}
-      {actionError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{actionError}</p>}
+      {actionError && <p role="alert" className={alertClass}>{actionError}</p>}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1.2fr]">
         <section className="rounded-xl border border-slate-200 bg-white p-4">
@@ -216,7 +216,7 @@ function FollowUpForm({ lead, onSaved }: { lead: LeadDetail; onSaved: (lead: Lea
   return (
     <form onSubmit={save} className="mt-3 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{l.logFollowUp}</p>
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div>
           <label htmlFor="fu-kind" className="text-xs font-medium">{l.kind}</label>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, safeNextPath } from "@/lib/api";
 import { withLocale } from "@/lib/i18n/config";
-import { labelClass } from "@/components/ui/styles";
+import { alertClass, labelClass } from "@/components/ui/styles";
 
 const MIN_LENGTH = 12;
 
@@ -99,7 +99,7 @@ export default function ChangePasswordForm() {
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className={alertClass}>
           {error}
         </p>
       )}

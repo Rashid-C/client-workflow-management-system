@@ -11,7 +11,7 @@ import type { Dashboard } from "@/lib/dashboard";
 import { STATUS_STYLES, taskRef } from "@/lib/tasks";
 import { Page, PageHeader } from "@/components/ui/page";
 import StatCard from "@/components/ui/stat-card";
-import { primaryButton } from "@/components/ui/styles";
+import { alertClass, primaryButton } from "@/components/ui/styles";
 
 export default function OverviewPage() {
   const { user, can } = useCurrentUser();
@@ -46,7 +46,7 @@ export default function OverviewPage() {
         )}
       />
 
-      {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className={alertClass}>{error}</p>}
       {!data && !error && <p role="status" className="py-8 text-center text-sm text-slate-500">{t.common.loading}</p>}
 
       {data && (
