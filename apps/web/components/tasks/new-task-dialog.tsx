@@ -7,6 +7,7 @@ import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/
 import { api } from "@/lib/api";
 import type { TaskType } from "@/lib/task-types";
 import type { Assignable, TaskDetail } from "@/lib/tasks";
+import { labelClass } from "@/components/ui/styles";
 
 type ClientOption = { id: number; name: string; clientCode: string; isActive: boolean };
 
@@ -105,7 +106,7 @@ export default function NewTaskDialog({
       {loadError && <p role="alert" className="text-sm text-red-700">{loadError}</p>}
 
       <div>
-        <label htmlFor="task-title" className="text-sm font-medium">{t.tasks.titleLabel} *</label>
+        <label htmlFor="task-title" className={labelClass}>{t.tasks.titleLabel} *</label>
         <input
           id="task-title"
           value={title}
@@ -118,7 +119,7 @@ export default function NewTaskDialog({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="task-client" className="text-sm font-medium">{t.common.client} *</label>
+          <label htmlFor="task-client" className={labelClass}>{t.common.client} *</label>
           <select id="task-client" value={clientId} onChange={(event) => setClientId(event.target.value)} className={inputClass}>
             <option value="">{t.tasks.chooseClient}</option>
             {clients.map((client) => (
@@ -129,7 +130,7 @@ export default function NewTaskDialog({
           </select>
         </div>
         <div>
-          <label htmlFor="task-type" className="text-sm font-medium">{t.tasks.taskType} *</label>
+          <label htmlFor="task-type" className={labelClass}>{t.tasks.taskType} *</label>
           <select
             id="task-type"
             value={typeId}
@@ -148,12 +149,12 @@ export default function NewTaskDialog({
       </div>
 
       <div>
-        <label htmlFor="task-due" className="text-sm font-medium">{t.tasks.dueDate}</label>
+        <label htmlFor="task-due" className={labelClass}>{t.tasks.dueDate}</label>
         <input id="task-due" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} className={inputClass} />
       </div>
 
       <div>
-        <label htmlFor="task-description" className="text-sm font-medium">{t.tasks.description}</label>
+        <label htmlFor="task-description" className={labelClass}>{t.tasks.description}</label>
         <textarea
           id="task-description"
           rows={3}

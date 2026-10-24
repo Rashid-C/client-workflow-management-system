@@ -9,7 +9,7 @@ import Link, { useRouter } from "@/components/i18n/link";
 import NewTaskDialog from "@/components/tasks/new-task-dialog";
 import { inputClass } from "@/components/ui/modal";
 import { Page, PageHeader } from "@/components/ui/page";
-import { primaryButton } from "@/components/ui/styles";
+import { labelClass, primaryButton } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import {
   isOverdue,
@@ -115,7 +115,7 @@ export default function TasksList() {
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
           <div className="md:col-span-2">
-            <label htmlFor="task-search" className="text-sm font-medium">{t.common.search}</label>
+            <label htmlFor="task-search" className={labelClass}>{t.common.search}</label>
             <input
               id="task-search"
               value={search}
@@ -125,7 +125,7 @@ export default function TasksList() {
             />
           </div>
           <div>
-            <label htmlFor="task-status" className="text-sm font-medium">{t.common.status}</label>
+            <label htmlFor="task-status" className={labelClass}>{t.common.status}</label>
             <select id="task-status" value={status} onChange={(event) => filterChanged(() => setStatus(event.target.value))} className={inputClass}>
               <option value="">{t.tasks.allStatuses}</option>
               {WORK_STATUSES.map((s) => <option key={s} value={s}>{t.status[s]}</option>)}
@@ -133,7 +133,7 @@ export default function TasksList() {
           </div>
           {canFilterPeople ? (
             <div>
-              <label htmlFor="task-assignee" className="text-sm font-medium">{t.tasks.assignee}</label>
+              <label htmlFor="task-assignee" className={labelClass}>{t.tasks.assignee}</label>
               <select id="task-assignee" value={assigneeId} onChange={(event) => filterChanged(() => setAssigneeId(event.target.value))} className={inputClass}>
                 <option value="">{t.common.anyone}</option>
                 {people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}

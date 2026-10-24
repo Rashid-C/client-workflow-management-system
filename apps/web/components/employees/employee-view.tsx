@@ -11,7 +11,7 @@ import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/
 import { api, ApiError } from "@/lib/api";
 import { isSuperAdmin, roleStyle, type Employee, type Role } from "@/lib/people";
 import { DetailHeader, Page } from "@/components/ui/page";
-import { buttonClass } from "@/components/ui/styles";
+import { buttonClass, labelClass } from "@/components/ui/styles";
 import Badge from "@/components/ui/badge";
 
 export default function EmployeeView({ employeeCode }: { employeeCode: string }) {
@@ -220,7 +220,7 @@ function ResetPasswordDialog({
       <p className="text-sm text-slate-600">{e.resetHint}</p>
       {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
       <div>
-        <label htmlFor="reset-password" className="text-sm font-medium">{e.temporaryPassword}</label>
+        <label htmlFor="reset-password" className={labelClass}>{e.temporaryPassword}</label>
         <input
           id="reset-password"
           type="text"

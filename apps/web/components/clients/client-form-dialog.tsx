@@ -19,6 +19,7 @@ import {
   type ClientValues,
 } from "@/lib/clients";
 import { intlLocale } from "@/lib/i18n/config";
+import { labelClass } from "@/components/ui/styles";
 
 type Key = keyof ClientValues;
 /** The form holds text for every field; it becomes typed values on save. */
@@ -138,7 +139,7 @@ export default function ClientFormDialog({
 
   const field = (key: Key, label: string, control: ReactNode, options: { hint?: string; wide?: boolean } = {}) => (
     <div className={options.wide ? "sm:col-span-2" : undefined}>
-      <label htmlFor={`client-${key}`} className="text-sm font-medium text-slate-800">{label}</label>
+      <label htmlFor={`client-${key}`} className={labelClass}>{label}</label>
       {control}
       {problems[key] ? (
         <p id={`client-${key}-problem`} className="mt-1 text-xs text-red-700">{problems[key]}</p>

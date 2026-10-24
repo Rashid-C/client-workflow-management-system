@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, safeNextPath } from "@/lib/api";
 import { withLocale } from "@/lib/i18n/config";
+import { labelClass } from "@/components/ui/styles";
 
 const MIN_LENGTH = 12;
 
@@ -49,7 +50,7 @@ export default function ChangePasswordForm() {
   return (
     <form onSubmit={changePassword} className="space-y-4" noValidate>
       <div>
-        <label htmlFor="current-password" className="text-sm font-medium">
+        <label htmlFor="current-password" className={labelClass}>
           {t.auth.currentPassword}
         </label>
         <input
@@ -64,7 +65,7 @@ export default function ChangePasswordForm() {
       </div>
 
       <div>
-        <label htmlFor="new-password" className="text-sm font-medium">
+        <label htmlFor="new-password" className={labelClass}>
           {t.auth.newPassword}
         </label>
         <input
@@ -83,7 +84,7 @@ export default function ChangePasswordForm() {
       </div>
 
       <div>
-        <label htmlFor="confirm-password" className="text-sm font-medium">
+        <label htmlFor="confirm-password" className={labelClass}>
           {t.auth.repeatPassword}
         </label>
         <input

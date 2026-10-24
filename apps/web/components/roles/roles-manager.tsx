@@ -7,6 +7,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import type { PermissionInfo, PermissionScope, Role } from "@/lib/people";
+import { labelClass } from "@/components/ui/styles";
 
 type Draft = { name: string; description: string; grants: Map<string, PermissionScope> };
 
@@ -185,11 +186,11 @@ export default function RolesManager() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="role-name" className="text-sm font-medium">{r.name}</label>
+              <label htmlFor="role-name" className={labelClass}>{r.name}</label>
               <input id="role-name" required maxLength={60} disabled={readOnly} value={draft.name} onChange={(ev) => setDraft({ ...draft, name: ev.target.value })} className={inputClass} />
             </div>
             <div>
-              <label htmlFor="role-description" className="text-sm font-medium">{r.description}</label>
+              <label htmlFor="role-description" className={labelClass}>{r.description}</label>
               <input id="role-description" maxLength={300} disabled={readOnly} value={draft.description} onChange={(ev) => setDraft({ ...draft, description: ev.target.value })} className={inputClass} />
             </div>
           </div>

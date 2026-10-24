@@ -8,7 +8,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link from "@/components/i18n/link";
 import { inputClass, primaryButton } from "@/components/ui/modal";
 import StatCard from "@/components/ui/stat-card";
-import { buttonClass } from "@/components/ui/styles";
+import { buttonClass, labelClass } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import {
   DOCUMENT_STATUSES,
@@ -129,12 +129,12 @@ export default function DocumentList({ clientId, documentId, initialStatus = "",
       ) : (
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
           <div className="flex-1">
-            <label htmlFor="doc-search" className="text-sm font-medium">{t.common.search}</label>
+            <label htmlFor="doc-search" className={labelClass}>{t.common.search}</label>
             <input id="doc-search" type="search" value={search} onChange={(ev) => setSearch(ev.target.value)} placeholder={d.searchPlaceholder} className={inputClass} />
           </div>
           <div className="grid grid-cols-2 gap-3 sm:flex">
             <div>
-              <label htmlFor="doc-status" className="text-sm font-medium">{d.status}</label>
+              <label htmlFor="doc-status" className={labelClass}>{d.status}</label>
               <select id="doc-status" value={status} onChange={(ev) => setStatus(ev.target.value)} className={inputClass}>
                 <option value="">{d.allStatuses}</option>
                 <option value="attention">{d.attention}</option>
@@ -142,7 +142,7 @@ export default function DocumentList({ clientId, documentId, initialStatus = "",
               </select>
             </div>
             <div>
-              <label htmlFor="doc-type-filter" className="text-sm font-medium">{d.type}</label>
+              <label htmlFor="doc-type-filter" className={labelClass}>{d.type}</label>
               <select id="doc-type-filter" value={type} onChange={(ev) => setType(ev.target.value)} className={inputClass}>
                 <option value="">{d.allTypes}</option>
                 {DOCUMENT_TYPES.map((value) => <option key={value} value={value}>{d.types[value]}</option>)}

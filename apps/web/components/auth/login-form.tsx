@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, safeNextPath, type CurrentUser } from "@/lib/api";
 import { withLocale } from "@/lib/i18n/config";
+import { labelClass } from "@/components/ui/styles";
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
@@ -44,7 +45,7 @@ export default function LoginForm() {
   return (
     <form onSubmit={signIn} className="space-y-4" noValidate>
       <div>
-        <label htmlFor="login-email" className="text-sm font-medium">
+        <label htmlFor="login-email" className={labelClass}>
           {t.auth.email}
         </label>
         <input
@@ -60,7 +61,7 @@ export default function LoginForm() {
       </div>
 
       <div>
-        <label htmlFor="login-password" className="text-sm font-medium">
+        <label htmlFor="login-password" className={labelClass}>
           {t.auth.password}
         </label>
         <input

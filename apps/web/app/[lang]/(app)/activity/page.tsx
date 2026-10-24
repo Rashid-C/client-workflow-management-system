@@ -10,6 +10,7 @@ import {
   type AuditFilters,
   type AuditLogEntry,
 } from "@/lib/audit";
+import { labelClass } from "@/components/ui/styles";
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500";
@@ -71,7 +72,7 @@ export default function ActivityPage() {
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <label htmlFor="activity-action" className="text-sm font-medium">
+            <label htmlFor="activity-action" className={labelClass}>
               {t.activity.action}
             </label>
             <select
@@ -92,7 +93,7 @@ export default function ActivityPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="activity-from" className="text-sm font-medium">
+            <label htmlFor="activity-from" className={labelClass}>
               {t.common.from}
             </label>
             <input
@@ -108,7 +109,7 @@ export default function ActivityPage() {
             />
           </div>
           <div>
-            <label htmlFor="activity-to" className="text-sm font-medium">
+            <label htmlFor="activity-to" className={labelClass}>
               {t.common.to}
             </label>
             <input

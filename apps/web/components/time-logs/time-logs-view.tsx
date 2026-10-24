@@ -8,6 +8,7 @@ import { inputClass } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { taskRef, type PersonRef } from "@/lib/tasks";
 import { Page, PageHeader } from "@/components/ui/page";
+import { labelClass } from "@/components/ui/styles";
 
 type TimeLogEntry = {
   id: number;
@@ -109,7 +110,7 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
       <section className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
         {canListPeople && (
           <div>
-            <label htmlFor="log-staff" className="text-sm font-medium">{t.common.staff}</label>
+            <label htmlFor="log-staff" className={labelClass}>{t.common.staff}</label>
             <select id="log-staff" value={employeeId} onChange={(event) => setEmployeeId(event.target.value)} className={inputClass}>
               <option value="">{t.common.everyone}</option>
               {people.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -118,7 +119,7 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
         )}
         {canListClients && (
           <div>
-            <label htmlFor="log-client" className="text-sm font-medium">{t.common.client}</label>
+            <label htmlFor="log-client" className={labelClass}>{t.common.client}</label>
             <select id="log-client" value={clientId} onChange={(event) => setClientId(event.target.value)} className={inputClass}>
               <option value="">{t.common.allClients}</option>
               {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -126,11 +127,11 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
           </div>
         )}
         <div>
-          <label htmlFor="log-from" className="text-sm font-medium">{t.common.from}</label>
+          <label htmlFor="log-from" className={labelClass}>{t.common.from}</label>
           <input id="log-from" type="date" value={from} max={to || undefined} onChange={(event) => setFrom(event.target.value)} className={inputClass} />
         </div>
         <div>
-          <label htmlFor="log-to" className="text-sm font-medium">{t.common.to}</label>
+          <label htmlFor="log-to" className={labelClass}>{t.common.to}</label>
           <input id="log-to" type="date" value={to} min={from || undefined} onChange={(event) => setTo(event.target.value)} className={inputClass} />
         </div>
       </section>

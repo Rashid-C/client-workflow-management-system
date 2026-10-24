@@ -11,6 +11,7 @@ import Badge from "@/components/ui/badge";
 import StatCard from "@/components/ui/stat-card";
 import { api, ApiError } from "@/lib/api";
 import { roleStyle, type Employee, type Role } from "@/lib/people";
+import { labelClass } from "@/components/ui/styles";
 
 export default function EmployeeList() {
   const router = useRouter();
@@ -92,19 +93,19 @@ export default function EmployeeList() {
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
           <div className="flex-1">
-            <label htmlFor="employee-search" className="text-sm font-medium">{t.common.search}</label>
+            <label htmlFor="employee-search" className={labelClass}>{t.common.search}</label>
             <input id="employee-search" type="search" value={search} onChange={(ev) => setSearch(ev.target.value)} placeholder={e.searchPlaceholder} className={inputClass} />
           </div>
           <div className="grid grid-cols-2 gap-3 sm:flex">
             <div>
-              <label htmlFor="employee-role" className="text-sm font-medium">{e.role}</label>
+              <label htmlFor="employee-role" className={labelClass}>{e.role}</label>
               <select id="employee-role" value={roleFilter} onChange={(ev) => setRoleFilter(ev.target.value)} className={inputClass}>
                 <option value="">{e.allRoles}</option>
                 {roles.map((role) => <option key={role.id} value={String(role.id)}>{role.name}</option>)}
               </select>
             </div>
             <div>
-              <label htmlFor="employee-status" className="text-sm font-medium">{t.common.status}</label>
+              <label htmlFor="employee-status" className={labelClass}>{t.common.status}</label>
               <select id="employee-status" value={statusFilter} onChange={(ev) => setStatusFilter(ev.target.value)} className={inputClass}>
                 <option value="">{e.allStatuses}</option>
                 <option value="Active">{e.active}</option>

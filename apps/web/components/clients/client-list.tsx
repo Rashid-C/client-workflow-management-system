@@ -9,6 +9,7 @@ import Link, { useRouter } from "@/components/i18n/link";
 import { inputClass, primaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { EMIRATES, type ClientSummary } from "@/lib/clients";
+import { labelClass } from "@/components/ui/styles";
 
 type StatusFilter = "active" | "archived" | "all";
 
@@ -60,7 +61,7 @@ export default function ClientList() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
         <div className="flex-1">
-          <label htmlFor="client-search" className="text-sm font-medium text-slate-700">{t.clients.searchLabel}</label>
+          <label htmlFor="client-search" className={labelClass}>{t.clients.searchLabel}</label>
           <input
             id="client-search"
             type="search"
@@ -72,7 +73,7 @@ export default function ClientList() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:flex">
           <div>
-            <label htmlFor="client-status" className="text-sm font-medium text-slate-700">{t.clients.statusFilter}</label>
+            <label htmlFor="client-status" className={labelClass}>{t.clients.statusFilter}</label>
             <select id="client-status" value={status} onChange={(event) => setStatus(event.target.value as StatusFilter)} className={inputClass}>
               <option value="active">{t.clients.active}</option>
               <option value="archived">{t.clients.archived}</option>
@@ -80,7 +81,7 @@ export default function ClientList() {
             </select>
           </div>
           <div>
-            <label htmlFor="client-emirate" className="text-sm font-medium text-slate-700">{t.clients.emirateFilter}</label>
+            <label htmlFor="client-emirate" className={labelClass}>{t.clients.emirateFilter}</label>
             <select id="client-emirate" value={emirate} onChange={(event) => setEmirate(event.target.value)} className={inputClass}>
               <option value="">{t.clients.anyEmirate}</option>
               {EMIRATES.map((value) => (

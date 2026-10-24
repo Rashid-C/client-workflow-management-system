@@ -14,6 +14,7 @@ import {
   type OwnerOption,
   type ServiceKey,
 } from "@/lib/leads";
+import { labelClass } from "@/components/ui/styles";
 
 /** Add a lead, or edit `lead` when given. */
 export default function LeadFormDialog({
@@ -80,7 +81,7 @@ export default function LeadFormDialog({
 
   const field = (id: string, label: string, control: ReactNode, hint?: string, wide = false) => (
     <div className={wide ? "sm:col-span-2" : undefined}>
-      <label htmlFor={id} className="text-sm font-medium text-slate-800">{label}</label>
+      <label htmlFor={id} className={labelClass}>{label}</label>
       {control}
       {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
     </div>

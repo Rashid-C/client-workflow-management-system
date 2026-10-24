@@ -6,6 +6,7 @@ import { useCurrentUser } from "@/components/auth/current-user";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { inputClass, primaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
+import { labelClass } from "@/components/ui/styles";
 
 type Person = { id: number; name: string; designation: string };
 
@@ -111,15 +112,15 @@ function MyUpdate() {
         {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
         {notice && <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">{notice}</p>}
         <div>
-          <label htmlFor="du-done" className="text-sm font-medium">{d.done} *</label>
+          <label htmlFor="du-done" className={labelClass}>{d.done} *</label>
           <textarea id="du-done" required rows={5} maxLength={4000} value={form.done} onChange={set("done")} placeholder={d.donePlaceholder} className={inputClass} />
         </div>
         <div>
-          <label htmlFor="du-plan" className="text-sm font-medium">{d.plan}</label>
+          <label htmlFor="du-plan" className={labelClass}>{d.plan}</label>
           <textarea id="du-plan" rows={3} maxLength={2000} value={form.plan} onChange={set("plan")} className={inputClass} />
         </div>
         <div>
-          <label htmlFor="du-blockers" className="text-sm font-medium">{d.blockers}</label>
+          <label htmlFor="du-blockers" className={labelClass}>{d.blockers}</label>
           <textarea id="du-blockers" rows={2} maxLength={2000} value={form.blockers} onChange={set("blockers")} className={inputClass} />
         </div>
         <div className="flex items-center justify-between gap-3">

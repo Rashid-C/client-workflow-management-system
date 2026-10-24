@@ -6,6 +6,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { todayInBrowserTimeZone, type Employee, type Role } from "@/lib/people";
+import { labelClass } from "@/components/ui/styles";
 
 const MIN_PASSWORD = 12;
 
@@ -72,7 +73,7 @@ export default function EmployeeFormDialog({
   }
 
   const label = (id: string, text: string) => (
-    <label htmlFor={id} className="text-sm font-medium text-slate-800">{text}</label>
+    <label htmlFor={id} className={labelClass}>{text}</label>
   );
 
   return (

@@ -10,7 +10,7 @@ import StageActionDialog, { type StageDialogKind } from "@/components/tasks/stag
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api, ApiError } from "@/lib/api";
 import { DetailHeader, Page } from "@/components/ui/page";
-import { buttonClass } from "@/components/ui/styles";
+import { buttonClass, labelClass } from "@/components/ui/styles";
 import Badge from "@/components/ui/badge";
 import {
   canOnStage,
@@ -339,15 +339,15 @@ function EditTaskDialog({
       }
     >
       <div>
-        <label htmlFor="edit-title" className="text-sm font-medium">{t.tasks.titleLabel} *</label>
+        <label htmlFor="edit-title" className={labelClass}>{t.tasks.titleLabel} *</label>
         <input id="edit-title" value={title} maxLength={200} onChange={(event) => setTitle(event.target.value)} className={inputClass} />
       </div>
       <div>
-        <label htmlFor="edit-due" className="text-sm font-medium">{t.tasks.dueDate}</label>
+        <label htmlFor="edit-due" className={labelClass}>{t.tasks.dueDate}</label>
         <input id="edit-due" type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} className={inputClass} />
       </div>
       <div>
-        <label htmlFor="edit-description" className="text-sm font-medium">{t.tasks.description}</label>
+        <label htmlFor="edit-description" className={labelClass}>{t.tasks.description}</label>
         <textarea id="edit-description" rows={4} maxLength={2000} value={description} onChange={(event) => setDescription(event.target.value)} className={inputClass} />
       </div>
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}

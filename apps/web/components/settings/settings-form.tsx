@@ -5,6 +5,7 @@ import { useCurrentUser } from "@/components/auth/current-user";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { inputClass, primaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
+import { labelClass } from "@/components/ui/styles";
 
 export type Settings = {
   companyName: string;
@@ -94,7 +95,7 @@ export default function SettingsForm() {
     setForm((current) => ({ ...current, [key]: event.target.value }));
   const input = (key: string, label: string, options: { type?: string; ltr?: boolean; rtl?: boolean; hint?: string; wide?: boolean } = {}) => (
     <div className={options.wide ? "sm:col-span-2" : undefined}>
-      <label htmlFor={`set-${key}`} className="text-sm font-medium text-slate-800">{label}</label>
+      <label htmlFor={`set-${key}`} className={labelClass}>{label}</label>
       <input
         id={`set-${key}`}
         type={options.type ?? "text"}
@@ -150,7 +151,7 @@ export default function SettingsForm() {
 
       <Section title={s.documents} hint={s.documentsHint}>
         <div>
-          <label htmlFor="set-documentReminderDays" className="text-sm font-medium text-slate-800">{s.reminderDays}</label>
+          <label htmlFor="set-documentReminderDays" className={labelClass}>{s.reminderDays}</label>
           <input
             id="set-documentReminderDays"
             type="number"

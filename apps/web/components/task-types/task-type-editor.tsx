@@ -8,6 +8,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import { api, ApiError } from "@/lib/api";
 import { MAX_STAGES, type TaskType } from "@/lib/task-types";
+import { labelClass } from "@/components/ui/styles";
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-brand-500 disabled:bg-slate-50";
@@ -185,7 +186,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
         <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="type-name" className="text-sm font-medium">{t.taskTypes.name} *</label>
+              <label htmlFor="type-name" className={labelClass}>{t.taskTypes.name} *</label>
               <input
                 id="type-name"
                 value={name}
@@ -196,7 +197,7 @@ export default function TaskTypeEditor({ typeId }: { typeId: number | null }) {
               />
             </div>
             <div>
-              <label htmlFor="type-description" className="text-sm font-medium">{t.taskTypes.description}</label>
+              <label htmlFor="type-description" className={labelClass}>{t.taskTypes.description}</label>
               <input
                 id="type-description"
                 value={description}

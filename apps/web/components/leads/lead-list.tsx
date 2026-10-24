@@ -10,6 +10,7 @@ import { inputClass, primaryButton } from "@/components/ui/modal";
 import StatCard from "@/components/ui/stat-card";
 import { api } from "@/lib/api";
 import { formatAmount, LEAD_STATUSES, LEAD_STATUS_STYLES, type Lead, type LeadSummary } from "@/lib/leads";
+import { labelClass } from "@/components/ui/styles";
 
 export default function LeadList() {
   const router = useRouter();
@@ -84,7 +85,7 @@ export default function LeadList() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="flex-1">
-          <label htmlFor="lead-search" className="text-sm font-medium">{t.common.search}</label>
+          <label htmlFor="lead-search" className={labelClass}>{t.common.search}</label>
           <input id="lead-search" type="search" value={search} onChange={(ev) => setSearch(ev.target.value)} placeholder={l.searchPlaceholder} className={inputClass} />
         </div>
         {can("leads.create") && (

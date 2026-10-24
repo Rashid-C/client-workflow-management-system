@@ -6,6 +6,7 @@ import TimeInput from "@/components/tasks/time-input";
 import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { officeToday, type Assignable, type TaskDetail, type TaskStage } from "@/lib/tasks";
+import { labelClass } from "@/components/ui/styles";
 
 export type StageDialogKind = "complete" | "block" | "reassign" | "reopen";
 
@@ -115,7 +116,7 @@ export default function StageActionDialog({
     >
       {kind === "reassign" && (
         <div>
-          <label htmlFor="stage-assignee" className="text-sm font-medium">{t.tasks.assignTo}</label>
+          <label htmlFor="stage-assignee" className={labelClass}>{t.tasks.assignTo}</label>
           <select id="stage-assignee" value={assigneeId} onChange={(event) => setAssigneeId(event.target.value)} className={inputClass}>
             <option value="">{t.common.unassigned}</option>
             {people.map((p) => (
@@ -135,7 +136,7 @@ export default function StageActionDialog({
             onChange={setMinutes}
           />
           <div>
-            <label htmlFor="stage-date" className="text-sm font-medium">{t.common.date}</label>
+            <label htmlFor="stage-date" className={labelClass}>{t.common.date}</label>
             <input
               id="stage-date"
               type="date"
@@ -149,7 +150,7 @@ export default function StageActionDialog({
       )}
 
       <div>
-        <label htmlFor="stage-text" className="text-sm font-medium">
+        <label htmlFor="stage-text" className={labelClass}>
           {kind === "block"
             ? `${t.tasks.whyBlocked} *`
             : kind === "reopen"
@@ -176,7 +177,7 @@ export default function StageActionDialog({
 
       {kind === "complete" && nextStage && canHandOver && (
         <div>
-          <label htmlFor="stage-next" className="text-sm font-medium">
+          <label htmlFor="stage-next" className={labelClass}>
             {t.tasks.assignNext(nextStage.name)}
           </label>
           <select id="stage-next" value={nextAssigneeId} onChange={(event) => setNextAssigneeId(event.target.value)} className={inputClass}>

@@ -6,6 +6,7 @@ import Modal, { inputClass, primaryButton, secondaryButton } from "@/components/
 import { api } from "@/lib/api";
 import type { ClientSummary } from "@/lib/clients";
 import { DOCUMENT_TYPES, type DocumentRecord, type DocumentType } from "@/lib/documents";
+import { labelClass } from "@/components/ui/styles";
 
 /** Add a document (for `clientId` when given), or edit `document`. */
 export default function DocumentFormDialog({
@@ -82,7 +83,7 @@ export default function DocumentFormDialog({
 
   const field = (id: string, label: string, control: React.ReactNode, hint?: string, wide = false) => (
     <div className={wide ? "sm:col-span-2" : undefined}>
-      <label htmlFor={id} className="text-sm font-medium text-slate-800">{label}</label>
+      <label htmlFor={id} className={labelClass}>{label}</label>
       {control}
       {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
     </div>
