@@ -4,13 +4,14 @@ type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "md" | "sm" | "icon";
 
 const BUTTON_BASE =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-medium whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-lg font-medium whitespace-nowrap transition-colors disabled:pointer-events-none";
 
+// Filled buttons turn grey when disabled: a faded brand colour reads as "loading".
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-brand-600 text-white shadow-xs hover:bg-brand-700",
-  secondary: "border border-slate-200 bg-white text-slate-700 shadow-xs hover:bg-slate-50 hover:text-slate-900",
-  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
-  danger: "bg-red-600 text-white shadow-xs hover:bg-red-700",
+  primary: "bg-brand-600 text-white shadow-xs hover:bg-brand-700 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none",
+  secondary: "border border-slate-200 bg-white text-slate-700 shadow-xs hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50",
+  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50",
+  danger: "bg-red-600 text-white shadow-xs hover:bg-red-700 disabled:bg-slate-200 disabled:text-slate-500 disabled:shadow-none",
 };
 
 const BUTTON_SIZES: Record<ButtonSize, string> = {
@@ -25,6 +26,11 @@ export function buttonClass(variant: ButtonVariant = "primary", size: ButtonSize
 
 export const primaryButton = buttonClass("primary");
 export const secondaryButton = buttonClass("secondary");
+
+export const labelClass = "text-sm font-medium text-slate-800";
+
+/** A form or page error the person needs to read before trying again. */
+export const alertClass = "rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700";
 
 export const inputClass =
   "mt-1.5 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-xs outline-none transition placeholder:text-slate-400 focus:border-brand-500 disabled:bg-slate-50 disabled:text-slate-500";
