@@ -21,6 +21,12 @@ import SocialLinks, { type SocialNetwork } from "@/components/marketing/social-i
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
 import { OFFICE } from "@/lib/office";
 import logo from "@/public/brand/alfath-logo.png";
+import accountingPhoto from "@/public/services/accounting.jpg";
+import adnocPhoto from "@/public/services/adnoc.jpg";
+import auditingPhoto from "@/public/services/auditing.jpg";
+import corporateTaxPhoto from "@/public/services/corporate-tax.jpg";
+import icvPhoto from "@/public/services/icv.jpg";
+import vatPhoto from "@/public/services/vat.jpg";
 
 // The old site's team, testimonials and client logos were template
 // placeholders and are left out.
@@ -32,6 +38,10 @@ const MAP_EMBED_URL = `https://www.google.com/maps?q=${OFFICE.coordinates}&z=16&
 const SOCIAL: readonly { network: SocialNetwork; url: string }[] = [];
 
 type Service = { title: string; text: string; icon: LucideIcon };
+
+// One photo per service, in the same order as `services` in both languages.
+// The ICV and ADNOC photos are cropped clear of those programmes' logos.
+const SERVICE_PHOTOS = [auditingPhoto, icvPhoto, accountingPhoto, corporateTaxPhoto, vatPhoto, adnocPhoto];
 
 const content = {
   en: {
@@ -342,13 +352,24 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           </div>
 
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {copy.services.map(({ title, text, icon: Icon }) => (
-              <article key={title} className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-brand-300 hover:shadow-sm sm:p-7">
-                <span className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
-                  <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
-                </span>
-                <h3 className="mt-5 text-lg font-semibold text-navy-950">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+            {copy.services.map(({ title, text, icon: Icon }, index) => (
+              <article key={title} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-brand-300 hover:shadow-md">
+                <div className="aspect-3/2 overflow-hidden bg-slate-100">
+                  <Image
+                    src={SERVICE_PHOTOS[index]}
+                    alt=""
+                    placeholder="blur"
+                    sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                    className="size-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="relative px-6 pb-7 sm:px-7">
+                  <span className="-mt-6 flex size-12 items-center justify-center rounded-xl bg-white text-brand-700 shadow-md ring-1 ring-slate-200">
+                    <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
+                  </span>
+                  <h3 className="mt-4 text-lg font-semibold text-navy-950">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                </div>
               </article>
             ))}
           </div>
