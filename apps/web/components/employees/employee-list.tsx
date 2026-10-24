@@ -7,6 +7,7 @@ import EmployeeFormDialog from "@/components/employees/employee-form-dialog";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import { inputClass, primaryButton } from "@/components/ui/modal";
+import Badge from "@/components/ui/badge";
 import StatCard from "@/components/ui/stat-card";
 import { api, ApiError } from "@/lib/api";
 import { roleStyle, type Employee, type Role } from "@/lib/people";
@@ -170,18 +171,18 @@ export default function EmployeeList() {
                     <td className="px-3 py-3 text-slate-700">{person.openStages || t.common.none}</td>
                     <td className="px-3 py-3">
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className={person.status === "Active" ? "text-xs font-medium text-emerald-700" : "text-xs font-medium text-slate-500"}>
+                        <Badge tone={person.status === "Active" ? "success" : "neutral"}>
                           {person.status === "Active" ? e.active : e.inactive}
-                        </span>
+                        </Badge>
                         {person.isLocked && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-xs text-red-700">
+                          <Badge tone="danger">
                             <Lock size={11} aria-hidden="true" /> {e.locked}
-                          </span>
+                          </Badge>
                         )}
                         {person.mustChangePassword && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-800">
+                          <Badge tone="warning">
                             <KeyRound size={11} aria-hidden="true" /> {e.tempPassword}
-                          </span>
+                          </Badge>
                         )}
                       </div>
                     </td>
