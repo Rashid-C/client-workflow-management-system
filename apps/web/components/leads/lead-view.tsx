@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
-import { ArrowLeft, Pencil, Trash2, UserPlus } from "lucide-react";
+import { Pencil, Trash2, UserPlus } from "lucide-react";
 import EntityHistory from "@/components/audit/entity-history";
 import { useCurrentUser } from "@/components/auth/current-user";
 import { useI18n } from "@/components/i18n/i18n-provider";
@@ -11,9 +11,8 @@ import { inputClass, primaryButton } from "@/components/ui/modal";
 import { api, ApiError } from "@/lib/api";
 import { formatAmount, FOLLOW_UP_KINDS, LEAD_STATUS_STYLES, type FollowUpKind, type LeadDetail } from "@/lib/leads";
 import { todayInBrowserTimeZone } from "@/lib/people";
-
-const smallButton =
-  "inline-flex items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-medium hover:bg-slate-100 disabled:opacity-50";
+import { DetailHeader, Page } from "@/components/ui/page";
+import { buttonClass } from "@/components/ui/styles";
 
 export default function LeadView({ leadId }: { leadId: number }) {
   const router = useRouter();
@@ -83,37 +82,31 @@ export default function LeadView({ leadId }: { leadId: number }) {
   const open = lead.status !== "Won" && lead.status !== "Lost";
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-        <div className="min-w-0">
-          <Link href="/leads" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900">
-            <ArrowLeft size={15} className="rtl:rotate-180" aria-hidden="true" />
-            {l.back}
-          </Link>
-          <div className="mt-2">
-            <span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${LEAD_STATUS_STYLES[lead.status]}`}>{l.statuses[lead.status]}</span>
-          </div>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{lead.name}</h1>
-          {lead.contactName && <p className="text-sm text-slate-500">{lead.contactName}</p>}
-        </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
+    <Page className="space-y-6">
+      <DetailHeader
+        backHref="/leads"
+        backLabel={l.back}
+        meta={<span className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${LEAD_STATUS_STYLES[lead.status]}`}>{l.statuses[lead.status]}</span>}
+        title={lead.name}
+        subtitle={lead.contactName}
+        actions={<>
           {can("leads.edit") && !lead.client && lead.status !== "Lost" && can("clients.create") && (
-            <button type="button" onClick={() => void convert(lead)} disabled={busy} className={`${smallButton} border-brand-600 bg-brand-600 text-white hover:bg-brand-700`}>
+            <button type="button" onClick={() => void convert(lead)} disabled={busy} className={buttonClass("primary", "sm")}>
               <UserPlus size={14} aria-hidden="true" /> {l.convert}
             </button>
           )}
           {can("leads.edit") && (
-            <button type="button" onClick={() => setEditing(true)} className={smallButton}>
+            <button type="button" onClick={() => setEditing(true)} className={buttonClass("secondary", "sm")}>
               <Pencil size={14} aria-hidden="true" /> {t.common.edit}
             </button>
           )}
           {can("leads.delete") && (
-            <button type="button" onClick={() => void remove(lead)} className={smallButton}>
+            <button type="button" onClick={() => void remove(lead)} className={buttonClass("secondary", "sm")}>
               <Trash2 size={14} aria-hidden="true" /> {l.remove}
             </button>
           )}
-        </div>
-      </div>
+        </>}
+      />
 
       {lead.client && (
         <p className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
@@ -173,7 +166,7 @@ export default function LeadView({ leadId }: { leadId: number }) {
       )}
 
       {editing && <LeadFormDialog lead={lead} onClose={() => setEditing(false)} onSaved={updated} />}
-    </div>
+    </Page>
   );
 }
 
