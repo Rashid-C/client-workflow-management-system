@@ -21,7 +21,6 @@ import SocialLinks, { SocialIcon, type SocialNetwork } from "@/components/market
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
 import { DEVELOPER } from "@/lib/developer";
 import { OFFICE } from "@/lib/office";
-import logo from "@/public/brand/alfath-logo.png";
 import accountingPhoto from "@/public/services/accounting.jpg";
 import adnocPhoto from "@/public/services/adnoc.jpg";
 import auditingPhoto from "@/public/services/auditing.jpg";
@@ -67,6 +66,10 @@ const content = {
     intro:
       "Al Fath Accounts & Tax Solutions supports businesses across the UAE with auditing, accounting, tax compliance and business advisory — from company setup to corporate compliance.",
     contactCta: "Talk to us",
+    ctaHeading: "Let's put your books and tax in order.",
+    ctaText: "Speak to our team in Abu Dhabi about your accounting, audit or tax needs.",
+    callUs: "Call us",
+    emailUs: "Email us",
     servicesCta: "Explore services",
     highlights: [
       "UAE VAT and corporate tax",
@@ -162,6 +165,10 @@ const content = {
     intro:
       "تدعم الفتح لحلول الحسابات والضرائب الشركات في دولة الإمارات بخدمات التدقيق والمحاسبة والامتثال الضريبي والاستشارات، من تأسيس الشركة إلى الامتثال المؤسسي.",
     contactCta: "تواصل معنا",
+    ctaHeading: "لنرتّب حساباتكم وضرائبكم معًا.",
+    ctaText: "تحدّثوا مع فريقنا في أبوظبي بشأن احتياجاتكم في المحاسبة والتدقيق والضرائب.",
+    callUs: "اتصل بنا",
+    emailUs: "راسلنا",
     servicesCta: "استكشف خدماتنا",
     highlights: [
       "ضريبة القيمة المضافة وضريبة الشركات في الإمارات",
@@ -260,7 +267,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">): Promis
   };
 }
 
-const sectionEyebrow = "text-xs font-semibold uppercase tracking-[0.16em] text-brand-700";
+const sectionEyebrow = "text-xs font-semibold uppercase tracking-[0.16em] text-signal-700";
 const footerHeading = "text-xs font-semibold uppercase tracking-[0.16em] text-white";
 const footerLink = "text-slate-400 transition hover:text-white";
 const sectionHeading = "mt-3 text-3xl font-semibold leading-tight tracking-[-0.03em] text-navy-950 sm:text-4xl";
@@ -285,7 +292,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
 
           <nav aria-label={locale === "ar" ? "التنقل الرئيسي" : "Main navigation"} className="hidden items-center gap-8 md:flex">
             {navItems.map((item) => (
-              <a key={item.href} className="text-sm font-medium text-slate-600 transition hover:text-navy-900" href={item.href}>
+              <a key={item.href} className="text-sm font-medium text-slate-600 transition hover:text-signal-700" href={item.href}>
                 {item.label}
               </a>
             ))}
@@ -300,7 +307,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             </Link>
             <Link
               href="/login"
-              className="hidden min-h-10 items-center justify-center rounded-lg bg-navy-900 px-4 text-sm font-medium text-white transition hover:bg-navy-800 md:inline-flex"
+              className="hidden min-h-10 items-center justify-center rounded-full bg-signal-600 px-5 text-sm font-medium text-white shadow-sm shadow-signal-600/30 transition hover:bg-signal-700 md:inline-flex"
             >
               {copy.staffSignIn}
             </Link>
@@ -315,50 +322,61 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50/70 to-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-14 sm:px-8 sm:pb-24 sm:pt-20 lg:grid-cols-[1.15fr_0.85fr]">
-          <div>
-            <p className="inline-flex rounded-full border border-brand-200 bg-white px-4 py-1.5 text-xs font-medium text-brand-800 sm:text-sm">
-              {copy.eyebrow}
-            </p>
-            <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-[-0.04em] text-navy-950 sm:text-6xl">
-              {copy.heading}
-            </h1>
-            <p className="mt-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">{copy.intro}</p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a
-                href="#contact"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-brand-600 px-5 text-sm font-semibold text-white transition hover:bg-brand-700"
-              >
-                {copy.contactCta}
-                <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
-              </a>
-              <a
-                href="#services"
-                className="inline-flex min-h-12 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-semibold text-navy-900 transition hover:bg-slate-50"
-              >
-                {copy.servicesCta}
-              </a>
-            </div>
-            <ul className="mt-10 grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
-              {copy.highlights.map((item) => (
-                <li key={item} className="flex items-start gap-2">
-                  <Check className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden="true" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+      {/* Hero: bright blue, centred, with a photo row rising into the next section. */}
+      <section className="relative text-white">
+        <div className="absolute inset-0 overflow-hidden bg-gradient-to-b from-signal-700 via-signal-600 to-signal-500" aria-hidden="true">
+          <div className="absolute -top-48 start-1/2 size-240 -translate-x-1/2 rounded-full bg-white/20 blur-3xl rtl:translate-x-1/2" />
+          <div className="absolute -bottom-40 -end-32 size-112 rounded-full bg-sky-300/30 blur-3xl" />
+          <div className="marketing-grid absolute inset-0 opacity-[0.14]" />
+        </div>
+        <div className="relative mx-auto max-w-7xl px-5 pt-16 text-center sm:px-8 sm:pt-24">
+          <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-1.5 text-xs font-medium backdrop-blur sm:text-sm">
+            <span className="size-1.5 rounded-full bg-white" aria-hidden="true" />
+            {copy.eyebrow}
+          </p>
+          <h1 className="mx-auto mt-6 max-w-4xl text-4xl font-semibold leading-[1.08] tracking-[-0.04em] sm:text-6xl lg:text-7xl">
+            {copy.heading}
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-white/85 sm:text-lg sm:leading-8">{copy.intro}</p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <a
+              href="#contact"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-sm font-semibold text-signal-700 shadow-lg shadow-signal-950/25 transition hover:bg-signal-50"
+            >
+              {copy.contactCta}
+              <ArrowRight className="size-4 rtl:rotate-180" aria-hidden="true" />
+            </a>
+            <a
+              href="#services"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/35 bg-white/10 px-7 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20"
+            >
+              {copy.servicesCta}
+            </a>
           </div>
+          <ul className="mt-8 flex flex-wrap justify-center gap-2.5 text-sm">
+            {copy.highlights.map((item) => (
+              <li key={item} className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 backdrop-blur">
+                <Check className="size-4 shrink-0" aria-hidden="true" />
+                {item}
+              </li>
+            ))}
+          </ul>
 
-          <div className="relative mx-auto w-full max-w-md">
-            <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-brand-100/70 via-white to-navy-100/70 blur-2xl" aria-hidden="true" />
-            <div className="relative rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_30px_80px_-40px_rgba(6,26,47,0.35)] sm:p-10">
-              <Image src={logo} alt={BRAND_NAME} priority sizes="(min-width: 1024px) 400px, 80vw" className="h-auto w-full" />
+          <div className="relative z-10 mx-auto -mb-28 mt-14 grid max-w-5xl grid-cols-1 items-end gap-5 sm:-mb-36 sm:mt-16 sm:grid-cols-[0.8fr_1.4fr_0.8fr]">
+            <div className="hidden overflow-hidden rounded-2xl border-4 border-white/50 shadow-2xl shadow-signal-950/30 sm:block">
+              <Image src={accountingPhoto} alt="" placeholder="blur" sizes="240px" className="aspect-4/5 w-full object-cover" />
+            </div>
+            <div className="overflow-hidden rounded-3xl border-4 border-white/60 shadow-2xl shadow-signal-950/40">
+              <Image src={auditingPhoto} alt="" priority placeholder="blur" sizes="(min-width: 640px) 520px, 90vw" className="aspect-4/3 w-full object-cover" />
+            </div>
+            <div className="hidden overflow-hidden rounded-2xl border-4 border-white/50 shadow-2xl shadow-signal-950/30 sm:block">
+              <Image src={corporateTaxPhoto} alt="" placeholder="blur" sizes="240px" className="aspect-4/5 w-full object-cover" />
             </div>
           </div>
         </div>
       </section>
+      {/* Room for the photo row that overlaps the hero's lower edge. */}
+      <div className="h-36 bg-white sm:h-44" aria-hidden="true" />
 
       {/* Trusted by */}
       {TRUSTED_LOGOS.length > 0 && (
@@ -385,7 +403,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
       )}
 
       {/* Services */}
-      <section id="services" className="scroll-mt-20 border-t border-slate-200 bg-porcelain px-5 py-20 sm:px-8 sm:py-24">
+      <section id="services" className="scroll-mt-20 bg-white px-5 py-20 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="max-w-2xl">
             <p className={sectionEyebrow}>{copy.servicesEyebrow}</p>
@@ -395,7 +413,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
 
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {copy.services.map(({ title, text, icon: Icon }, index) => (
-              <article key={title} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-brand-300 hover:shadow-md">
+              <article key={title} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-signal-200 hover:shadow-xl hover:shadow-signal-900/10">
                 <div className="aspect-3/2 overflow-hidden bg-slate-100">
                   <Image
                     src={SERVICE_PHOTOS[index]}
@@ -406,7 +424,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
                   />
                 </div>
                 <div className="relative px-6 pb-7 sm:px-7">
-                  <span className="-mt-6 flex size-12 items-center justify-center rounded-xl bg-white text-brand-700 shadow-md ring-1 ring-slate-200">
+                  <span className="-mt-6 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-signal-500 to-signal-700 text-white shadow-lg shadow-signal-700/30 ring-4 ring-white">
                     <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
                   </span>
                   <h3 className="mt-4 text-lg font-semibold text-navy-950">{title}</h3>
@@ -416,11 +434,11 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             ))}
           </div>
 
-          <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+          <div className="mt-10 rounded-2xl border border-signal-100 bg-gradient-to-br from-signal-50 via-white to-sky-50 p-6 sm:p-8">
             <h3 className="text-sm font-semibold text-navy-950">{copy.moreHeading}</h3>
             <ul className="mt-4 flex flex-wrap gap-2.5">
               {copy.more.map((item) => (
-                <li key={item} className="rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-sm text-slate-700">
+                <li key={item} className="rounded-full border border-signal-200 bg-white px-3.5 py-1.5 text-sm font-medium text-signal-900 shadow-xs">
                   {item}
                 </li>
               ))}
@@ -430,25 +448,57 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
       </section>
 
       {/* About */}
-      <section id="about" className="scroll-mt-20 bg-navy-950 px-5 py-20 text-white sm:px-8 sm:py-24">
+      <section id="about" className="scroll-mt-20 border-y border-slate-200 bg-porcelain px-5 py-20 sm:px-8 sm:py-24">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-300">{copy.aboutEyebrow}</p>
-            <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-4xl">{copy.aboutHeading}</h2>
-            <p className="mt-6 text-base leading-7 text-slate-300">{copy.mission}</p>
-            <p className="mt-4 text-base leading-7 text-slate-300">{copy.vision}</p>
+            <p className={sectionEyebrow}>{copy.aboutEyebrow}</p>
+            <h2 className={sectionHeading}>{copy.aboutHeading}</h2>
+            <p className="mt-6 text-base leading-7 text-slate-600">{copy.mission}</p>
+            <p className="mt-4 text-base leading-7 text-slate-600">{copy.vision}</p>
           </div>
           <ul className="grid gap-4 self-center">
-            {copy.values.map(([title, text]) => (
-              <li key={title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                <span className="mt-1.5 size-2.5 shrink-0 rounded-full bg-brand-400" aria-hidden="true" />
+            {copy.values.map(([title, text], index) => (
+              <li key={title} className="flex gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-signal-500 to-signal-700 text-sm font-semibold text-white" dir="ltr" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <div>
-                  <h3 className="font-semibold">{title}</h3>
-                  <p className="mt-1 text-sm leading-6 text-slate-300">{text}</p>
+                  <h3 className="font-semibold text-navy-950">{title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">{text}</p>
                 </div>
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* Call to action */}
+      <section className="px-5 pt-20 sm:px-8 sm:pt-24">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-3xl bg-gradient-to-br from-signal-600 via-signal-700 to-navy-900 px-6 py-12 text-white shadow-xl shadow-signal-900/20 sm:px-12 sm:py-14">
+          <div className="pointer-events-none absolute -end-24 -top-24 size-80 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
+          <div className="marketing-grid pointer-events-none absolute inset-0 opacity-[0.08]" aria-hidden="true" />
+          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl font-semibold leading-tight tracking-[-0.02em] sm:text-3xl">{copy.ctaHeading}</h2>
+              <p className="mt-3 text-base leading-7 text-signal-50/90">{copy.ctaText}</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href={`tel:${OFFICE.phones[0].replace(/\s/g, "")}`}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-white px-6 text-sm font-semibold text-navy-950 shadow-lg transition hover:bg-signal-50"
+              >
+                <Phone className="size-4" aria-hidden="true" />
+                {copy.callUs}
+              </a>
+              <a
+                href={`mailto:${OFFICE.email}`}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20"
+              >
+                <Mail className="size-4" aria-hidden="true" />
+                {copy.emailUs}
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -467,7 +517,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
                   href={DIRECTIONS_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-1 inline-flex w-fit items-center gap-1 text-sm font-medium text-brand-700 hover:text-brand-800"
+                  className="mt-1 inline-flex w-fit items-center gap-1 text-sm font-medium text-signal-700 hover:text-signal-800"
                 >
                   {copy.directions}
                   <ArrowRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
@@ -475,13 +525,13 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
               </ContactRow>
               <ContactRow icon={Phone} label={copy.phoneLabel}>
                 {OFFICE.phones.map((phone) => (
-                  <a key={phone} href={`tel:${phone.replace(/\s/g, "")}`} dir="ltr" className="w-fit hover:text-brand-700">
+                  <a key={phone} href={`tel:${phone.replace(/\s/g, "")}`} dir="ltr" className="w-fit hover:text-signal-700">
                     {phone}
                   </a>
                 ))}
               </ContactRow>
               <ContactRow icon={Mail} label={copy.emailLabel}>
-                <a href={`mailto:${OFFICE.email}`} dir="ltr" className="w-fit hover:text-brand-700">
+                <a href={`mailto:${OFFICE.email}`} dir="ltr" className="w-fit hover:text-signal-700">
                   {OFFICE.email}
                 </a>
               </ContactRow>
@@ -532,17 +582,17 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             <h2 className={footerHeading}>{copy.contactUs}</h2>
             <ul className="mt-4 space-y-3.5 text-sm">
               <li className="flex gap-2.5">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-brand-300" aria-hidden="true" />
+                <MapPin className="mt-0.5 size-4 shrink-0 text-signal-300" aria-hidden="true" />
                 <a href={DIRECTIONS_URL} target="_blank" rel="noopener noreferrer" className={footerLink}>{copy.address}</a>
               </li>
               {OFFICE.phones.map((phone) => (
                 <li key={phone} className="flex gap-2.5">
-                  <Phone className="mt-0.5 size-4 shrink-0 text-brand-300" aria-hidden="true" />
+                  <Phone className="mt-0.5 size-4 shrink-0 text-signal-300" aria-hidden="true" />
                   <a href={`tel:${phone.replace(/\s/g, "")}`} dir="ltr" className={footerLink}>{phone}</a>
                 </li>
               ))}
               <li className="flex gap-2.5">
-                <Mail className="mt-0.5 size-4 shrink-0 text-brand-300" aria-hidden="true" />
+                <Mail className="mt-0.5 size-4 shrink-0 text-signal-300" aria-hidden="true" />
                 <a href={`mailto:${OFFICE.email}`} dir="ltr" className={footerLink}>{OFFICE.email}</a>
               </li>
             </ul>
@@ -589,7 +639,7 @@ function ContactRow({
 }) {
   return (
     <div className="flex gap-4">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-signal-50 text-signal-700">
         <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
       </span>
       <div>
