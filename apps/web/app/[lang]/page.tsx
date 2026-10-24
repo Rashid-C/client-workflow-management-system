@@ -19,16 +19,11 @@ import Link from "@/components/i18n/link";
 import MobileNavigation from "@/components/marketing/mobile-navigation";
 import SocialLinks, { type SocialNetwork } from "@/components/marketing/social-icons";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/i18n/config";
+import { OFFICE } from "@/lib/office";
 import logo from "@/public/brand/alfath-logo.png";
 
-// Facts from the firm's own site (alfathuae.com) and new logo. Its team,
-// testimonials and client logos were template placeholders and are left out.
-const OFFICE = {
-  phones: ["+971 58 584 8008", "+971 55 776 9483"],
-  email: "info@alfathuae.com",
-  // The office's pin, as given by the client.
-  coordinates: "24.47558,54.38038",
-};
+// The old site's team, testimonials and client logos were template
+// placeholders and are left out.
 const DIRECTIONS_URL = `https://www.google.com/maps/search/?api=1&query=${OFFICE.coordinates}`;
 const MAP_EMBED_URL = `https://www.google.com/maps?q=${OFFICE.coordinates}&z=16&output=embed`;
 
@@ -239,7 +234,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">): Promis
 
 const sectionEyebrow = "text-xs font-semibold uppercase tracking-[0.16em] text-brand-700";
 const footerHeading = "text-xs font-semibold uppercase tracking-[0.16em] text-white";
-const footerLink = "text-slate-500 transition hover:text-white";
+const footerLink = "text-slate-400 transition hover:text-white";
 const sectionHeading = "mt-3 text-3xl font-semibold leading-tight tracking-[-0.03em] text-navy-950 sm:text-4xl";
 
 export default async function HomePage({ params }: PageProps<"/[lang]">) {
@@ -446,7 +441,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 sm:px-8 lg:grid-cols-[1.3fr_0.7fr_1.4fr_1fr] lg:gap-12">
           <div>
             <BrandLogo variant="full" tone="dark" />
-            <p className="mt-5 max-w-sm text-sm leading-6 text-slate-500">{copy.footerAbout}</p>
+            <p className="mt-5 max-w-sm text-sm leading-6 text-slate-400">{copy.footerAbout}</p>
             <SocialLinks links={SOCIAL} className="mt-5" />
           </div>
 
@@ -492,7 +487,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         </div>
 
         <div className="border-t border-white/10">
-          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-8">
             <p>© 2026 {BRAND_NAME}. {copy.copyright}</p>
             <Link href={copy.languagePath} className="w-fit transition hover:text-white">{copy.languageName}</Link>
           </div>
