@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { ArrowLeft } from "lucide-react";
+import Link from "@/components/i18n/link";
 
 const WIDTHS = {
   form: "max-w-4xl",
@@ -46,6 +48,40 @@ export function PageHeader({
         {subtitle && <p className="mt-1.5 max-w-3xl text-sm leading-6 text-slate-600">{subtitle}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+    </header>
+  );
+}
+
+/** Top of a record's page: back link, code and status, name, and its actions. */
+export function DetailHeader({
+  backHref,
+  backLabel,
+  meta,
+  title,
+  subtitle,
+  actions,
+}: {
+  backHref: string;
+  backLabel: ReactNode;
+  meta?: ReactNode;
+  title: ReactNode;
+  subtitle?: ReactNode;
+  actions?: ReactNode;
+}) {
+  return (
+    <header className="mb-6">
+      <Link href={backHref} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900">
+        <ArrowLeft size={15} className="rtl:rotate-180" aria-hidden="true" />
+        {backLabel}
+      </Link>
+      <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          {meta && <div className="mb-1.5 flex flex-wrap items-center gap-2 text-sm">{meta}</div>}
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-[1.75rem]">{title}</h1>
+          {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
+        </div>
+        {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
+      </div>
     </header>
   );
 }
