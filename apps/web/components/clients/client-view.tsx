@@ -196,8 +196,7 @@ export default function ClientView({ clientId }: { clientId: number }) {
 
       {can("documents.view") && (
         <section className="rounded-xl border border-slate-200 bg-white p-4">
-          <h2 className="mb-3 text-sm font-semibold">{t.documents.title}</h2>
-          <DocumentList clientId={client.id} />
+          <DocumentList clientId={client.id} title={t.documents.title} />
         </section>
       )}
 

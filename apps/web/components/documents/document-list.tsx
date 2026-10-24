@@ -8,6 +8,7 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link from "@/components/i18n/link";
 import { inputClass, primaryButton } from "@/components/ui/modal";
 import StatCard from "@/components/ui/stat-card";
+import { buttonClass } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import {
   DOCUMENT_STATUSES,
@@ -23,7 +24,7 @@ const iconButton = "rounded-md p-1.5 text-slate-500 hover:bg-slate-100 hover:tex
  * The documents table. With `clientId` it is the compact list on a client's
  * page (no tiles or client column); without, the full page with filters.
  */
-export default function DocumentList({ clientId, documentId, initialStatus = "" }: { clientId?: number; documentId?: number; initialStatus?: string }) {
+export default function DocumentList({ clientId, documentId, initialStatus = "", title }: { clientId?: number; documentId?: number; initialStatus?: string; title?: string }) {
   const { can } = useCurrentUser();
   const { t, day, errorText } = useI18n();
   const d = t.documents;
@@ -116,38 +117,45 @@ export default function DocumentList({ clientId, documentId, initialStatus = "" 
         </section>
       )}
 
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
-        {!compact && (
-          <>
-            <div className="flex-1">
-              <label htmlFor="doc-search" className="text-sm font-medium">{t.common.search}</label>
-              <input id="doc-search" type="search" value={search} onChange={(ev) => setSearch(ev.target.value)} placeholder={d.searchPlaceholder} className={inputClass} />
+      {compact ? (
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+          {can("documents.create") && (
+            <button type="button" onClick={() => setEditing("new")} className={buttonClass("secondary", "sm")}>
+              <Plus size={14} aria-hidden="true" /> {d.add}
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
+          <div className="flex-1">
+            <label htmlFor="doc-search" className="text-sm font-medium">{t.common.search}</label>
+            <input id="doc-search" type="search" value={search} onChange={(ev) => setSearch(ev.target.value)} placeholder={d.searchPlaceholder} className={inputClass} />
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:flex">
+            <div>
+              <label htmlFor="doc-status" className="text-sm font-medium">{d.status}</label>
+              <select id="doc-status" value={status} onChange={(ev) => setStatus(ev.target.value)} className={inputClass}>
+                <option value="">{d.allStatuses}</option>
+                <option value="attention">{d.attention}</option>
+                {DOCUMENT_STATUSES.map((value) => <option key={value} value={value}>{d.statuses[value]}</option>)}
+              </select>
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:flex">
-              <div>
-                <label htmlFor="doc-status" className="text-sm font-medium">{d.status}</label>
-                <select id="doc-status" value={status} onChange={(ev) => setStatus(ev.target.value)} className={inputClass}>
-                  <option value="">{d.allStatuses}</option>
-                  <option value="attention">{d.attention}</option>
-                  {DOCUMENT_STATUSES.map((value) => <option key={value} value={value}>{d.statuses[value]}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="doc-type-filter" className="text-sm font-medium">{d.type}</label>
-                <select id="doc-type-filter" value={type} onChange={(ev) => setType(ev.target.value)} className={inputClass}>
-                  <option value="">{d.allTypes}</option>
-                  {DOCUMENT_TYPES.map((value) => <option key={value} value={value}>{d.types[value]}</option>)}
-                </select>
-              </div>
+            <div>
+              <label htmlFor="doc-type-filter" className="text-sm font-medium">{d.type}</label>
+              <select id="doc-type-filter" value={type} onChange={(ev) => setType(ev.target.value)} className={inputClass}>
+                <option value="">{d.allTypes}</option>
+                {DOCUMENT_TYPES.map((value) => <option key={value} value={value}>{d.types[value]}</option>)}
+              </select>
             </div>
-          </>
-        )}
-        {can("documents.create") && (
-          <button type="button" onClick={() => setEditing("new")} className={`${primaryButton} inline-flex items-center justify-center gap-1.5 ${compact ? "ms-auto" : ""}`}>
-            <Plus size={16} aria-hidden="true" /> {d.add}
-          </button>
-        )}
-      </div>
+          </div>
+          {can("documents.create") && (
+            <button type="button" onClick={() => setEditing("new")} className={primaryButton}>
+              <Plus size={16} aria-hidden="true" /> {d.add}
+            </button>
+          )}
+        </div>
+      )}
 
       {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
       {loading ? (
@@ -158,7 +166,7 @@ export default function DocumentList({ clientId, documentId, initialStatus = "" 
         </p>
       ) : (
         <div className="relative overflow-x-auto rounded-lg border border-slate-200">
-          <table className={`w-full border-collapse text-sm ${compact ? "" : "min-w-[760px]"}`}>
+          <table className={`w-full border-collapse text-sm ${compact ? "" : "min-w-190"}`}>
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-3 py-2.5 text-start font-medium">{d.document}</th>
