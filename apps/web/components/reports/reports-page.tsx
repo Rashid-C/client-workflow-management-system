@@ -6,7 +6,10 @@ import { useCurrentUser } from "@/components/auth/current-user";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, apiBlob } from "@/lib/api";
 import { inputClass, primaryButton } from "@/components/ui/modal";
+import { cardClass } from "@/components/ui/card";
 import { Page, PageHeader } from "@/components/ui/page";
+import StatCard from "@/components/ui/stat-card";
+import { secondaryButton } from "@/components/ui/styles";
 
 const REPORTS = ["time-by-employee", "time-by-client", "task-status", "expiring-documents", "leads-pipeline"] as const;
 type Report = (typeof REPORTS)[number];
@@ -24,6 +27,8 @@ type ReportData = {
   closedInPeriod?: { won: number; lost: number; conversionRate: number };
 };
 type Column = { key: string; label: string; render?: (row: Row) => string | number };
+type Choice = { id: number; name: string; clientCode?: string };
+type FilterChoices = { clients: Choice[]; employees: Choice[]; taskTypes: Choice[] };
 
 export default function ReportsPage() {
   const { t, locale, day, errorText } = useI18n();
@@ -42,6 +47,11 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState("");
+  const [choices, setChoices] = useState<FilterChoices>({ clients: [], employees: [], taskTypes: [] });
+
+  useEffect(() => {
+    api<FilterChoices>("/reports/filters").then(setChoices).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -133,7 +143,7 @@ export default function ReportsPage() {
 
   function table(title: string, rows: Row[], columns: Column[]) {
     return (
-      <section key={title} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <section key={title} className={`overflow-hidden ${cardClass}`}>
         <h2 className="border-b border-slate-100 px-4 py-3 text-sm font-semibold text-slate-900">{title}</h2>
         {rows.length === 0 ? <p className="px-4 py-5 text-sm text-slate-500">{r.empty}</p> : (
           <div className="overflow-x-auto">
@@ -176,7 +186,7 @@ export default function ReportsPage() {
     <Page>
       <PageHeader eyebrow={r.eyebrow} title={r.title} subtitle={r.subtitle} />
 
-      <form onSubmit={submit} className="mb-6 grid gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
+      <form onSubmit={submit} className={`mb-6 grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4 ${cardClass}`}>
         <Field label={r.report}><select value={report} onChange={(event) => selectReport(event.target.value as Report)} className={inputClass}>
           {REPORTS.map((name) => <option key={name} value={name}>{r.reportNames[name]}</option>)}
         </select></Field>
@@ -184,15 +194,24 @@ export default function ReportsPage() {
           <Field label={r.from}><input type="date" value={from} onChange={(event) => setFrom(event.target.value)} className={inputClass} required /></Field>
           <Field label={r.to}><input type="date" value={to} onChange={(event) => setTo(event.target.value)} className={inputClass} required /></Field>
         </> : <Field label={r.days}><input type="number" min="1" max="365" value={days} onChange={(event) => setDays(event.target.value)} className={inputClass} /></Field>}
-        {report !== "leads-pipeline" && <Field label={r.clientId}><input type="number" min="1" value={clientId} onChange={(event) => setClientId(event.target.value)} className={inputClass} /></Field>}
-        {report.startsWith("time-by-") && <Field label={r.employeeId}><input type="number" min="1" value={employeeId} onChange={(event) => setEmployeeId(event.target.value)} className={inputClass} /></Field>}
-        {["time-by-client", "time-by-employee", "task-status"].includes(report) && <Field label={r.taskTypeId}><input type="number" min="1" value={taskTypeId} onChange={(event) => setTaskTypeId(event.target.value)} className={inputClass} /></Field>}
+        {report !== "leads-pipeline" && <Field label={r.clientFilter}><select value={clientId} onChange={(event) => setClientId(event.target.value)} className={inputClass}>
+          <option value="">{r.allClients}</option>
+          {choices.clients.map((client) => <option key={client.id} value={client.id}>{client.name} ({client.clientCode})</option>)}
+        </select></Field>}
+        {report.startsWith("time-by-") && choices.employees.length > 0 && <Field label={r.employeeFilter}><select value={employeeId} onChange={(event) => setEmployeeId(event.target.value)} className={inputClass}>
+          <option value="">{r.allEmployees}</option>
+          {choices.employees.map((person) => <option key={person.id} value={person.id}>{person.name}</option>)}
+        </select></Field>}
+        {["time-by-client", "time-by-employee", "task-status"].includes(report) && <Field label={r.taskTypeFilter}><select value={taskTypeId} onChange={(event) => setTaskTypeId(event.target.value)} className={inputClass}>
+          <option value="">{r.allTaskTypes}</option>
+          {choices.taskTypes.map((type) => <option key={type.id} value={type.id}>{type.name}</option>)}
+        </select></Field>}
         {["task-status", "leads-pipeline"].includes(report) && <Field label={r.status}><select value={status} onChange={(event) => setStatus(event.target.value)} className={inputClass}>
           <option value="">{r.allStatuses}</option>{statusOptions.map(([key, label]) => <option value={key} key={key}>{label}</option>)}
         </select></Field>}
         <div className="flex items-end gap-2 lg:col-span-2">
           <button type="submit" className={primaryButton}>{loading && <LoaderCircle size={16} className="animate-spin" />}{r.run}</button>
-          {can("reports.export") && <button type="button" disabled={exporting} onClick={exportReport} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-slate-300 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+          {can("reports.export") && <button type="button" disabled={exporting} onClick={exportReport} className={secondaryButton}>
             {exporting ? <LoaderCircle size={16} className="animate-spin" /> : <Download size={16} />}{r.export}
           </button>}
         </div>
@@ -201,9 +220,9 @@ export default function ReportsPage() {
       {error && <p role="alert" className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p>}
       {data?.from && data?.to && <p className="mb-4 text-xs text-slate-500">{r.period}: {day(data.from)} – {day(data.to)}</p>}
       {report === "leads-pipeline" && data?.closedInPeriod && <div className="mb-4 grid gap-3 sm:grid-cols-3">
-        <Metric label={r.won} value={data.closedInPeriod.won} />
-        <Metric label={r.lost} value={data.closedInPeriod.lost} />
-        <Metric label={r.conversionRate} value={`${data.closedInPeriod.conversionRate.toFixed(2)}%`} />
+        <StatCard compact label={r.won} value={data.closedInPeriod.won} tone="success" />
+        <StatCard compact label={r.lost} value={data.closedInPeriod.lost} />
+        <StatCard compact label={r.conversionRate} value={`${data.closedInPeriod.conversionRate.toFixed(2)}%`} tone="brand" />
       </div>}
       {report.startsWith("time-by-") && data && <p className="mb-4 text-sm font-medium text-slate-700">{r.totals}: {((data.totalMinutes ?? 0) / 60).toFixed(2)} {r.hours.toLowerCase()}</p>}
       {loading && !data ? <p className="py-10 text-center text-sm text-slate-500">{r.loading}</p> : <div className="space-y-5">{sections.map((section) => table(section.title, section.rows, section.columns))}</div>}
@@ -215,9 +234,6 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   return <label className="block space-y-1.5 text-sm font-medium text-slate-700"><span>{label}</span>{children}</label>;
 }
 
-function Metric({ label, value }: { label: string; value: string | number }) {
-  return <div className="rounded-lg border border-slate-200 bg-white p-4"><p className="text-xs text-slate-500">{label}</p><p className="mt-1 text-xl font-semibold tabular-nums text-slate-900">{value}</p></div>;
-}
 
 function columnLabel(key: string, r: ReturnType<typeof useI18n>["t"]["reports"]) {
   const labels: Record<string, string> = {
