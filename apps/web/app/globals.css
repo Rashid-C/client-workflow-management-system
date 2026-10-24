@@ -41,6 +41,21 @@
   --color-navy-900: #0d2c4c;
   --color-navy-950: #061a2f;
 
+  /* Signal blue (#0057FF = 600): the public website's accent, chosen by the
+     client; the signed-in app keeps the logo's teal. White text passes AA
+     from 600 up; 700 is the link colour on white (~7:1). */
+  --color-signal-50: #eef4ff;
+  --color-signal-100: #d9e6ff;
+  --color-signal-200: #bcd3ff;
+  --color-signal-300: #8eb5ff;
+  --color-signal-400: #5a8dff;
+  --color-signal-500: #2e6bff;
+  --color-signal-600: #0057ff;
+  --color-signal-700: #0046d1;
+  --color-signal-800: #003aa8;
+  --color-signal-900: #003185;
+  --color-signal-950: #001d52;
+
   /* Porcelain: a warm, paper-like off-white for page backgrounds, so white
      cards stand out. canvas is the signed-in app's background (dark mode
      swaps it); porcelain is the public and sign-in pages'. */
