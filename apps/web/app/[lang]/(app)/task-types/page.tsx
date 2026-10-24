@@ -7,6 +7,8 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link from "@/components/i18n/link";
 import { api } from "@/lib/api";
 import type { TaskType } from "@/lib/task-types";
+import { Page, PageHeader } from "@/components/ui/page";
+import { primaryButton } from "@/components/ui/styles";
 
 export default function TaskTypesPage() {
   const { can } = useCurrentUser();
@@ -37,24 +39,18 @@ export default function TaskTypesPage() {
   }, [showInactive]);
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t.taskTypes.title}</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {t.taskTypes.subtitle}
-          </p>
-        </div>
-        {can("workflows.manage") && (
-          <Link
-            href="/task-types/new"
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
-          >
+    <Page className="space-y-6">
+      <PageHeader
+        eyebrow={t.nav.groups.operations}
+        title={t.taskTypes.title}
+        subtitle={t.taskTypes.subtitle}
+        actions={can("workflows.manage") && (
+          <Link href="/task-types/new" className={primaryButton}>
             <Plus size={16} aria-hidden="true" />
             {t.taskTypes.newType}
           </Link>
         )}
-      </header>
+      />
 
       <label className="inline-flex items-center gap-2 text-sm">
         <input
@@ -125,6 +121,6 @@ export default function TaskTypesPage() {
           ))}
         </ul>
       )}
-    </div>
+    </Page>
   );
 }

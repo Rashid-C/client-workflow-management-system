@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import AuditTimeline from "@/components/audit/audit-timeline";
 import { useI18n } from "@/components/i18n/i18n-provider";
+import { Page, PageHeader } from "@/components/ui/page";
 import {
   AUDIT_ACTIONS,
   fetchAuditLogs,
@@ -64,14 +65,8 @@ export default function ActivityPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <header>
-        <p className="text-sm text-slate-500">{t.activity.eyebrow}</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t.activity.title}</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          {t.activity.subtitle}
-        </p>
-      </header>
+    <Page size="narrow" className="space-y-6">
+      <PageHeader eyebrow={t.activity.eyebrow} title={t.activity.title} subtitle={t.activity.subtitle} />
 
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -162,6 +157,6 @@ export default function ActivityPage() {
           </>
         )}
       </section>
-    </div>
+    </Page>
   );
 }

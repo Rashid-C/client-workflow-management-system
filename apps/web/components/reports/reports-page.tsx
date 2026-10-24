@@ -6,6 +6,7 @@ import { useCurrentUser } from "@/components/auth/current-user";
 import { useI18n } from "@/components/i18n/i18n-provider";
 import { api, apiBlob } from "@/lib/api";
 import { inputClass, primaryButton } from "@/components/ui/modal";
+import { Page, PageHeader } from "@/components/ui/page";
 
 const REPORTS = ["time-by-employee", "time-by-client", "task-status", "expiring-documents", "leads-pipeline"] as const;
 type Report = (typeof REPORTS)[number];
@@ -172,12 +173,8 @@ export default function ReportsPage() {
   }, [data, report, locale, r]);
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-5 pb-10 text-slate-900 sm:p-7 lg:p-10">
-      <header className="mb-6 border-b border-slate-200 pb-6">
-        <p className="mb-2 text-sm font-medium text-brand-800">{r.eyebrow}</p>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">{r.title}</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{r.subtitle}</p>
-      </header>
+    <Page>
+      <PageHeader eyebrow={r.eyebrow} title={r.title} subtitle={r.subtitle} />
 
       <form onSubmit={submit} className="mb-6 grid gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
         <Field label={r.report}><select value={report} onChange={(event) => selectReport(event.target.value as Report)} className={inputClass}>
@@ -210,7 +207,7 @@ export default function ReportsPage() {
       </div>}
       {report.startsWith("time-by-") && data && <p className="mb-4 text-sm font-medium text-slate-700">{r.totals}: {((data.totalMinutes ?? 0) / 60).toFixed(2)} {r.hours.toLowerCase()}</p>}
       {loading && !data ? <p className="py-10 text-center text-sm text-slate-500">{r.loading}</p> : <div className="space-y-5">{sections.map((section) => table(section.title, section.rows, section.columns))}</div>}
-    </div>
+    </Page>
   );
 }
 

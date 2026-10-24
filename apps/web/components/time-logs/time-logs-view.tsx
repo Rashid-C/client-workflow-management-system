@@ -7,6 +7,7 @@ import Link from "@/components/i18n/link";
 import { inputClass } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { taskRef, type PersonRef } from "@/lib/tasks";
+import { Page, PageHeader } from "@/components/ui/page";
 
 type TimeLogEntry = {
   id: number;
@@ -98,13 +99,12 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t.timeLogs.title}</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          {seesEveryone ? t.timeLogs.subtitleTeam : t.timeLogs.subtitleOwn}
-        </p>
-      </header>
+    <Page className="space-y-6">
+      <PageHeader
+        eyebrow={t.nav.groups.operations}
+        title={t.timeLogs.title}
+        subtitle={seesEveryone ? t.timeLogs.subtitleTeam : t.timeLogs.subtitleOwn}
+      />
 
       <section className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
         {canListPeople && (
@@ -219,6 +219,6 @@ export default function TimeLogsView({ defaultFrom }: { defaultFrom: string }) {
           )}
         </aside>
       </div>
-    </div>
+    </Page>
   );
 }

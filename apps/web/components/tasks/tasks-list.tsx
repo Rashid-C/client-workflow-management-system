@@ -8,6 +8,8 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link, { useRouter } from "@/components/i18n/link";
 import NewTaskDialog from "@/components/tasks/new-task-dialog";
 import { inputClass } from "@/components/ui/modal";
+import { Page, PageHeader } from "@/components/ui/page";
+import { primaryButton } from "@/components/ui/styles";
 import { api } from "@/lib/api";
 import {
   isOverdue,
@@ -18,7 +20,7 @@ import {
   type TaskListItem,
 } from "@/lib/tasks";
 
-type Page = { items: TaskListItem[]; nextBefore: number | null };
+type TaskPage = { items: TaskListItem[]; nextBefore: number | null };
 
 /** The task list; its starting filters come from the URL (dashboard links). */
 export default function TasksList() {
@@ -57,7 +59,7 @@ export default function TasksList() {
   useEffect(() => {
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      api<Page>(query(), { signal: controller.signal })
+      api<TaskPage>(query(), { signal: controller.signal })
         .then((page) => {
           setTasks(page.items);
           setNextBefore(page.nextBefore);
@@ -86,7 +88,7 @@ export default function TasksList() {
 
   async function loadOlder() {
     if (nextBefore === null) return;
-    const page = await api<Page>(query(nextBefore));
+    const page = await api<TaskPage>(query(nextBefore));
     setTasks((current) => [...current, ...page.items]);
     setNextBefore(page.nextBefore);
   }
@@ -97,23 +99,18 @@ export default function TasksList() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6 p-4 pb-10 text-slate-900 sm:p-6">
-      <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t.tasks.title}</h1>
-          <p className="mt-1 text-sm text-slate-500">{t.tasks.subtitle}</p>
-        </div>
-        {can("tasks.create") && (
-          <button
-            type="button"
-            onClick={() => setShowNew(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
-          >
+    <Page className="space-y-6">
+      <PageHeader
+        eyebrow={t.nav.groups.operations}
+        title={t.tasks.title}
+        subtitle={t.tasks.subtitle}
+        actions={can("tasks.create") && (
+          <button type="button" onClick={() => setShowNew(true)} className={primaryButton}>
             <Plus size={16} aria-hidden="true" />
             {t.tasks.newTask}
           </button>
         )}
-      </header>
+      />
 
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
@@ -254,7 +251,7 @@ export default function TasksList() {
           onCreated={(task) => router.push(`/tasks/${task.id}`)}
         />
       )}
-    </div>
+    </Page>
   );
 }
 

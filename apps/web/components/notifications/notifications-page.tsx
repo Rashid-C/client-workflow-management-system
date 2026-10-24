@@ -6,6 +6,8 @@ import { useI18n } from "@/components/i18n/i18n-provider";
 import Link from "@/components/i18n/link";
 import { api } from "@/lib/api";
 import { notificationTime, type NotificationItem, type NotificationPage } from "@/lib/notifications";
+import { Page, PageHeader } from "@/components/ui/page";
+import { secondaryButton } from "@/components/ui/styles";
 
 export default function NotificationsPage() {
   const { t, locale, errorText } = useI18n();
@@ -69,14 +71,13 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl p-5 pb-10 text-slate-900 sm:p-7 lg:p-10">
-      <header className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 pb-6">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">{n.title}</h1>
-          <p className="mt-2 text-sm leading-6 text-slate-600">{n.subtitle}</p>
-        </div>
-        {items.some((item) => !item.readAt) && <button type="button" disabled={busy} onClick={() => void markAllRead()} className="rounded-md px-3 py-2 text-sm font-medium text-brand-800 hover:bg-brand-50 disabled:opacity-50">{n.markAllRead}</button>}
-      </header>
+    <Page size="form">
+      <PageHeader
+        eyebrow={t.nav.groups.workspace}
+        title={n.title}
+        subtitle={n.subtitle}
+        actions={items.some((item) => !item.readAt) && <button type="button" disabled={busy} onClick={() => void markAllRead()} className={secondaryButton}>{n.markAllRead}</button>}
+      />
 
       <section className="mb-6 rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
         <label className="flex cursor-pointer items-start gap-3">
@@ -100,6 +101,6 @@ export default function NotificationsPage() {
         </li>)}
       </ul>
       {cursor && <div className="mt-5 text-center"><button type="button" disabled={busy} onClick={async () => { setBusy(true); await load(cursor); setBusy(false); }} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50">{n.loadMore}</button></div>}
-    </div>
+    </Page>
   );
 }
